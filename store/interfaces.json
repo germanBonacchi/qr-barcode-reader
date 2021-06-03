@@ -1,5 +1,5 @@
 {
-  "countdown": {
-    "component": "Countdown"
+  "qr-reader": {
+    "component": "QrReader"
   }
 }

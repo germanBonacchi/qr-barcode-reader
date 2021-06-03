@@ -1,6 +1,10 @@
 {
   "extends": "@vtex/tsconfig",
   "compilerOptions": {
+    "noImplicitAny": false,
+    "allowJs": true,
+    "allowSyntheticDefaultImports": true,
+    "jsx": "react",
     "noEmitOnError": false,
     "typeRoots": [
       "node_modules/@types"
@@ -9,6 +13,7 @@
       "node",
       "jest"
     ],
+    "lib": ["es2017", "dom"],
     "module": "esnext",
     "moduleResolution": "node",
     "target": "es2017"
@@ -16,6 +21,8 @@
   "include": [
     "./typings/*.d.ts",
     "./**/*.tsx",
-    "./**/*.ts"
+    "./**/*.ts",
+    "./**/*.js",
+    "./**/*"
   ]
 }

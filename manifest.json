@@ -1,10 +1,9 @@
 {
-  "vendor": "vtex",
-  "name": "countdown",
+  "vendor": "gbonacchi",
+  "name": "qr-barcode-reader",
   "version": "0.0.1",
-  "title": "Countdown",
-  "description": "Countdown component",
-  "defaultLocale": "pt-BR",
+  "title": "qr-barcode-reader",
+  "description": "qr-barcode-reader",
   "builders": {
     "messages": "1.x",
     "store": "0.x",
@@ -12,7 +11,8 @@
   },
   "dependencies": {
     "vtex.styleguide": "9.x",
-    "vtex.css-handles": "0.x"
+    "vtex.css-handles": "0.x",
+    "vtex.session-client": "1.x"
   },
   "$schema": "https://raw.githubusercontent.com/vtex/node-vtex-api/master/gen/manifest.schema"
 }
