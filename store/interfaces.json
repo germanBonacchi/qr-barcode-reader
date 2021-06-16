@@ -1,5 +1,8 @@
 {
   "qr-reader": {
-    "component": "QrReader"
+    "component": "QrReader",
+    "content": {
+      "$ref": "#/definitions/QrReader"
+    }
   }
 }

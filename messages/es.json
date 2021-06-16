@@ -1,4 +1,8 @@
 {
   "editor.qr-reader.title": "Lector Qr",
-  "editor.qr-reader.description": "Lector Qr componente"
+  "editor.qr-reader.description": "Lector Qr componente",
+  "editor.qr-reader.title.separator.title": "Qr Reader Separator",
+  "editor.qr-reader.title.separator.description": "Carácter que se utilizará para separar la información importante",
+  "editor.qr-reader.title.separatorApparition.title": "Qr Reader separatorApparition",
+  "editor.qr-reader.title.separatorApparition.description": "Number that represents from which appearance of the separator the important information"
 }

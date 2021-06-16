@@ -1,0 +1,21 @@
+{
+  "definitions": {
+    "QrReader": {
+      "type": "object",
+      "properties": {
+        "separator": {
+          "title": "editor.qr-reader.title.separator.title",
+          "description": "editor.qr-reader.title.separator.description",
+          "type": "string",
+          "default": "X"
+        },
+        "separatorApparition": {
+          "title": "editor.qr-reader.title.avoidSeparator.title",
+          "description": "editor.qr-reader.title.avoidSeparator.description",
+          "type": "number",
+          "default": 0
+        }
+      }
+    }
+  }
+}

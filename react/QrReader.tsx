@@ -1,31 +1,3 @@
-import React, {useState} from 'react'
-import QrContainer from './qr-scanner.js'
+import QrReaderWrapper from './components/QrReaderWrapper'
 
-interface QrReaderProps {}
-
-
-const QrReader: StorefrontFunctionComponent<QrReaderProps> = ({}) => {
-  const [useQr, setUseQr]: any = useState(false)
-  
-  const onclickQrReader = () => {
-    useQr?setUseQr(false):setUseQr(true)
-  }
-
-  return (
-    <div>
-      <button onClick={onclickQrReader}>
-        Qr Reader
-      </button>
-      {useQr && <QrContainer/>}
-    </div>  
-  )
-}
-
-QrReader.schema = {
-  title: 'editor.qr-reader.title',
-  description: 'editor.qr-reader.description',
-  type: 'object',
-  properties: {},
-}
-
-export default QrReader
+export default QrReaderWrapper
