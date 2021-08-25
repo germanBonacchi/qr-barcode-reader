@@ -1,8 +1,4 @@
 {
-  "editor.qr-reader.title": "Qr Reader",
-  "editor.qr-reader.description": "Componente do leitor Qr",
-  "editor.qr-reader.title.separator.title": "Qr Reader Separator",
-  "editor.qr-reader.title.separator.description": "Caracter que será usado para separar as informações importantes",
-  "editor.qr-reader.title.separatorApparition.title": "Qr Reader SeparatorApparition",
-  "editor.qr-reader.title.separatorApparition.description": "Number that represents from which appearance of the separator the important information"
+  "store/qr-reader.messageModalError": "O Qr mostrado não corresponde a nenhum produto, tente outro.",
+  "store/qr-reader.messageModalSucces": "Iremos redirecioná-lo para o produto"
 }
