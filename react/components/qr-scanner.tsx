@@ -46,6 +46,7 @@ export default function QrContainer({separator,separatorApparition}: QrReaderPro
 
   const closeModalResult = () => {
     setModalResult(false)
+    setPrevData(null)
   }
 
   const handleScan = (data: any) => {
@@ -89,10 +90,11 @@ export default function QrContainer({separator,separatorApparition}: QrReaderPro
       const productName: string = sku.NameComplete
 
       setMessageModal(`${translateMessage(messagesInternationalization.messageModalSucces)} ${productName}`)
-      setSkuData(skuData)
+      setSkuData(sku)
     }else{
       null
     }
+
   },[loadingGetSku,errorGetSku,dataGetSku]
   )
 
