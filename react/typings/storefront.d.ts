@@ -1,4 +1,6 @@
-import { FunctionComponent } from 'react'
+/* eslint-disable prettier/prettier */
+
+import type { FunctionComponent } from 'react'
 
 declare global {
   interface StorefrontFunctionComponent<P = GenericObject>

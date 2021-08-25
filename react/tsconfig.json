@@ -6,10 +6,7 @@
     "allowSyntheticDefaultImports": true,
     "jsx": "react",
     "noEmitOnError": false,
-    "types": [
-      "node",
-      "jest"
-    ],
+    "types": ["node", "jest"],
     "lib": ["es2017", "dom"],
     "module": "esnext",
     "moduleResolution": "node",
@@ -23,4 +20,3 @@
     "./**/*"
   ]
 }
-

@@ -1,22 +1,28 @@
+/* eslint-disable prettier/prettier */
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 import React, { useState, useEffect } from 'react'
 import QrReader from 'react-qr-scanner'
-import type { QrReaderProps } from '../typings/global'
-
-import formatQr from './formatQr'
-import apiCallGetSkuByEan from './apiCallGetSkuByEan.js'
-
 import { Modal, Spinner } from 'vtex.styleguide'
+import { useLazyQuery } from 'react-apollo'
+
+import type { QrReaderProps, SkuDataType } from '../typings/global'
+import formatQr from '../utils/formatQr'
+import getDataSku from '../graphql/getSku.gql'
 
 export default function QrContainer({separator,separatorApparition}: QrReaderProps) {
   const delay = 3000
   const [result, setResult] = useState(null)  
-  const [ean, setEan] = useState(null)
-  const [skuData, setSkuData] = useState<any>(null)
+  const [ean, setEan] = useState<string>('')
+  const [skuData, setSkuData] = useState<SkuDataType>()
   const [isRedirect, setIsRedirect] = useState<boolean>(false)
   const [prevData, setPrevData] = useState<any>(null)
   
   const [modalResult, setModalResult] = useState(false)
   const [messageModal, setMessageModal] = useState<string>('')
+
+  const [getSkuQuery,{ loading: loadingGetSku, error: errorGetSku, data: dataGetSku }] = useLazyQuery(getDataSku)
+
 
   const openModalResult = () => {
     setModalResult(true)
@@ -34,9 +40,8 @@ export default function QrContainer({separator,separatorApparition}: QrReaderPro
   }
   
   const handleError = (err: any) => {
-    console.log(err)
+    console.error(err)
   }
-
 
   useEffect(() => {
     if (result){
@@ -46,26 +51,40 @@ export default function QrContainer({separator,separatorApparition}: QrReaderPro
 
   useEffect(() => {
     if (ean){
-      openModalResult()
-      const getSkuByEan = apiCallGetSkuByEan(ean)
-      getSkuByEan.then(response => {
-        if(response.status === 200){
-          const product: string = response.data.NameComplete
-          setMessageModal(`Te redigiremos al Producto ${product}`)
-          if(skuData != response.data){
-            setSkuData(response.data)
-          }
-        }else{
-          setMessageModal(`El Qr mostrado no concide con ningun producto, por favor intente con otro.`)
-        }
-      });
+      const queryParam = ean
+
+      getSkuQuery({ variables: { ean: queryParam } })
     }
   }, [ean])
+
+
+  useEffect ( () => {
+    if(loadingGetSku){
+      setMessageModal(``)
+      openModalResult()
+    }
+
+    if(errorGetSku){
+      setMessageModal(`El Qr mostrado no concide con ningun producto, por favor intente con otro.`)
+    }
+
+    if(dataGetSku){
+      const sku: SkuDataType = dataGetSku.getSku.data
+      const productName: string = sku.NameComplete
+
+      setMessageModal(`Te redigiremos al Producto ${productName}`)
+      setSkuData(skuData)
+    }else{
+      null
+    }
+  },[loadingGetSku,errorGetSku,dataGetSku]
+  )
 
   useEffect(() => {
     if (skuData){
       if (!isRedirect){
-        const skuLink = skuData.DetailUrl + '?skuId=' + skuData.Id
+        const skuLink = `${skuData.DetailUrl  }?skuId=${  skuData.Id}`
+
         setIsRedirect(true)
         window.location.replace(skuLink)
       }

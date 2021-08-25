@@ -1,3 +1,5 @@
+/* eslint-disable prettier/prettier */
+
 import type {
   IOContext,
   ParamsContext,

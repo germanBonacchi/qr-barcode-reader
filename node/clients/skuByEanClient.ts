@@ -1,3 +1,5 @@
+/* eslint-disable prettier/prettier */
+
 import type { InstanceOptions, IOContext } from '@vtex/api'
 import { ExternalClient } from '@vtex/api'
 
@@ -11,7 +13,7 @@ export default class SkuByEanClient extends ExternalClient {
     })
   }
 
-  public async getSku(ean: String) {
+  public async getSku(ean: string) {
     return this.http.getRaw(`/${ean}`)
   }
 }

@@ -2,8 +2,6 @@
 
 export const queries = {
   getSku: async (_: unknown, { ean }: any, ctx: Context): Promise<any> => {
-    const aux = await ctx.clients.skuByEan.getSku(ean)
-
-    return { stores: aux }
+    return ctx.clients.skuByEan.getSku(ean)
   },
 }

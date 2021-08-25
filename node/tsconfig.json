@@ -14,5 +14,10 @@
     "strictNullChecks": true,
     "strictPropertyInitialization": true,
     "target": "es2019"
-  }
+  },
+  "typeAcquisition": {
+    "enable": false
+  },
+  "include": ["global.ts", "./**/*"],
+  "exclude": ["node_modules"]
 }
