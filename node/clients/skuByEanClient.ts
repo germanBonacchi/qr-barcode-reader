@@ -6,12 +6,12 @@ export default class SkuByEanClient extends ExternalClient {
     super(`http://${context.account}.vtexcommercestable.com.br/api/catalog_system/pvt/sku/stockkeepingunitbyean`, context, {
     ...options,
       headers: {
-        VtexIdClientAutCookie: context.authToken
+        VtexIdClientAutCookie: context.storeUserAuthToken ?? context.authToken,
       }
     })
   }
 
   public async getSku(ean: String) {
-    return this.http.get(`/${ean}`)
+    return this.http.getRaw(`/${ean}`)
   }
 }

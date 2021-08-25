@@ -1,0 +1,9 @@
+type DataGetSkuResponse{
+  Id: String
+  NameComplete: String
+  DetailUrl: String
+}
+
+type GetSkuResponse{
+  data: [DataGetSkuResponse]
+}

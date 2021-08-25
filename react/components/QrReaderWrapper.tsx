@@ -1,13 +1,11 @@
 import React, {useState} from 'react'
-import QrContainer from './qr-scanner.js'
+//import QrContainer from './qr-scanner.js'
+import QrContainer from './qr-scanner'
+
 import { useCssHandles } from 'vtex.css-handles'
+import type { QrReaderProps } from './../typings/global'
 
 const CSS_HANDLES = ['qrReader']
-
-export interface QrReaderProps {
-  separator: string,
-  separatorApparition: number
-}
 
 const QrReaderWrapper: StorefrontFunctionComponent<QrReaderProps> = ({separator, separatorApparition}) => {
   const [useQr, setUseQr]: any = useState(false)
@@ -17,7 +15,6 @@ const QrReaderWrapper: StorefrontFunctionComponent<QrReaderProps> = ({separator,
   }
 
   const handles = useCssHandles(CSS_HANDLES)
-  
   return (
     <div className={`${handles.qrReader} c-muted-1 db tc`}>
       <button onClick={onclickQrReader}>

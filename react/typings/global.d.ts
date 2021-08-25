@@ -1,7 +1,5 @@
-export interface TimeSplit {
-  hours: string
-  minutes: string
-  seconds: string
+export interface QrReaderProps {
+  separator: string,
+  separatorApparition: number
 }
 
-type GenericObject = Record<string, any>
