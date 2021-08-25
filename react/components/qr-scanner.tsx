@@ -5,10 +5,17 @@ import React, { useState, useEffect } from 'react'
 import QrReader from 'react-qr-scanner'
 import { Modal, Spinner } from 'vtex.styleguide'
 import { useLazyQuery } from 'react-apollo'
+import type {
+  MessageDescriptor} from 'react-intl';
+import {
+  useIntl,
+  defineMessages,
+} from 'react-intl'
 
 import type { QrReaderProps, SkuDataType } from '../typings/global'
 import formatQr from '../utils/formatQr'
 import getDataSku from '../graphql/getSku.gql'
+
 
 export default function QrContainer({separator,separatorApparition}: QrReaderProps) {
   const delay = 3000
@@ -23,6 +30,15 @@ export default function QrContainer({separator,separatorApparition}: QrReaderPro
 
   const [getSkuQuery,{ loading: loadingGetSku, error: errorGetSku, data: dataGetSku }] = useLazyQuery(getDataSku)
 
+  const intl = useIntl()
+
+  const messagesInternationalization = defineMessages({
+    messageModalError: { id: 'store/qr-reader.messageModalError' },
+    messageModalSucces: { id: 'store/qr-reader.messageModalSucces' },
+  })
+
+  const translateMessage = (message: MessageDescriptor) =>
+  intl.formatMessage(message)
 
   const openModalResult = () => {
     setModalResult(true)
@@ -65,14 +81,14 @@ export default function QrContainer({separator,separatorApparition}: QrReaderPro
     }
 
     if(errorGetSku){
-      setMessageModal(`El Qr mostrado no concide con ningun producto, por favor intente con otro.`)
+      setMessageModal(`${translateMessage(messagesInternationalization.messageModalError)}`)
     }
 
     if(dataGetSku){
       const sku: SkuDataType = dataGetSku.getSku.data
       const productName: string = sku.NameComplete
 
-      setMessageModal(`Te redigiremos al Producto ${productName}`)
+      setMessageModal(`${translateMessage(messagesInternationalization.messageModalSucces)} ${productName}`)
       setSkuData(skuData)
     }else{
       null
@@ -83,7 +99,7 @@ export default function QrContainer({separator,separatorApparition}: QrReaderPro
   useEffect(() => {
     if (skuData){
       if (!isRedirect){
-        const skuLink = `${skuData.DetailUrl  }?skuId=${  skuData.Id}`
+        const skuLink = `${skuData.DetailUrl}?skuId=${skuData.Id}`
 
         setIsRedirect(true)
         window.location.replace(skuLink)
