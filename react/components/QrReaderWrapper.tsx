@@ -9,6 +9,7 @@ import {
   useIntl,
   defineMessages,
 } from 'react-intl'
+import { Button } from 'vtex.styleguide'
 
 import QrContainer from './qr-scanner'
 import type { QrReaderProps } from "../typings/global"
@@ -16,7 +17,7 @@ import type { QrReaderProps } from "../typings/global"
 const CSS_HANDLES = ['qrReader']
 
 const QrReaderWrapper: StorefrontFunctionComponent<QrReaderProps> = ({separator, separatorApparition}) => {
-  const [useQr, setUseQr]: any = useState(false)
+  const [useQr, setUseQr]: any = useState<boolean>(false)
 
   const intl = useIntl()
 
@@ -29,17 +30,19 @@ const QrReaderWrapper: StorefrontFunctionComponent<QrReaderProps> = ({separator,
 
 
   const onclickQrReader = () => {
-    useQr?setUseQr(false):setUseQr(true)
+    setUseQr(!useQr)
   }
 
   const handles = useCssHandles(CSS_HANDLES)
 
   return (
     <div className={`${handles.qrReader} c-muted-1 db tc`}>
-      <button onClick={onclickQrReader}>
-      {`${translateMessage(messagesInternationalization.buttonOpenReader)}`}
-      </button>
-      {useQr && <QrContainer separator={separator} separatorApparition={separatorApparition}/>}
+      <div className="mb4">
+        <Button onClick={onclickQrReader}>
+        {`${translateMessage(messagesInternationalization.buttonOpenReader)}`}
+        </Button>
+      </div>
+      {useQr && <QrContainer setUseQr={setUseQr}separator={separator} separatorApparition={separatorApparition}/>}
     </div>  
   )
 }

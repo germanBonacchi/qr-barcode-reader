@@ -19,8 +19,7 @@
     },
     "BarcodeReader": {
       "type": "object",
-      "properties": {
-      }
+      "properties": {}
     }
   }
 }

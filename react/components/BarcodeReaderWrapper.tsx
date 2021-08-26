@@ -9,13 +9,14 @@ import {
   useIntl,
   defineMessages,
 } from 'react-intl'
+import { Button } from 'vtex.styleguide'
 
 import BarcodeContainer from './barcode-scanner'
 
 const CSS_HANDLES = ['BarcodeReader']
 
 const BarcodeReaderWrapper: StorefrontFunctionComponent<any> = () => {
-  const [useBarcode, setUseBarcode]: any = useState(false)
+  const [useBarcode, setUseBarcode]: any = useState<boolean>(false)
 
   const intl = useIntl()
 
@@ -28,17 +29,19 @@ const BarcodeReaderWrapper: StorefrontFunctionComponent<any> = () => {
 
 
   const onclickBarcodeReader = () => {
-    useBarcode?setUseBarcode(false):setUseBarcode(true)
+    setUseBarcode(!useBarcode)
   }
 
   const handles = useCssHandles(CSS_HANDLES)
 
   return (
     <div className={`${handles.BarcodeReader} c-muted-1 db tc`}>
-      <button onClick={onclickBarcodeReader}>
-      {`${translateMessage(messagesInternationalization.buttonOpenReader)}`}
-      </button>
-      {useBarcode && <BarcodeContainer/>}
+      <div className="mb4">
+        <Button variation="primary" onClick={onclickBarcodeReader}>
+        {`${translateMessage(messagesInternationalization.buttonOpenReader)}`}
+        </Button>
+      </div>
+      {useBarcode && <BarcodeContainer setUseBarcode={setUseBarcode}/>}
     </div>  
   )
 }

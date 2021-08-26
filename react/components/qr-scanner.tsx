@@ -1,20 +1,25 @@
-/* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useState, useEffect } from 'react'
 import QrReader from 'react-qr-scanner'
+import { useCssHandles } from 'vtex.css-handles'
 
 import UseEan from './useEan'
+// eslint-disable-next-line prettier/prettier
 import type { QrReaderProps } from '../typings/global'
 import formatQr from '../utils/formatQr'
 
-export default function QrContainer({separator,separatorApparition}: QrReaderProps) {
+import '../style/camStyle.global.css'
+
+const CSS_HANDLES = ['QrContainer']
+
+export default function QrContainer({setUseQr,separator,separatorApparition}: QrReaderProps) {
   const delay = 3000
   const [result, setResult] = useState(null)  
   const [ean, setEan] = useState<string>('')
 
   const [prevData, setPrevData] = useState<any>(null)
-  
+  const handles = useCssHandles(CSS_HANDLES)
 
   const handleScan = (data: any) => {
     if (data && data.text!==prevData?.text){
@@ -40,15 +45,9 @@ export default function QrContainer({separator,separatorApparition}: QrReaderPro
     justifyContent: "center"
   }
 
-  const camStyle = {
-    display : 'flex',
-    justifyContent: "center",
-    marginTop: '0px'
-  }
-
   return (
     <div>
-      <div style={camStyle}>
+      <div className={`${handles.QrContainer} camStyle`}>
         <QrReader
           delay={delay}
           style={previewStyle}
@@ -56,7 +55,7 @@ export default function QrContainer({separator,separatorApparition}: QrReaderPro
           onScan={handleScan}
         />   
       </div>
-      {ean && <UseEan ean={ean} type={'qr'} />}
+      {ean && <UseEan setUse = {setUseQr} ean={ean} type={'qr'} />}
     </div> 
   )
 }
