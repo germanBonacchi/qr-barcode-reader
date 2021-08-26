@@ -1,10 +1,12 @@
+/* eslint-disable no-console */
 /* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useState, useEffect } from 'react'
-import QrReader from 'react-qr-scanner'
-import { Modal, Spinner } from 'vtex.styleguide'
+import BarCodeScanner from 'barcode-react-scanner'
 import { useLazyQuery } from 'react-apollo'
+import { Modal, Spinner } from 'vtex.styleguide'
+
 import type {
   MessageDescriptor} from 'react-intl';
 import {
@@ -12,30 +14,24 @@ import {
   defineMessages,
 } from 'react-intl'
 
-import type { QrReaderProps, SkuDataType } from '../typings/global'
-import formatQr from '../utils/formatQr'
+import type { SkuDataType } from '../typings/global'
 import getDataSku from '../graphql/getSku.gql'
 
-import '../style/Loading.global.css'
 
-export default function QrContainer({separator,separatorApparition}: QrReaderProps) {
-  const delay = 3000
-  const [result, setResult] = useState(null)  
-  const [ean, setEan] = useState<string>('')
+export default function BarcodeContainer() {
+  const [ data, setData ] = useState('');
+
   const [skuData, setSkuData] = useState<SkuDataType>()
   const [isRedirect, setIsRedirect] = useState<boolean>(false)
-  const [prevData, setPrevData] = useState<any>(null)
-  
-  const [modalResult, setModalResult] = useState(false)
-  const [messageModal, setMessageModal] = useState<string>('')
 
   const [getSkuQuery,{ loading: loadingGetSku, error: errorGetSku, data: dataGetSku }] = useLazyQuery(getDataSku)
-
+  const [modalResult, setModalResult] = useState(false)
+  const [messageModal, setMessageModal] = useState<string>('')
   const intl = useIntl()
 
   const messagesInternationalization = defineMessages({
-    messageModalError: { id: 'store/qr-reader.messageModalError' },
-    messageModalSucces: { id: 'store/qr-reader.messageModalSucces' },
+    messageModalError: { id: 'store/barcode-reader.messageModalError' },
+    messageModalSucces: { id: 'store/barcode-reader.messageModalSucces' },
   })
 
   const translateMessage = (message: MessageDescriptor) =>
@@ -47,34 +43,13 @@ export default function QrContainer({separator,separatorApparition}: QrReaderPro
 
   const closeModalResult = () => {
     setModalResult(false)
-    setPrevData(null)
-  }
-
-  const handleScan = (data: any) => {
-    if (data && data.text!==prevData?.text){
-      setPrevData(data)
-      setResult(data.text)
-    }
-  }
-  
-  const handleError = (err: any) => {
-    console.error(err)
   }
 
   useEffect(() => {
-    if (result){
-      setEan(formatQr(result,separator,separatorApparition))
+    if (data){
+      getSkuQuery({ variables: { ean: data } })
     }
-  }, [result])
-
-  useEffect(() => {
-    if (ean){
-      const queryParam = ean
-
-      getSkuQuery({ variables: { ean: queryParam } })
-    }
-  }, [ean])
-
+  }, [data])
 
   useEffect ( () => {
     if(loadingGetSku){
@@ -89,7 +64,6 @@ export default function QrContainer({separator,separatorApparition}: QrReaderPro
     if(dataGetSku){
       const sku: SkuDataType = dataGetSku.getSku.data
       const productName: string = sku.NameComplete
-
       setMessageModal(`${translateMessage(messagesInternationalization.messageModalSucces)} ${productName}`)
       setSkuData(sku)
     }else{
@@ -110,29 +84,19 @@ export default function QrContainer({separator,separatorApparition}: QrReaderPro
     }
   }, [skuData])
 
-  const previewStyle = {
-    heigth: 500,
-    width: 500,
-    display: 'flex',
-    justifyContent: "center"
-  }
-
-  const camStyle = {
-    display : 'flex',
-    justifyContent: "center",
-    marginTop: '0px'
-  }
-
   return (
     <div>
-      <div style={camStyle}>
-        <QrReader
-          delay={delay}
-          style={previewStyle}
-          onError={handleError}
-          onScan={handleScan}
-        />   
-      </div>
+      <BarCodeScanner
+        onUpdate={(err, resp): void => {
+          if (resp) {
+            const text = resp.getText()
+            setData(text)
+          }
+          if (err) {
+            console.log('err', err)
+          }
+        }}
+      />
       <Modal
         centered
         isOpen={modalResult}
@@ -142,6 +106,7 @@ export default function QrContainer({separator,separatorApparition}: QrReaderPro
           {(isRedirect || messageModal === '') && <div className="loading-container"><Spinner /></div>}
         </div>
       </Modal>
+
     </div> 
   )
 }

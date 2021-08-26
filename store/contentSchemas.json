@@ -16,6 +16,11 @@
           "default": 0
         }
       }
+    },
+    "BarcodeReader": {
+      "type": "object",
+      "properties": {
+      }
     }
   }
 }

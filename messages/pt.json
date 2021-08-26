@@ -1,5 +1,8 @@
 {
   "store/qr-reader.messageModalError": "O Qr mostrado não corresponde a nenhum produto, tente outro.",
   "store/qr-reader.messageModalSucces": "Iremos redirecioná-lo para o produto",
-  "store/qr-reader.buttonOpenReader": "Qr Reader"
+  "store/qr-reader.buttonOpenReaderQr": "Qr Reader",
+  "store/barcode-reader.buttonOpenReaderBarcode": "Barcode Reader",
+  "store/barcode-reader.messageModalError": "O Barcode mostrado não corresponde a nenhum produto, tente outro.",
+  "store/barcode-reader.messageModalSucces": "Iremos redirecioná-lo para o produto"
 }

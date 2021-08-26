@@ -4,5 +4,11 @@
     "content": {
       "$ref": "#/definitions/QrReader"
     }
+  },
+  "barcode-reader": {
+    "component": "BarcodeReader",
+    "content": {
+      "$ref": "#/definitions/BarcodeReader"
+    }
   }
 }

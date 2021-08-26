@@ -15,7 +15,7 @@
     "typescript": "^3.7.5"
   },
   "dependencies": {
-    "@vtex/api": "^6.42.1",
+    "@vtex/api": "^6.45.0",
     "@vtex/clients": "^2.13.0"
   }
 }

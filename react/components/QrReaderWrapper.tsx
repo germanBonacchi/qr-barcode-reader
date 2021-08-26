@@ -21,7 +21,7 @@ const QrReaderWrapper: StorefrontFunctionComponent<QrReaderProps> = ({separator,
   const intl = useIntl()
 
   const messagesInternationalization = defineMessages({
-    buttonOpenReader: { id: 'store/qr-reader.buttonOpenReader' },
+    buttonOpenReader: { id: 'store/qr-reader.buttonOpenReaderQr' },
   })
 
   const translateMessage = (message: MessageDescriptor) =>
