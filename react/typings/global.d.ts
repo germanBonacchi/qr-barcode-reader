@@ -8,3 +8,10 @@ export interface SkuDataType {
   NameComplete: string
   DetailUrl: string
 }
+
+export type UseEanType = 'qr' | 'barcode'
+
+export interface UseEanProps {
+  ean: string
+  type: UseEanType
+}
