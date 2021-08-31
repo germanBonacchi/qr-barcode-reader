@@ -13,7 +13,7 @@ import { Button } from 'vtex.styleguide'
 
 import BarcodeContainer from './barcode-scanner'
 
-const CSS_HANDLES = ['BarcodeReader']
+const CSS_HANDLES = ['barcodeReaderWrapper']
 
 const BarcodeReaderWrapper: StorefrontFunctionComponent<any> = () => {
   const [useBarcode, setUseBarcode]: any = useState<boolean>(false)

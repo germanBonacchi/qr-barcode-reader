@@ -12,7 +12,7 @@ import '../style/camStyle.global.css'
 
 import '../style/dbrScanner-video.global.css'
 
-const CSS_HANDLES = ['BarcodeContainer']
+const CSS_HANDLES = ['barcodeContainer']
 
 export default function BarcodeContainer({
   setUseBarcode,

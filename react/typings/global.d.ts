@@ -1,7 +1,7 @@
 export interface QrReaderProps {
   setUseQr: (qr: boolean) => void
   separator: string
-  separatorApparition: number
+  eanIndex: number
 }
 
 export interface BarcodeReaderProps {

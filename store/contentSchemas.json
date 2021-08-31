@@ -4,14 +4,14 @@
       "type": "object",
       "properties": {
         "separator": {
-          "title": "editor.qr-reader.title.separator.title",
-          "description": "editor.qr-reader.title.separator.description",
+          "title": "separator",
+          "description": "The separator is a pattern that describes where each division of the qr code should occur.",
           "type": "string",
           "default": "X"
         },
-        "separatorApparition": {
-          "title": "editor.qr-reader.title.avoidSeparator.title",
-          "description": "editor.qr-reader.title.avoidSeparator.description",
+        "eanIndex": {
+          "title": "eanIndex",
+          "description": "The eanIndex is the index of the division made by the separator in which the Ean will be within the qr code.",
           "type": "number",
           "default": 0
         }

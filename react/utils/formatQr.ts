@@ -1,5 +1,5 @@
-const formatQr = (qr, separator, separatorApparition) => {
-  return qr.split(separator)[separatorApparition]
+const formatQr = (qr, separator, eanIndex) => {
+  return qr.split(separator)[eanIndex]
 }
 
 export default formatQr

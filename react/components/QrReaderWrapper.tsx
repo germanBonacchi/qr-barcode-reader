@@ -14,9 +14,9 @@ import { Button } from 'vtex.styleguide'
 import QrContainer from './qr-scanner'
 import type { QrReaderProps } from "../typings/global"
 
-const CSS_HANDLES = ['qrReader']
+const CSS_HANDLES = ['qrReaderWrapper']
 
-const QrReaderWrapper: StorefrontFunctionComponent<QrReaderProps> = ({separator, separatorApparition}) => {
+const QrReaderWrapper: StorefrontFunctionComponent<QrReaderProps> = ({separator, eanIndex}) => {
   const [useQr, setUseQr]: any = useState<boolean>(false)
 
   const intl = useIntl()
@@ -36,13 +36,13 @@ const QrReaderWrapper: StorefrontFunctionComponent<QrReaderProps> = ({separator,
   const handles = useCssHandles(CSS_HANDLES)
 
   return (
-    <div className={`${handles.qrReader} c-muted-1 db tc`}>
+    <div className={`${handles.qrReaderWrapper} c-muted-1 db tc`}>
       <div className="mb4">
         <Button onClick={onclickQrReader}>
         {`${translateMessage(messagesInternationalization.buttonOpenReader)}`}
         </Button>
       </div>
-      {useQr && <QrContainer setUseQr={setUseQr}separator={separator} separatorApparition={separatorApparition}/>}
+      {useQr && <QrContainer setUseQr={setUseQr}separator={separator} eanIndex={eanIndex}/>}
     </div>  
   )
 }

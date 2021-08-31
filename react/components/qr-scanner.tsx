@@ -11,9 +11,9 @@ import formatQr from '../utils/formatQr'
 
 import '../style/camStyle.global.css'
 
-const CSS_HANDLES = ['QrContainer']
+const CSS_HANDLES = ['qrContainer']
 
-export default function QrContainer({setUseQr,separator,separatorApparition}: QrReaderProps) {
+export default function QrContainer({setUseQr,separator,eanIndex}: QrReaderProps) {
   const delay = 3000
   const [result, setResult] = useState(null)  
   const [ean, setEan] = useState<string>('')
@@ -34,7 +34,7 @@ export default function QrContainer({setUseQr,separator,separatorApparition}: Qr
 
   useEffect(() => {
     if (result){
-      setEan(formatQr(result,separator,separatorApparition))
+      setEan(formatQr(result,separator,eanIndex))
     }
   }, [result])
 
