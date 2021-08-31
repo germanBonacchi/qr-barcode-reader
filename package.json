@@ -1,5 +1,5 @@
 {
-  "name": "countdown",
+  "name": "qr-barcode-reader",
   "private": true,
   "license": "UNLICENSED",
   "scripts": {
@@ -13,5 +13,9 @@
     "eslint-config-vtex-react": "^6.2.1",
     "prettier": "^1.19.1",
     "typescript": "^3.7.5"
+  },
+  "dependencies": {
+    "@vtex/api": "^6.45.0",
+    "@vtex/clients": "^2.13.0"
   }
 }

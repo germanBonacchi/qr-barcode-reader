@@ -1,7 +1,25 @@
-export interface TimeSplit {
-  hours: string
-  minutes: string
-  seconds: string
+export interface QrReaderProps {
+  setUseQr: (qr: boolean) => void
+  separator: string
+  eanIndex: number
 }
 
-type GenericObject = Record<string, any>
+export interface BarcodeReaderProps {
+  setUseBarcode: (barcode: boolean) => void
+}
+
+export interface SkuDataType {
+  Id: string
+  NameComplete: string
+  DetailUrl: string
+}
+
+export type UseEanType = 'qr' | 'barcode'
+
+export interface UseEanProps {
+  setUse: (code: boolean) => void
+  ean: string
+  type: UseEanType
+}
+
+export type ModalType = 'succes' | 'error'

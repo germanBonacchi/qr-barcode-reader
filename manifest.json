@@ -1,18 +1,34 @@
 {
-  "vendor": "vtex",
-  "name": "countdown",
-  "version": "0.0.1",
-  "title": "Countdown",
-  "description": "Countdown component",
-  "defaultLocale": "pt-BR",
+  "vendor": "vtexarg",
+  "name": "qr-barcode-reader",
+  "version": "0.0.2",
+  "title": "qr-barcode-reader",
+  "description": "qr-barcode-reader",
   "builders": {
     "messages": "1.x",
     "store": "0.x",
-    "react": "3.x"
+    "react": "3.x",
+    "node": "6.x",
+    "graphql": "1.x"
   },
   "dependencies": {
     "vtex.styleguide": "9.x",
-    "vtex.css-handles": "0.x"
+    "vtex.css-handles": "0.x",
+    "vtex.session-client": "1.x"
   },
+  "billingOptions": {
+    "support": {
+      "url": "https://support.vtex.com/hc/requests"
+    },
+    "type": "free",
+    "availableCountries": [
+      "*"
+    ]
+  },
+  "policies": [
+    {
+      "name": "Sku.aspx"
+    }
+  ],
   "$schema": "https://raw.githubusercontent.com/vtex/node-vtex-api/master/gen/manifest.schema"
 }

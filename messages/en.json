@@ -1,4 +1,8 @@
 {
-  "editor.countdown.title": "Countdown",
-  "editor.countdown.description": "Countdown component"
+  "store/qr-reader.messageModalError": "The Qr shown does not match any product, please try another.",
+  "store/qr-reader.messageModalSucces": "We will redirect you to the Product",
+  "store/qr-reader.buttonOpenReaderQr": "Qr Reader",
+  "store/barcode-reader.buttonOpenReaderBarcode": "Barcode Reader",
+  "store/barcode-reader.messageModalError": "The Barcode shown does not match any product, please try another.",
+  "store/barcode-reader.messageModalSucces": "We will redirect you to the Product"
 }
