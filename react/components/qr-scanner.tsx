@@ -4,7 +4,8 @@ import React, { useState, useEffect } from 'react'
 import QrReader from 'react-qr-scanner'
 import { useCssHandles } from 'vtex.css-handles'
 
-import UseEan from './useEan'
+import UseEanGoToPDP from './UseEan/go-to-pdp'
+import UseEanAddToCart from './UseEan/add-to-cart'
 // eslint-disable-next-line prettier/prettier
 import type { QrReaderProps } from '../typings/global'
 import formatQr from '../utils/formatQr'
@@ -13,7 +14,7 @@ import '../style/camStyle.global.css'
 
 const CSS_HANDLES = ['qrContainer']
 
-export default function QrContainer({setUseQr,separator,eanIndex}: QrReaderProps) {
+export default function QrContainer({setUseQr,separator,eanIndex,action}: QrReaderProps) {
   const delay = 3000
   const [result, setResult] = useState(null)  
   const [ean, setEan] = useState<string>('')
@@ -55,7 +56,8 @@ export default function QrContainer({setUseQr,separator,eanIndex}: QrReaderProps
           onScan={handleScan}
         />   
       </div>
-      {ean && <UseEan setUse = {setUseQr} ean={ean} type={'qr'} />}
+      {action==='go-to-pdp' && ean && <UseEanGoToPDP setUse = {setUseQr} ean={ean} type={'qr'} />}
+      {action==='add-to-cart' && ean && <UseEanAddToCart setUse = {setUseQr} ean={ean} type={'qr'} />}
     </div> 
   )
 }

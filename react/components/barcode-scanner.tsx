@@ -6,7 +6,8 @@ import React, { useState } from 'react'
 import BarCodeScanner from 'barcode-react-scanner'
 import { useCssHandles } from 'vtex.css-handles'
 
-import UseEan from './useEan'
+import UseEanGoToPDP from './UseEan/go-to-pdp'
+import UseEanAddToCart from './UseEan/add-to-cart'
 import { BarcodeReaderProps } from '../typings/global'
 import '../style/camStyle.global.css'
 
@@ -16,6 +17,7 @@ const CSS_HANDLES = ['barcodeContainer']
 
 export default function BarcodeContainer({
   setUseBarcode,
+  action,
 }: BarcodeReaderProps) {
   const [ean, setEan] = useState('')
   const handles = useCssHandles(CSS_HANDLES)
@@ -31,7 +33,12 @@ export default function BarcodeContainer({
           }
         }}
       />
-      {ean && <UseEan setUse={setUseBarcode} ean={ean} type={'barcode'} />}
+      {action === 'go-to-pdp' && ean && (
+        <UseEanGoToPDP setUse={setUseBarcode} ean={ean} type={'barcode'} />
+      )}
+      {action === 'add-to-cart' && ean && (
+        <UseEanAddToCart setUse={setUseBarcode} ean={ean} type={'barcode'} />
+      )}
     </div>
   )
 }

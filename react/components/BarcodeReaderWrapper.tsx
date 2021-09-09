@@ -15,7 +15,7 @@ import BarcodeContainer from './barcode-scanner'
 
 const CSS_HANDLES = ['barcodeReaderWrapper']
 
-const BarcodeReaderWrapper: StorefrontFunctionComponent<any> = () => {
+const BarcodeReaderWrapper: StorefrontFunctionComponent<any> = ({action}) => {
   const [useBarcode, setUseBarcode]: any = useState<boolean>(false)
 
   const intl = useIntl()
@@ -41,7 +41,7 @@ const BarcodeReaderWrapper: StorefrontFunctionComponent<any> = () => {
         {`${translateMessage(messagesInternationalization.buttonOpenReader)}`}
         </Button>
       </div>
-      {useBarcode && <BarcodeContainer setUseBarcode={setUseBarcode}/>}
+      {useBarcode && <BarcodeContainer setUseBarcode={setUseBarcode} action={action}/>}
     </div>  
   )
 }

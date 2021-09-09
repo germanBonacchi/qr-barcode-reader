@@ -12,14 +12,14 @@ import {
 } from 'react-intl'
 import { useCssHandles } from 'vtex.css-handles'
 
-import type { ModalType, UseEanProps, SkuDataType } from '../typings/global'
+import type { ModalType, UseEanProps, SkuDataType } from '../../typings/global'
 import getDataSku from '../graphql/getSku.gql'
 
 import '../style/Loading.global.css'
 
 const CSS_HANDLES = ['modalReaderMessagesError','modalReaderMessagesErrorText','modalReaderMessagesSucces','modalReaderMessagesSuccesText']
 
-export default function UseEan({setUse, ean, type}: UseEanProps) {
+export default function UseEanAddToCart({setUse, ean, type}: UseEanProps) {
 
   const [skuData, setSkuData] = useState<SkuDataType>()
   const [isRedirect, setIsRedirect] = useState<boolean>(false)
