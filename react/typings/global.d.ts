@@ -2,10 +2,12 @@ export interface QrReaderProps {
   setUseQr: (qr: boolean) => void
   separator: string
   eanIndex: number
+  action: string
 }
 
 export interface BarcodeReaderProps {
   setUseBarcode: (barcode: boolean) => void
+  action: string
 }
 
 export interface SkuDataType {

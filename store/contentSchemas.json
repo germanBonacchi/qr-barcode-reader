@@ -14,12 +14,25 @@
           "description": "The eanIndex is the index of the division made by the separator in which the Ean will be within the qr code.",
           "type": "number",
           "default": 0
+        },
+        "action":{
+          "title": "action",
+          "description": "The action that will do after the scan.",
+          "type": "string",
+          "default": "go-to-pdp"
         }
       }
     },
     "BarcodeReader": {
       "type": "object",
-      "properties": {}
+      "properties": {
+        "action":{
+          "title": "action",
+          "description": "The action that will do after the scan.",
+          "type": "string",
+          "default": "go-to-pdp"
+        }
+      }
     }
   }
 }
