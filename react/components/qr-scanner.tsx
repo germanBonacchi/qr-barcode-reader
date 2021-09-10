@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import QrReader from 'react-qr-scanner'
 import { useCssHandles } from 'vtex.css-handles'
-import { Spinner } from 'vtex.styleguide'
+import { Spinner,Alert } from 'vtex.styleguide'
 
 import UseEanGoToPDP from './UseEan/go-to-pdp'
 import UseEanAddToCart from './UseEan/add-to-cart'
@@ -13,10 +13,11 @@ import formatQr from '../utils/formatQr'
 
 import '../style/camStyle.global.css'
 import '../style/Loading.global.css'
+import '../style/Success.global.css'
 
 const CSS_HANDLES = ['qrContainer']
 
-export default function QrContainer({separator,eanIndex,action}: QrReaderProps) {
+export default function QrContainer({setButtonUseQr, separator,eanIndex,action}: QrReaderProps) {
   const delay = 3000
   const [result, setResult] = useState(null)  
   const [ean, setEan] = useState<string>('')
@@ -24,6 +25,7 @@ export default function QrContainer({separator,eanIndex,action}: QrReaderProps) 
   const [prevData, setPrevData] = useState<any>(null)
   const handles = useCssHandles(CSS_HANDLES)
   const [useQr, setUseQr]: any = useState<boolean>(true)
+  const [successAlert, setSuccessAlert]: any = useState<boolean>(false)
 
   useEffect(() => {
     if (!useQr) {
@@ -57,6 +59,13 @@ export default function QrContainer({separator,eanIndex,action}: QrReaderProps) 
 
   return (
     <div>
+      {successAlert && (
+        <div className="success-container">
+          <Alert type="success" autoClose={1000}>
+            {`Test`}
+          </Alert>
+        </div>
+      )}
       {useQr && (
         <div>
       <div className={`${handles.QrContainer} camStyle`}>
@@ -67,8 +76,8 @@ export default function QrContainer({separator,eanIndex,action}: QrReaderProps) 
           onScan={handleScan}
         />   
       </div>
-      {action==='go-to-pdp' && ean && <UseEanGoToPDP setUse = {setUseQr} ean={ean} type={'qr'} />}
-      {action==='add-to-cart' && ean && <UseEanAddToCart setUse = {setUseQr} ean={ean} type={'qr'} />}
+      {action==='go-to-pdp' && ean && <UseEanGoToPDP setSuccessAlert={null} setButton={setButtonUseQr} setUse = {setUseQr} ean={ean} type={'qr'} />}
+      {action==='add-to-cart' && ean && <UseEanAddToCart setSuccessAlert={setSuccessAlert} setButton={setButtonUseQr} setUse = {setUseQr} ean={ean} type={'qr'} />}
       </div>
       )}
       {!useQr && (

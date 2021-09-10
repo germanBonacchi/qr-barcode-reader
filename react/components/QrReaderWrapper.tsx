@@ -42,7 +42,7 @@ const QrReaderWrapper: StorefrontFunctionComponent<QrReaderProps> = ({separator,
         {`${translateMessage(messagesInternationalization.buttonOpenReader)}`}
         </Button>
       </div>
-      {useQr && <QrContainer separator={separator} eanIndex={eanIndex} action={action}/>}
+      {useQr && <QrContainer setButtonUseQr={setUseQr} separator={separator} eanIndex={eanIndex} action={action}/>}
     </div>  
   )
 }

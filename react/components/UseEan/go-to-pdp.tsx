@@ -19,7 +19,7 @@ import '../../style/Loading.global.css'
 
 const CSS_HANDLES = ['modalReaderMessagesError','modalReaderMessagesErrorText','modalReaderMessagesSucces','modalReaderMessagesSuccesText']
 
-export default function UseEanGoToPDP({setUse, ean, type}: UseEanProps) {
+export default function UseEanGoToPDP({setButton, setUse, ean, type}: UseEanProps) {
 
   const [skuData, setSkuData] = useState<SkuDataType>()
   const [isRedirect, setIsRedirect] = useState<boolean>(false)
@@ -38,12 +38,12 @@ export default function UseEanGoToPDP({setUse, ean, type}: UseEanProps) {
   if (type === 'qr'){
      messagesInternationalization = defineMessages({
         messageModalError: { id: 'store/qr-reader.messageModalError' },
-        messageModalSucces: { id: 'store/qr-reader.messageModalSucces' },
+        messageModalSucces: { id: 'store/reader.messageModalSucces' },
       })
   }else if (type === 'barcode'){
      messagesInternationalization = defineMessages({
         messageModalError: { id: 'store/barcode-reader.messageModalError' },
-        messageModalSucces: { id: 'store/barcode-reader.messageModalSucces' },
+        messageModalSucces: { id: 'store/reader.messageModalSucces' },
       })
     }
 
@@ -80,7 +80,7 @@ export default function UseEanGoToPDP({setUse, ean, type}: UseEanProps) {
       const productName: string = sku.NameComplete
 
       setMessageModal(`${translateMessage(messagesInternationalization.messageModalSucces)} ${productName}`)
-      setModalType('succes')
+      setModalType('success')
       setSkuData(sku)
     }else{
       null
@@ -119,7 +119,7 @@ export default function UseEanGoToPDP({setUse, ean, type}: UseEanProps) {
         cancelation={{
           onClick: () => {
             closeModalResult() 
-            setUse(false)
+            setButton(false)
           },
           label: 'Cancel',
         }}
@@ -129,7 +129,7 @@ export default function UseEanGoToPDP({setUse, ean, type}: UseEanProps) {
           {(isRedirect || messageModal === '') && <div className="loading-container"><Spinner /></div>}
         </div>
       </ModalDialog>}
-      {modalType === 'succes' && 
+      {modalType === 'success' && 
       <Modal
         centered
         isOpen={modalResult}

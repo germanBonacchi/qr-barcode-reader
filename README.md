@@ -71,7 +71,7 @@ For example:
 
 If the qr code have this code embeded: `division0Xdivision1Xdivision2X33675134Xdivision4`, we will split by the `separator` in 5 division (0 to 4), and with the `eanIndex` we will get the division number 3 that in this case contains the Ean.
 
-Every block in this app only has this props in common:
+Every block in this app only has two props in common:
 | Prop name          | Type      |  Description | Default value |
 | --------------------| ----------|--------------|---------------|
 |  `blockClass`  |  `string`  |  Block  ID  of your choosing to  be  used  in [CSS  customization](https://vtex.io/docs/recipes/style/using-css-handles-for-store-customization#using-the-blockclass-property).  | 
