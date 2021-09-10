@@ -14,7 +14,8 @@
   "dependencies": {
     "vtex.styleguide": "9.x",
     "vtex.css-handles": "0.x",
-    "vtex.session-client": "1.x"
+    "vtex.session-client": "1.x",
+    "vtex.order-items": "0.x"
   },
   "billingOptions": {
     "support": {

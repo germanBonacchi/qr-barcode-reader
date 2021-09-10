@@ -13,9 +13,9 @@ import {
 import { useCssHandles } from 'vtex.css-handles'
 
 import type { ModalType, UseEanProps, SkuDataType } from '../../typings/global'
-import getDataSku from '../graphql/getSku.gql'
+import getDataSku from '../../graphql/getSku.gql'
 
-import '../style/Loading.global.css'
+import '../../style/Loading.global.css'
 
 const CSS_HANDLES = ['modalReaderMessagesError','modalReaderMessagesErrorText','modalReaderMessagesSucces','modalReaderMessagesSuccesText']
 
@@ -113,7 +113,7 @@ export default function UseEanGoToPDP({setUse, ean, type}: UseEanProps) {
             setUse(false)
             setTimeout(() => {
               setUse(true)
-            }, 1);
+            }, 1000);
           },
         }}
         cancelation={{

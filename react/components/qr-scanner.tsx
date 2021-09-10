@@ -3,6 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import QrReader from 'react-qr-scanner'
 import { useCssHandles } from 'vtex.css-handles'
+import { Spinner } from 'vtex.styleguide'
 
 import UseEanGoToPDP from './UseEan/go-to-pdp'
 import UseEanAddToCart from './UseEan/add-to-cart'
@@ -11,16 +12,24 @@ import type { QrReaderProps } from '../typings/global'
 import formatQr from '../utils/formatQr'
 
 import '../style/camStyle.global.css'
+import '../style/Loading.global.css'
 
 const CSS_HANDLES = ['qrContainer']
 
-export default function QrContainer({setUseQr,separator,eanIndex,action}: QrReaderProps) {
+export default function QrContainer({separator,eanIndex,action}: QrReaderProps) {
   const delay = 3000
   const [result, setResult] = useState(null)  
   const [ean, setEan] = useState<string>('')
 
   const [prevData, setPrevData] = useState<any>(null)
   const handles = useCssHandles(CSS_HANDLES)
+  const [useQr, setUseQr]: any = useState<boolean>(true)
+
+  useEffect(() => {
+    if (!useQr) {
+      setEan('')
+    }
+  }, [useQr])
 
   const handleScan = (data: any) => {
     if (data && data.text!==prevData?.text){
@@ -48,6 +57,8 @@ export default function QrContainer({setUseQr,separator,eanIndex,action}: QrRead
 
   return (
     <div>
+      {useQr && (
+        <div>
       <div className={`${handles.QrContainer} camStyle`}>
         <QrReader
           delay={delay}
@@ -58,6 +69,13 @@ export default function QrContainer({setUseQr,separator,eanIndex,action}: QrRead
       </div>
       {action==='go-to-pdp' && ean && <UseEanGoToPDP setUse = {setUseQr} ean={ean} type={'qr'} />}
       {action==='add-to-cart' && ean && <UseEanAddToCart setUse = {setUseQr} ean={ean} type={'qr'} />}
-    </div> 
+      </div>
+      )}
+      {!useQr && (
+        <div className="loading-container">
+          <Spinner />
+        </div>
+      )}
+      </div> 
   )
 }

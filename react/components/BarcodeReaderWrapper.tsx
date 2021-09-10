@@ -41,7 +41,7 @@ const BarcodeReaderWrapper: StorefrontFunctionComponent<any> = ({action}) => {
         {`${translateMessage(messagesInternationalization.buttonOpenReader)}`}
         </Button>
       </div>
-      {useBarcode && <BarcodeContainer setUseBarcode={setUseBarcode} action={action}/>}
+      {useBarcode && <BarcodeContainer action={action}/>}
     </div>  
   )
 }
