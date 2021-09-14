@@ -71,6 +71,7 @@ export default function UseEanAddToCart({setSuccessAlert, setButton, setUse, ean
   }, [])
 
   useEffect ( () => {
+    if(!loadingGetSku && !errorGetSku && !dataGetSku ) return
     if(loadingGetSku){
       setMessageModal(``)
       openModalResult()
@@ -85,8 +86,6 @@ export default function UseEanAddToCart({setSuccessAlert, setButton, setUse, ean
       const sku: SkuDataType = dataGetSku.getSku.data
 
       setSkuData(sku)
-    }else{
-      null
     }
 
   },[loadingGetSku,errorGetSku,dataGetSku]

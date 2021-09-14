@@ -65,6 +65,7 @@ export default function UseEanGoToPDP({setButton, setUse, ean, type}: UseEanProp
   }, [])
 
   useEffect ( () => {
+    if(!loadingGetSku && !errorGetSku && !dataGetSku ) return
     if(loadingGetSku){
       setMessageModal(``)
       openModalResult()
@@ -90,6 +91,7 @@ export default function UseEanGoToPDP({setButton, setUse, ean, type}: UseEanProp
   )
 
   useEffect(() => {
+    if(!skuData) return
     if (skuData){
       if (!isRedirect){
         const skuLink = `${skuData.DetailUrl}?skuId=${skuData.Id}`
