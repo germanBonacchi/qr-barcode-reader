@@ -19,7 +19,7 @@ import '../../style/Loading.global.css'
 
 const CSS_HANDLES = ['modalReaderMessagesError','modalReaderMessagesErrorText','modalReaderMessagesSucces','modalReaderMessagesSuccesText']
 
-export default function UseEanGoToPDP({setButton, setUse, ean, type}: UseEanProps) {
+export default function UseEanGoToPDP({ean, type}: UseEanProps) {
 
   const [skuData, setSkuData] = useState<SkuDataType>()
   const [isRedirect, setIsRedirect] = useState<boolean>(false)
@@ -112,16 +112,11 @@ export default function UseEanGoToPDP({setButton, setUse, ean, type}: UseEanProp
           label: 'Reintentar',
           onClick: () => {
             closeModalResult()
-            setUse(false)
-            setTimeout(() => {
-              setUse(true)
-            }, 1000);
           },
         }}
         cancelation={{
           onClick: () => {
             closeModalResult() 
-            setButton(false)
           },
           label: 'Cancel',
         }}

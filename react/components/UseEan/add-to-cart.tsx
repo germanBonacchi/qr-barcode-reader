@@ -11,18 +11,17 @@ import {
   defineMessages,
 } from 'react-intl'
 import { useCssHandles } from 'vtex.css-handles'
-import { OrderFormProvider } from 'vtex.order-manager/OrderForm'
-import { OrderItemsProvider, useOrderItems } from 'vtex.order-items/OrderItems'
+import { useOrderItems } from 'vtex.order-items/OrderItems'
 
 import type { ModalType, UseEanProps, SkuDataType } from '../../typings/global'
 import getDataSku from '../../graphql/getSku.gql'
 
 import '../../style/Loading.global.css'
 
-const CSS_HANDLES = ['modalReaderMessagesError','modalReaderMessagesErrorText','modalReaderMessagesSucces','modalReaderMessagesSuccesText']
+const CSS_HANDLES = ['modalReaderMessagesError', 'modalReaderMessagesErrorText', 'modalReaderMessagesSucces', 'modalReaderMessagesSuccesText']
 // const { orderForm: { items } } = useOrderForm()
 
-export default function UseEanAddToCart({setSuccessAlert, setButton, setUse, ean, type}: UseEanProps) {
+export default function UseEanAddToCart({setSuccessAlert, ean, type}: UseEanProps) {
 
   const [skuData, setSkuData] = useState<SkuDataType>()
 
@@ -33,19 +32,19 @@ export default function UseEanAddToCart({setSuccessAlert, setButton, setUse, ean
   const [getSkuQuery,{ loading: loadingGetSku, error: errorGetSku, data: dataGetSku }] = useLazyQuery(getDataSku)
   const handles = useCssHandles(CSS_HANDLES)
 
-  const { addItem } = useOrderItems()
+  const { addItems } = useOrderItems()
 
   const intl = useIntl()
 
   let messagesInternationalization: any
 
-  if (type === 'qr'){
+  if (type === 'qr') {
     messagesInternationalization = defineMessages({
       messageModalError: { id: 'store/qr-reader.messageModalError' },
       theProduct: { id: 'store/reader.theProduct' },
       addToCartSucces: { id: 'store/reader.addToCartSucces' },
     })
-  }else if (type === 'barcode'){
+  } else if (type === 'barcode') {
     messagesInternationalization = defineMessages({
       messageModalError: { id: 'store/barcode-reader.messageModalError' },
       theProduct: { id: 'store/reader.theProduct' },
@@ -66,12 +65,19 @@ export default function UseEanAddToCart({setSuccessAlert, setButton, setUse, ean
   
   useEffect(() => {
     const queryParam = ean
-
-    getSkuQuery({ variables: { ean: queryParam } })
+    console.log("useeffect getSkuQuery", String(queryParam))
+    getSkuQuery({ variables: { ean: String(queryParam) } })
   }, [])
 
   useEffect ( () => {
-    if(!loadingGetSku && !errorGetSku && !dataGetSku ) return
+    console.log("hola useEffect2")
+    console.log(loadingGetSku)
+    console.log(errorGetSku)
+    console.log(dataGetSku)
+    if(!loadingGetSku && !errorGetSku && !dataGetSku ) {
+      return
+    }
+
     if(loadingGetSku){
       setMessageModal(``)
       openModalResult()
@@ -88,7 +94,7 @@ export default function UseEanAddToCart({setSuccessAlert, setButton, setUse, ean
       setSkuData(sku)
     }
 
-  },[loadingGetSku,errorGetSku,dataGetSku]
+  },[loadingGetSku, errorGetSku, dataGetSku]
   )
 
   useEffect(() => {
@@ -97,52 +103,44 @@ export default function UseEanAddToCart({setSuccessAlert, setButton, setUse, ean
     if (skuData){
       console.info("skuData",skuData)
       setSuccessAlert?.(`${translateMessage(messagesInternationalization.theProduct)} ${skuData.NameComplete} ${translateMessage(messagesInternationalization.addToCartSucces)}`)
-      setUse(false)
-      addItem(
-        [{
-          id: skuData.Id,
-          quantity: 1,
-          seller: '1', // Preguntar
-        }])
-      setTimeout(() => {
-        setUse(true)
-      }, 1000)
+      
+      handleAddToCart(skuData)
   }
   }, [skuData])
 
+  const handleAddToCart = async (skuData) => {
+    const addItemsPromise = addItems([{
+      id: skuData.Id,
+      quantity: 1,
+      seller: '1',
+    }])
+    await addItemsPromise
+  }
+
   return (
     <div>
-      <OrderFormProvider>
-        <OrderItemsProvider>
-          {modalType === 'error' && 
-          <ModalDialog
-            centered
-            isOpen={modalResult}
-            confirmation={{
-              label: 'Reintentar',
-              onClick: () => {
-                closeModalResult()
-                setUse(false)
-                setTimeout(() => {
-                  setUse(true)
-                }, 1000);
-              },
-            }}
-            cancelation={{
-              onClick: () => {
-                closeModalResult() 
-                setButton(false)
-              },
-              label: 'Cancel',
-            }}
-            onClose={() => {closeModalResult()}}>
-            <div className={`${handles.modalReaderMessagesError}`}>
-              <span className={`${handles.modalReaderMessagesErrorText} f3 f3-ns fw3 gray c-action-primary fw5`}> {messageModal} </span>
-              {(messageModal === '') && <div className="loading-container"><Spinner /></div>}
-            </div>
-          </ModalDialog>}
-        </OrderItemsProvider>
-      </OrderFormProvider>
+      {modalType === 'error' && 
+      <ModalDialog
+        centered
+        isOpen={modalResult}
+        confirmation={{
+          label: 'Reintentar',
+          onClick: () => {
+            closeModalResult()
+          },
+        }}
+        cancelation={{
+          onClick: () => {
+            closeModalResult() 
+          },
+          label: 'Cancel',
+        }}
+        onClose={() => {closeModalResult()}}>
+        <div className={`${handles.modalReaderMessagesError}`}>
+          <span className={`${handles.modalReaderMessagesErrorText} f3 f3-ns fw3 gray c-action-primary fw5`}> {messageModal} </span>
+          {(messageModal === '') && <div className="loading-container"><Spinner /></div>}
+        </div>
+      </ModalDialog>}
     </div> 
   )
 }

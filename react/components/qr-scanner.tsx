@@ -3,13 +3,13 @@
 import React, { useState, useEffect } from 'react'
 import QrReader from 'react-qr-scanner'
 import { useCssHandles } from 'vtex.css-handles'
-import { Spinner,Alert } from 'vtex.styleguide'
+import { Alert } from 'vtex.styleguide'
 
-import UseEanGoToPDP from './UseEan/go-to-pdp'
-import UseEanAddToCart from './UseEan/add-to-cart'
+// import UseEanGoToPDP from './UseEan/go-to-pdp'
+// import UseEanAddToCart from './UseEan/add-to-cart'
 // eslint-disable-next-line prettier/prettier
-import type { QrReaderProps } from '../typings/global'
-import formatQr from '../utils/formatQr'
+// import type { QrReaderProps } from '../typings/global'
+// import formatQr from '../utils/formatQr'
 
 import '../style/camStyle.global.css'
 import '../style/Loading.global.css'
@@ -17,21 +17,14 @@ import '../style/Success.global.css'
 
 const CSS_HANDLES = ['qrContainer']
 
-export default function QrContainer({setButtonUseQr, separator,eanIndex,action}: QrReaderProps) {
+export default function QrContainer() {
   const delay = 3000
   const [result, setResult] = useState(null)  
-  const [ean, setEan] = useState<string>('')
+  // const [ean, setEan] = useState<string>('')
 
   const [prevData, setPrevData] = useState<any>(null)
   const handles = useCssHandles(CSS_HANDLES)
-  const [useQr, setUseQr]: any = useState<boolean>(true)
-  const [successAlert, setSuccessAlert]: any = useState<boolean>(false)
-
-  useEffect(() => {
-    if (!useQr) {
-      setEan('')
-    }
-  }, [useQr])
+  // const [successAlert, setSuccessAlert]: any = useState<boolean>(false)
 
   const handleScan = (data: any) => {
     if (data && data.text!==prevData?.text){
@@ -47,7 +40,7 @@ export default function QrContainer({setButtonUseQr, separator,eanIndex,action}:
   useEffect(() => {
     if(!result) return
     if (result){
-      setEan(formatQr(result,separator,eanIndex))
+      // setEan(formatQr(result,separator,eanIndex))
     }
   }, [result])
 
@@ -60,14 +53,14 @@ export default function QrContainer({setButtonUseQr, separator,eanIndex,action}:
 
   return (
     <div>
-      {successAlert && (
+      {(
         <div className="success-container">
           <Alert type="success" autoClose={1000}>
             {`Test`}
           </Alert>
         </div>
       )}
-      {useQr && (
+      {(
         <div>
       <div className={`${handles.QrContainer} camStyle`}>
         <QrReader
@@ -77,14 +70,9 @@ export default function QrContainer({setButtonUseQr, separator,eanIndex,action}:
           onScan={handleScan}
         />   
       </div>
-      {action==='go-to-pdp' && ean && <UseEanGoToPDP setSuccessAlert={null} setButton={setButtonUseQr} setUse = {setUseQr} ean={ean} type={'qr'} />}
-      {action==='add-to-cart' && ean && <UseEanAddToCart setSuccessAlert={setSuccessAlert} setButton={setButtonUseQr} setUse = {setUseQr} ean={ean} type={'qr'} />}
+      {/* {action==='go-to-pdp' && ean && <UseEanGoToPDP setSuccessAlert={null} ean={ean} type={'qr'} />} */}
+      {/* {action==='add-to-cart' && ean && <UseEanAddToCart setSuccessAlert={setSuccessAlert} ean={ean} type={'qr'} />} */}
       </div>
-      )}
-      {!useQr && (
-        <div className="loading-container">
-          <Spinner />
-        </div>
       )}
       </div> 
   )
