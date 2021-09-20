@@ -74,7 +74,8 @@ If the qr code have this code embeded: `division0Xdivision1Xdivision2X33675134Xd
 Every block in this app only has two props in common:
 | Prop name          | Type      |  Description | Default value |
 | --------------------| ----------|--------------|---------------|
-|  `blockClass`  |  `string`  |  Block  ID  of your choosing to  be  used  in [CSS  customization](https://vtex.io/docs/recipes/style/using-css-handles-for-store-customization#using-the-blockclass-property).  | 
+|  `action`  |  `string`  |  The `action` that will do after the scan. Possible values are: `go-to-pdp` and `add-to-cart` | `go-to-pdp` |
+|  `blockClass`  |  `string`  |  Block  ID  of your choosing to  be  used  in [CSS  customization](https://vtex.io/docs/recipes/style/using-css-handles-for-store-customization#using-the-blockclass-property). | 
 
 ---
 
