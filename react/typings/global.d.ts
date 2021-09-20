@@ -27,3 +27,9 @@ export interface UseEanProps {
 }
 
 export type ModalType = 'success' | 'error'
+
+export interface OrderFormContext {
+  loading: boolean
+  orderForm: OrderFormType | undefined
+  setOrderForm: (orderForm: Partial<OrderFormType>) => void
+}

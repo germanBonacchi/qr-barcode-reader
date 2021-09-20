@@ -3,7 +3,7 @@
 
 import React, { useState, useEffect } from 'react'
 import { Spinner, ModalDialog } from 'vtex.styleguide'
-import { useLazyQuery } from 'react-apollo'
+import { useLazyQuery , useMutation } from 'react-apollo'
 import type {
   MessageDescriptor} from 'react-intl';
 import {
@@ -11,10 +11,12 @@ import {
   defineMessages,
 } from 'react-intl'
 import { useCssHandles } from 'vtex.css-handles'
-import { OrderFormProvider } from 'vtex.order-manager/OrderForm'
-import { OrderItemsProvider, useOrderItems } from 'vtex.order-items/OrderItems'
+import { usePixel } from 'vtex.pixel-manager'
+import { addToCart as ADD_TO_CART } from 'vtex.checkout-resources/Mutations'
+import type { OrderForm as OrderFormType } from 'vtex.checkout-graphql'
+import { OrderForm } from 'vtex.order-manager'
 
-import type { ModalType, UseEanProps, SkuDataType } from '../../typings/global'
+import type { ModalType, UseEanProps, SkuDataType, OrderFormContext } from '../../typings/global'
 import getDataSku from '../../graphql/getSku.gql'
 
 import '../../style/Loading.global.css'
@@ -33,7 +35,7 @@ export default function UseEanAddToCart({setSuccessAlert, setButton, setUse, ean
   const [getSkuQuery,{ loading: loadingGetSku, error: errorGetSku, data: dataGetSku }] = useLazyQuery(getDataSku)
   const handles = useCssHandles(CSS_HANDLES)
 
-  const { addItem } = useOrderItems()
+  // const { addItem } = useOrderItems()
 
   const intl = useIntl()
 
@@ -63,7 +65,16 @@ export default function UseEanAddToCart({setSuccessAlert, setButton, setUse, ean
   const closeModalResult = () => {
     setModalResult(false)
   }
-  
+
+  const { push } = usePixel()
+  const { setOrderForm }: OrderFormContext = OrderForm.useOrderForm()
+
+  const [
+    addToCart,
+    { error: mutationError},
+  ] = useMutation<{ addToCart: OrderFormType }, { items: [] }>(ADD_TO_CART)
+
+
   useEffect(() => {
     const queryParam = ean
 
@@ -98,6 +109,8 @@ export default function UseEanAddToCart({setSuccessAlert, setButton, setUse, ean
       console.info("skuData",skuData)
       setSuccessAlert?.(`${translateMessage(messagesInternationalization.theProduct)} ${skuData.NameComplete} ${translateMessage(messagesInternationalization.addToCartSucces)}`)
       setUse(false)
+
+      /*
       addItem(
         [{
           id: skuData.Id,
@@ -107,13 +120,66 @@ export default function UseEanAddToCart({setSuccessAlert, setButton, setUse, ean
       setTimeout(() => {
         setUse(true)
       }, 1000)
+      */
+
+      // eslint-disable-next-line @typescript-eslint/no-use-before-define
+      callAddToCart([{
+        // eslint-disable-next-line radix
+        id: parseInt(skuData.Id),
+        quantity: 1,
+        seller: '1',
+      }])
+      setTimeout(() => {
+        setUse(true)
+      }, 1000)
   }
   }, [skuData])
+  const callAddToCart = async (items: any) => {
+    console.info('callAddToCart1')
+    console.info('item',items)
+    const mutationResult = await addToCart({
+      variables: {
+        items: items.map((item: any) => {
+          return {
+            ...item,
+          }
+        }),
+      },
+    })
+
+    console.info('mutationResult',mutationResult)
+
+    if (mutationError) {
+      console.error(mutationError)
+
+      // toastMessage({ success: false, isNewItem: false })
+      return
+    }
+    console.info('callAddToCart3')
+    // Update OrderForm from the context
+
+    mutationResult.data && setOrderForm(mutationResult.data.addToCart)
+    console.info('callAddToCart4')
+    const adjustSkuItemForPixelEvent = (item: any) => {
+      return {
+        skuId: item.id,
+        quantity: item.quantity,
+      }
+    }
+
+    // Send event to pixel-manager
+    const pixelEventItems = items.map(adjustSkuItemForPixelEvent)
+
+    push({
+      event: 'addToCart',
+      items: pixelEventItems,
+    })
+
+    
+  }
 
   return (
     <div>
-      <OrderFormProvider>
-        <OrderItemsProvider>
           {modalType === 'error' && 
           <ModalDialog
             centered
@@ -141,8 +207,6 @@ export default function UseEanAddToCart({setSuccessAlert, setButton, setUse, ean
               {(messageModal === '') && <div className="loading-container"><Spinner /></div>}
             </div>
           </ModalDialog>}
-        </OrderItemsProvider>
-      </OrderFormProvider>
     </div> 
   )
 }
