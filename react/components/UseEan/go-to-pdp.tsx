@@ -39,11 +39,15 @@ export default function UseEanGoToPDP({setButton, setUse, ean, type}: UseEanProp
      messagesInternationalization = defineMessages({
         messageModalError: { id: 'store/qr-reader.messageModalError' },
         messageModalSucces: { id: 'store/reader.messageModalSucces' },
+        retry: { id: 'store/reader.retry' },
+        cancel: { id: 'store/reader.cancel' },
       })
   }else if (type === 'barcode'){
      messagesInternationalization = defineMessages({
         messageModalError: { id: 'store/barcode-reader.messageModalError' },
         messageModalSucces: { id: 'store/reader.messageModalSucces' },
+        retry: { id: 'store/reader.retry' },
+        cancel: { id: 'store/reader.cancel' },
       })
     }
 
@@ -109,7 +113,7 @@ export default function UseEanGoToPDP({setButton, setUse, ean, type}: UseEanProp
         centered
         isOpen={modalResult}
         confirmation={{
-          label: 'Reintentar',
+          label: translateMessage(messagesInternationalization.retry),
           onClick: () => {
             closeModalResult()
             setUse(false)
@@ -123,7 +127,7 @@ export default function UseEanGoToPDP({setButton, setUse, ean, type}: UseEanProp
             closeModalResult() 
             setButton(false)
           },
-          label: 'Cancel',
+          label: translateMessage(messagesInternationalization.cancel),
         }}
         onClose={() => {closeModalResult()}}>
         <div className={`${handles.modalReaderMessagesError}`}>
