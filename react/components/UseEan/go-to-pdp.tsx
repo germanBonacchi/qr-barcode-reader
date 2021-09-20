@@ -1,9 +1,9 @@
-/* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useState, useEffect } from 'react'
 import { Spinner, ModalDialog, Modal } from 'vtex.styleguide'
 import { useLazyQuery } from 'react-apollo'
+// eslint-disable-next-line prettier/prettier
 import type {
   MessageDescriptor} from 'react-intl';
 import {
@@ -96,14 +96,14 @@ export default function UseEanGoToPDP({setButton, setUse, ean, type}: UseEanProp
 
   useEffect(() => {
     if(!skuData) return
-    if (skuData){
+      // eslint-disable-next-line vtex/prefer-early-return
       if (!isRedirect){
         const skuLink = `${skuData.DetailUrl}?skuId=${skuData.Id}`
 
         setIsRedirect(true)
         window.location.replace(skuLink)
       }
-    }
+    
   }, [skuData])
 
   return (

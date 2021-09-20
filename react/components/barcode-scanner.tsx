@@ -28,9 +28,9 @@ export default function BarcodeContainer({
   const [successAlert, setSuccessAlert]: any = useState<string>('')
 
   useEffect(() => {
-    if (!useBarcode) {
-      setEan('')
-    }
+    if (!useBarcode) return
+
+    setEan('')
   }, [useBarcode])
 
   return (

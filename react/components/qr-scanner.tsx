@@ -46,9 +46,8 @@ export default function QrContainer({setButtonUseQr, separator,eanIndex,action}:
 
   useEffect(() => {
     if(!result) return
-    if (result){
-      setEan(formatQr(result,separator,eanIndex))
-    }
+
+    setEan(formatQr(result,separator,eanIndex))
   }, [result])
 
   const previewStyle = {
