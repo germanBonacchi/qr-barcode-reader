@@ -1,9 +1,9 @@
-/* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useState, useEffect } from 'react'
-import { Spinner, ModalDialog, Modal } from 'vtex.styleguide'
-import { useLazyQuery } from 'react-apollo'
+import { Spinner, ModalDialog } from 'vtex.styleguide'
+import { useLazyQuery , useMutation } from 'react-apollo'
+// eslint-disable-next-line prettier/prettier
 import type {
   MessageDescriptor} from 'react-intl';
 import {
@@ -11,18 +11,21 @@ import {
   defineMessages,
 } from 'react-intl'
 import { useCssHandles } from 'vtex.css-handles'
+import { usePixel } from 'vtex.pixel-manager'
+import { addToCart as ADD_TO_CART } from 'vtex.checkout-resources/Mutations'
+import type { OrderForm as OrderFormType } from 'vtex.checkout-graphql'
+import { OrderForm } from 'vtex.order-manager'
 
-import type { ModalType, UseEanProps, SkuDataType } from '../../typings/global'
-import getDataSku from '../graphql/getSku.gql'
+import type { ModalType, UseEanProps, SkuDataType, OrderFormContext } from '../../typings/global'
+import getDataSku from '../../graphql/getSku.gql'
 
-import '../style/Loading.global.css'
+import '../../style/Loading.global.css'
 
 const CSS_HANDLES = ['modalReaderMessagesError','modalReaderMessagesErrorText','modalReaderMessagesSucces','modalReaderMessagesSuccesText']
 
-export default function UseEanAddToCart({setUse, ean, type}: UseEanProps) {
+export default function UseEanAddToCart({setSuccessAlert, setButton, setUse, ean, type}: UseEanProps) {
 
   const [skuData, setSkuData] = useState<SkuDataType>()
-  const [isRedirect, setIsRedirect] = useState<boolean>(false)
 
   const [modalResult, setModalResult] = useState(false)
   const [messageModal, setMessageModal] = useState<string>('')
@@ -30,22 +33,29 @@ export default function UseEanAddToCart({setUse, ean, type}: UseEanProps) {
 
   const [getSkuQuery,{ loading: loadingGetSku, error: errorGetSku, data: dataGetSku }] = useLazyQuery(getDataSku)
   const handles = useCssHandles(CSS_HANDLES)
+  const { orderForm: { items: itemsOrderform } } = OrderForm.useOrderForm()
 
   const intl = useIntl()
 
   let messagesInternationalization: any
 
   if (type === 'qr'){
-     messagesInternationalization = defineMessages({
-        messageModalError: { id: 'store/qr-reader.messageModalError' },
-        messageModalSucces: { id: 'store/qr-reader.messageModalSucces' },
-      })
+    messagesInternationalization = defineMessages({
+      messageModalError: { id: 'store/qr-reader.messageModalError' },
+      theProduct: { id: 'store/reader.theProduct' },
+      addToCartSucces: { id: 'store/reader.addToCartSucces' },
+      retry: { id: 'store/reader.retry' },
+      cancel: { id: 'store/reader.cancel' },
+    })
   }else if (type === 'barcode'){
-     messagesInternationalization = defineMessages({
-        messageModalError: { id: 'store/barcode-reader.messageModalError' },
-        messageModalSucces: { id: 'store/barcode-reader.messageModalSucces' },
-      })
-    }
+    messagesInternationalization = defineMessages({
+      messageModalError: { id: 'store/barcode-reader.messageModalError' },
+      theProduct: { id: 'store/reader.theProduct' },
+      addToCartSucces: { id: 'store/reader.addToCartSucces' },
+      retry: { id: 'store/reader.retry' },
+      cancel: { id: 'store/reader.cancel' },
+    })
+  }
 
   const translateMessage = (message: MessageDescriptor) =>
   intl.formatMessage(message)
@@ -57,7 +67,51 @@ export default function UseEanAddToCart({setUse, ean, type}: UseEanProps) {
   const closeModalResult = () => {
     setModalResult(false)
   }
-  
+
+  const { push } = usePixel()
+  const { setOrderForm }: OrderFormContext = OrderForm.useOrderForm()
+
+  const [
+    addToCart,
+    { error: mutationError},
+  ] = useMutation<{ addToCart: OrderFormType }, { items: [] }>(ADD_TO_CART)
+
+  const callAddToCart = async (items: any) => {
+
+    const mutationResult = await addToCart({
+      variables: {
+        items: items.map((item: any) => {
+          return {
+            ...item,
+          }
+        }),
+      },
+    })
+
+    if (mutationError) {
+      console.error(mutationError)
+      
+      return
+    }
+
+    // Update OrderForm from the context
+    mutationResult.data && setOrderForm(mutationResult.data.addToCart)
+    const adjustSkuItemForPixelEvent = (item: any) => {
+      return {
+        skuId: item.id,
+        quantity: item.quantity,
+      }
+    }
+
+    // Send event to pixel-manager
+    const pixelEventItems = items.map(adjustSkuItemForPixelEvent)
+
+    push({
+      event: 'addToCart',
+      items: pixelEventItems,
+    })
+  }
+
   useEffect(() => {
     const queryParam = ean
 
@@ -65,6 +119,7 @@ export default function UseEanAddToCart({setUse, ean, type}: UseEanProps) {
   }, [])
 
   useEffect ( () => {
+    if(!loadingGetSku && !errorGetSku && !dataGetSku ) return
     if(loadingGetSku){
       setMessageModal(``)
       openModalResult()
@@ -77,29 +132,31 @@ export default function UseEanAddToCart({setUse, ean, type}: UseEanProps) {
 
     if(dataGetSku){
       const sku: SkuDataType = dataGetSku.getSku.data
-      const productName: string = sku.NameComplete
 
-      setMessageModal(`${translateMessage(messagesInternationalization.messageModalSucces)} ${productName}`)
-      setModalType('succes')
       setSkuData(sku)
-    }else{
-      null
     }
 
   },[loadingGetSku,errorGetSku,dataGetSku]
   )
 
   useEffect(() => {
-    if (skuData){
-      if (!isRedirect){
-        const skuLink = `${skuData.DetailUrl}?skuId=${skuData.Id}`
+    if(!skuData) return
+    setSuccessAlert?.(`${translateMessage(messagesInternationalization.theProduct)} ${skuData.NameComplete} ${translateMessage(messagesInternationalization.addToCartSucces)}`)
+    setUse(false)
 
-        setIsRedirect(true)
-        window.location.replace(skuLink)
-      }
-    }
+    const quantityInOrderForm: number = itemsOrderform.find((item: any) => item.id === skuData.Id)?.quantity
+
+    callAddToCart([{
+      id: parseInt(skuData.Id,10),
+      quantity: quantityInOrderForm ? quantityInOrderForm + 1 : 1,
+      seller: '1',
+    }])
+    setTimeout(() => {
+      setUse(true)
+    }, 1000)
+  
   }, [skuData])
-
+  
   return (
     <div>
       {modalType === 'error' && 
@@ -107,38 +164,28 @@ export default function UseEanAddToCart({setUse, ean, type}: UseEanProps) {
         centered
         isOpen={modalResult}
         confirmation={{
-          label: 'Reintentar',
+          label: translateMessage(messagesInternationalization.retry),
           onClick: () => {
             closeModalResult()
             setUse(false)
             setTimeout(() => {
               setUse(true)
-            }, 1);
+            }, 1000);
           },
         }}
         cancelation={{
           onClick: () => {
             closeModalResult() 
-            setUse(false)
+            setButton(false)
           },
-          label: 'Cancel',
+          label: translateMessage(messagesInternationalization.cancel),
         }}
         onClose={() => {closeModalResult()}}>
         <div className={`${handles.modalReaderMessagesError}`}>
           <span className={`${handles.modalReaderMessagesErrorText} f3 f3-ns fw3 gray c-action-primary fw5`}> {messageModal} </span>
-          {(isRedirect || messageModal === '') && <div className="loading-container"><Spinner /></div>}
+          {(messageModal === '') && <div className="loading-container"><Spinner /></div>}
         </div>
       </ModalDialog>}
-      {modalType === 'succes' && 
-      <Modal
-        centered
-        isOpen={modalResult}
-        onClose={() => {closeModalResult()}}>
-        <div className={`${handles.modalReaderMessagesSucces}`}>
-          <span className={`${handles.modalReaderMessagesSuccesText} f3 f3-ns fw3 gray c-action-primary fw5`}> {messageModal} </span>
-          {(isRedirect || messageModal === '') && <div className="loading-container"><Spinner /></div>}
-        </div>
-      </Modal>}
     </div> 
   )
 }

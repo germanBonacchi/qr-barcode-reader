@@ -1,9 +1,9 @@
-/* eslint-disable prettier/prettier */
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useState, useEffect } from 'react'
 import { Spinner, ModalDialog, Modal } from 'vtex.styleguide'
 import { useLazyQuery } from 'react-apollo'
+// eslint-disable-next-line prettier/prettier
 import type {
   MessageDescriptor} from 'react-intl';
 import {
@@ -13,13 +13,13 @@ import {
 import { useCssHandles } from 'vtex.css-handles'
 
 import type { ModalType, UseEanProps, SkuDataType } from '../../typings/global'
-import getDataSku from '../graphql/getSku.gql'
+import getDataSku from '../../graphql/getSku.gql'
 
-import '../style/Loading.global.css'
+import '../../style/Loading.global.css'
 
 const CSS_HANDLES = ['modalReaderMessagesError','modalReaderMessagesErrorText','modalReaderMessagesSucces','modalReaderMessagesSuccesText']
 
-export default function UseEanGoToPDP({setUse, ean, type}: UseEanProps) {
+export default function UseEanGoToPDP({setButton, setUse, ean, type}: UseEanProps) {
 
   const [skuData, setSkuData] = useState<SkuDataType>()
   const [isRedirect, setIsRedirect] = useState<boolean>(false)
@@ -38,12 +38,16 @@ export default function UseEanGoToPDP({setUse, ean, type}: UseEanProps) {
   if (type === 'qr'){
      messagesInternationalization = defineMessages({
         messageModalError: { id: 'store/qr-reader.messageModalError' },
-        messageModalSucces: { id: 'store/qr-reader.messageModalSucces' },
+        messageModalSucces: { id: 'store/reader.messageModalSucces' },
+        retry: { id: 'store/reader.retry' },
+        cancel: { id: 'store/reader.cancel' },
       })
   }else if (type === 'barcode'){
      messagesInternationalization = defineMessages({
         messageModalError: { id: 'store/barcode-reader.messageModalError' },
-        messageModalSucces: { id: 'store/barcode-reader.messageModalSucces' },
+        messageModalSucces: { id: 'store/reader.messageModalSucces' },
+        retry: { id: 'store/reader.retry' },
+        cancel: { id: 'store/reader.cancel' },
       })
     }
 
@@ -65,6 +69,7 @@ export default function UseEanGoToPDP({setUse, ean, type}: UseEanProps) {
   }, [])
 
   useEffect ( () => {
+    if(!loadingGetSku && !errorGetSku && !dataGetSku ) return
     if(loadingGetSku){
       setMessageModal(``)
       openModalResult()
@@ -80,7 +85,7 @@ export default function UseEanGoToPDP({setUse, ean, type}: UseEanProps) {
       const productName: string = sku.NameComplete
 
       setMessageModal(`${translateMessage(messagesInternationalization.messageModalSucces)} ${productName}`)
-      setModalType('succes')
+      setModalType('success')
       setSkuData(sku)
     }else{
       null
@@ -90,14 +95,15 @@ export default function UseEanGoToPDP({setUse, ean, type}: UseEanProps) {
   )
 
   useEffect(() => {
-    if (skuData){
+    if(!skuData) return
+      // eslint-disable-next-line vtex/prefer-early-return
       if (!isRedirect){
         const skuLink = `${skuData.DetailUrl}?skuId=${skuData.Id}`
 
         setIsRedirect(true)
         window.location.replace(skuLink)
       }
-    }
+    
   }, [skuData])
 
   return (
@@ -107,21 +113,21 @@ export default function UseEanGoToPDP({setUse, ean, type}: UseEanProps) {
         centered
         isOpen={modalResult}
         confirmation={{
-          label: 'Reintentar',
+          label: translateMessage(messagesInternationalization.retry),
           onClick: () => {
             closeModalResult()
             setUse(false)
             setTimeout(() => {
               setUse(true)
-            }, 1);
+            }, 1000);
           },
         }}
         cancelation={{
           onClick: () => {
             closeModalResult() 
-            setUse(false)
+            setButton(false)
           },
-          label: 'Cancel',
+          label: translateMessage(messagesInternationalization.cancel),
         }}
         onClose={() => {closeModalResult()}}>
         <div className={`${handles.modalReaderMessagesError}`}>
@@ -129,7 +135,7 @@ export default function UseEanGoToPDP({setUse, ean, type}: UseEanProps) {
           {(isRedirect || messageModal === '') && <div className="loading-container"><Spinner /></div>}
         </div>
       </ModalDialog>}
-      {modalType === 'succes' && 
+      {modalType === 'success' && 
       <Modal
         centered
         isOpen={modalResult}

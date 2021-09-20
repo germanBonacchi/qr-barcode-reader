@@ -1,8 +1,11 @@
 {
   "store/qr-reader.messageModalError": "El Qr mostrado no coincide con ningun producto, por favor intente con otro.",
-  "store/qr-reader.messageModalSucces": "Te redirigiremos al Producto",
+  "store/reader.messageModalSucces": "Te redirigiremos al Producto",
   "store/qr-reader.buttonOpenReaderQr": "Qr Reader",
   "store/barcode-reader.buttonOpenReaderBarcode": "Barcode Reader",
   "store/barcode-reader.messageModalError": "El Barcode mostrado no coincide con ningun producto, por favor intente con otro.",
-  "store/barcode-reader.messageModalSucces": "Te redirigiremos al Producto"
+  "store/reader.theProduct": "El producto",
+  "store/reader.addToCartSucces": "se agregó al carrito con éxito.",
+  "store/reader.retry": "Reintentar",
+  "store/reader.cancel": "Cancelar"
 }
