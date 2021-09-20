@@ -16,7 +16,6 @@ Scan Qr codes and Barcodes with the Ean of a product embedded and then redirect 
 - Ean 13
 - Ean 8
 - UPC-A
-
 ---
 ## Configuration 
 
@@ -35,8 +34,7 @@ Now, you are able to use all blocks exported by the `qr-barcode-reader` app. Che
 | Block name     | Description | 
 | -------------- | ----------- | 
 | `qr-reader` | Renders a button that allows you to scan a qr code. | 
-| `barcode-reader` | Renders a button that allows you to scan a barcode. 
-| 
+| `barcode-reader` | Renders a button that allows you to scan a barcode. | 
 
 ### Step 2 - Adding the Qr & Barcode Reader's blocks to your theme's templates
 
@@ -72,6 +70,7 @@ For example:
 If the qr code have this code embeded: `division0Xdivision1Xdivision2X33675134Xdivision4`, we will split by the `separator` in 5 division (0 to 4), and with the `eanIndex` we will get the division number 3 that in this case contains the Ean.
 
 Every block in this app only has two props in common:
+
 | Prop name          | Type      |  Description | Default value |
 | --------------------| ----------|--------------|---------------|
 |  `action`  |  `string`  |  The `action` that will do after the scan. Possible values are: `go-to-pdp` and `add-to-cart` | `go-to-pdp` |
