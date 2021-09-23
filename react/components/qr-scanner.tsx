@@ -17,7 +17,7 @@ import '../style/Success.global.css'
 
 const CSS_HANDLES = ['qrContainer']
 
-export default function QrContainer({setButtonUseQr, separator,eanIndex,action}: QrReaderProps) {
+export default function QrContainer({setButtonUseQr, separator,eanIndex,action,mode}: QrReaderProps) {
   const delay = 3000
   const [result, setResult] = useState(null)  
   const [ean, setEan] = useState<string>('')
@@ -76,8 +76,8 @@ export default function QrContainer({setButtonUseQr, separator,eanIndex,action}:
           onScan={handleScan}
         />   
       </div>
-      {action==='go-to-pdp' && ean && <UseEanGoToPDP setSuccessAlert={null} setButton={setButtonUseQr} setUse = {setUseQr} ean={ean} type={'qr'} />}
-      {action==='add-to-cart' && ean && <UseEanAddToCart setSuccessAlert={setSuccessAlert} setButton={setButtonUseQr} setUse = {setUseQr} ean={ean} type={'qr'} />}
+      {action==='go-to-pdp' && ean && <UseEanGoToPDP setSuccessAlert={null} setButton={setButtonUseQr} setUse = {setUseQr} ean={ean} type={'qr'} mode={mode} />}
+      {action==='add-to-cart' && ean && <UseEanAddToCart setSuccessAlert={setSuccessAlert} setButton={setButtonUseQr} setUse = {setUseQr} ean={ean} type={'qr'} mode={mode} />}
       </div>
       )}
       {!useQr && (

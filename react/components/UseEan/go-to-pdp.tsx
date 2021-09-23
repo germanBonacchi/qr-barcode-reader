@@ -19,7 +19,7 @@ import '../../style/Loading.global.css'
 
 const CSS_HANDLES = ['modalReaderMessagesError','modalReaderMessagesErrorText','modalReaderMessagesSucces','modalReaderMessagesSuccesText']
 
-export default function UseEanGoToPDP({setButton, setUse, ean, type}: UseEanProps) {
+export default function UseEanGoToPDP({setButton, setUse, ean, type, mode}: UseEanProps) {
 
   const [skuData, setSkuData] = useState<SkuDataType>()
   const [isRedirect, setIsRedirect] = useState<boolean>(false)
@@ -76,8 +76,13 @@ export default function UseEanGoToPDP({setButton, setUse, ean, type}: UseEanProp
     }
 
     if(errorGetSku){
-      setMessageModal(`${translateMessage(messagesInternationalization.messageModalError)}`)
-      setModalType('error')
+      if (mode === 'single'){
+        setMessageModal(`${translateMessage(messagesInternationalization.messageModalError)}`)
+        setModalType('error')
+      } else if (mode === 'multiple'){
+        console.info('mode',mode)
+        console.info('Buscar en el campo de producto')
+      }
     }
 
     if(dataGetSku){

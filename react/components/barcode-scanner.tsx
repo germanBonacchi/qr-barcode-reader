@@ -20,6 +20,7 @@ const CSS_HANDLES = ['barcodeContainer']
 export default function BarcodeContainer({
   setButtonUseBarcode,
   action,
+  mode,
 }: BarcodeReaderProps) {
   const [ean, setEan] = useState('')
   const handles = useCssHandles(CSS_HANDLES)
@@ -64,6 +65,7 @@ export default function BarcodeContainer({
               setUse={setUseBarcode}
               ean={ean}
               type={'barcode'}
+              mode={mode}
             />
           )}
           {action === 'add-to-cart' && ean && (
@@ -73,6 +75,7 @@ export default function BarcodeContainer({
               setUse={setUseBarcode}
               ean={ean}
               type={'barcode'}
+              mode={mode}
             />
           )}
         </div>

@@ -16,7 +16,7 @@ import type { QrReaderProps } from "../typings/global"
 
 const CSS_HANDLES = ['qrReaderWrapper']
 
-const QrReaderWrapper: StorefrontFunctionComponent<QrReaderProps> = ({separator, eanIndex, action}) => {
+const QrReaderWrapper: StorefrontFunctionComponent<QrReaderProps> = ({separator, eanIndex, action, mode}) => {
   const [useQr, setUseQr]: any = useState<boolean>(false)
 
   const intl = useIntl()
@@ -42,7 +42,7 @@ const QrReaderWrapper: StorefrontFunctionComponent<QrReaderProps> = ({separator,
         {`${translateMessage(messagesInternationalization.buttonOpenReader)}`}
         </Button>
       </div>
-      {useQr && <QrContainer setButtonUseQr={setUseQr} separator={separator} eanIndex={eanIndex} action={action}/>}
+      {useQr && <QrContainer setButtonUseQr={setUseQr} separator={separator} eanIndex={eanIndex} action={action} mode={mode}/>}
     </div>  
   )
 }

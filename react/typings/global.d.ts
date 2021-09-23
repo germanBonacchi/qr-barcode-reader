@@ -3,11 +3,13 @@ export interface QrReaderProps {
   separator: string
   eanIndex: number
   action: string
+  mode: string
 }
 
 export interface BarcodeReaderProps {
   setButtonUseBarcode: (barcode: boolean) => void
   action: string
+  mode: string
 }
 
 export interface SkuDataType {
@@ -24,6 +26,7 @@ export interface UseEanProps {
   setSuccessAlert: ((alert: string) => void) | null
   ean: string
   type: UseEanType
+  mode: string
 }
 
 export type ModalType = 'success' | 'error'
