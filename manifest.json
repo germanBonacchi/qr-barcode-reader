@@ -22,6 +22,16 @@
     "vtex.checkout-resources": "0.x",
     "vtex.checkout-graphql": "0.x"
   },
+  "settingsSchema": {
+    "title": "Qr & Barcode Reader",
+    "type": "object",
+    "properties": {
+      "idMultipleEan": {
+        "title": "Id of Product Field MultipleEan",
+        "type": "number"
+      }
+    }
+  },
   "billingOptions": {
     "support": {
       "url": "https://support.vtex.com/hc/requests"
