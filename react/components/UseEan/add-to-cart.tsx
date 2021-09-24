@@ -160,7 +160,6 @@ export default function UseEanAddToCart({setSuccessAlert, setButton, setUse, ean
         setModalType('error')
     }
 
-    // eslint-disable-next-line vtex/prefer-early-return
     if(dataGetProduct){
       const {data} = dataGetProduct.getProductBySpecificationFilter
 
