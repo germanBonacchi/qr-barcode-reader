@@ -39,7 +39,7 @@ Now, you are able to use all blocks exported by the `qr-barcode-reader` app. Che
 
 # Multiple Ean configuration
 
-Solo si utilizara el mode = 'multiple' realice esta configuracion
+Solo si utilizara el mode = 'multipleEans' realice esta configuracion
 
 Añadir el campo de producto MultipleEan en la Categoria padre de todas y aplicarte esta config:
 
@@ -51,7 +51,9 @@ https://{workspace}--{accountName}.myvtex.com/admin/apps/vtexarg.qr-barcode-read
 
 Completar en los productos con multiples Ean para un mismo sku de la siguiente manera:
 
-SKU:EAN-SKU:EAN-
+--SKU:EAN-SKU:EAN-SKU:EAN-SKU:EAN--
+
+Es importante que comienze y termine con --
 
 ### Step 2 - Adding the Qr & Barcode Reader's blocks to your theme's templates
 

@@ -1,7 +1,7 @@
 {
   "vendor": "vtexarg",
   "name": "qr-barcode-reader",
-  "version": "0.5.2",
+  "version": "0.6.0",
   "title": "qr-barcode-reader",
   "description": "qr-barcode-reader",
   "builders": {
@@ -44,6 +44,20 @@
   "policies": [
     {
       "name": "Sku.aspx"
+    },
+    {
+      "name": "outbound-access",
+      "attrs": {
+        "host": "{{account}}.myvtex.com",
+        "path": "/*"
+      }
+    },
+    {
+      "name": "outbound-access",
+      "attrs": {
+        "host": "{{account}}.vtexcommercestable.com.br",
+        "path": "/api/*"
+      }
     }
   ],
   "$schema": "https://raw.githubusercontent.com/vtex/node-vtex-api/master/gen/manifest.schema"

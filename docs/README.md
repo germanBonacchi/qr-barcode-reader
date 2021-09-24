@@ -36,6 +36,25 @@ Now, you are able to use all blocks exported by the `qr-barcode-reader` app. Che
 | `qr-reader` | Renders a button that allows you to scan a qr code. | 
 | `barcode-reader` | Renders a button that allows you to scan a barcode. | 
 
+
+# Multiple Ean configuration
+
+Solo si utilizara el mode = 'multipleEans' realice esta configuracion
+
+Añadir el campo de producto MultipleEan en la Categoria padre de todas y aplicarte esta config:
+
+--config foto
+
+Colocalar en el setup del componente el Id del campo de producto MultipleEan
+
+https://{workspace}--{accountName}.myvtex.com/admin/apps/vtexarg.qr-barcode-reader/setup
+
+Completar en los productos con multiples Ean para un mismo sku de la siguiente manera:
+
+--SKU:EAN-SKU:EAN-SKU:EAN-SKU:EAN--
+
+Es importante que comienze y termine con --
+
 ### Step 2 - Adding the Qr & Barcode Reader's blocks to your theme's templates
 
 To add the Qr & Barcode Reader's blocks in your theme, you just need to declare them as block of any component, this is because all exported blocks are thinking to be added anywhere in the store.

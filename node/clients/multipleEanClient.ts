@@ -7,14 +7,18 @@ export default class MultipleEanClient extends ExternalClient {
   constructor(context: IOContext, options?: InstanceOptions) {
     super(`http://${context.account}.vtexcommercestable.com.br/api/catalog_system/pub/products/search`, context, {
     ...options,
+      headers: {
+        VtexIdClientAutCookie: context.storeUserAuthToken ?? context.authToken,
+      }
     })
   }
 
   public async getProductBySpecificationFilter(idMultipleEan: string,  ean: string) {
+    const aux = await this.http.getRaw(`?fq=specificationFilter_${idMultipleEan}:**${ean}**`)
 
-    console.info('idMultipleEan',idMultipleEan)
+    console.info(aux.data)
 
-    return this.http.getRaw(`?fq=specificationFilter_${idMultipleEan}:**${ean}**`)
+    return aux
   }
 }
 
