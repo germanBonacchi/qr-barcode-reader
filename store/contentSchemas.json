@@ -23,7 +23,7 @@
         },
         "mode": {
           "title": "mode",
-          "description": "The mode indicates if we will have 1 Ean for 1 Sku or Some Eans for 1 Sku.",
+          "description": "The mode indicates if we will have 1 Ean for 1 Sku or Many Eans for 1 Sku.",
           "type": "string",
           "default": "singleEan"
         }

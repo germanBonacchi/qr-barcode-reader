@@ -14,6 +14,7 @@ Scan Qr codes and Barcodes with the Ean of a product embedded and then redirect 
 
 :warning: **Supported Barcodes:**
 - Ean 13
+- Ean 14
 - Ean 8
 - UPC-A
 ---
@@ -35,25 +36,6 @@ Now, you are able to use all blocks exported by the `qr-barcode-reader` app. Che
 | -------------- | ----------- | 
 | `qr-reader` | Renders a button that allows you to scan a qr code. | 
 | `barcode-reader` | Renders a button that allows you to scan a barcode. | 
-
-
-# Multiple Ean configuration
-
-Solo si utilizara el mode = 'multipleEans' realice esta configuracion
-
-Añadir el campo de producto MultipleEan en la Categoria padre de todas y aplicarte esta config:
-
---config foto
-
-Colocalar en el setup del componente el Id del campo de producto MultipleEan
-
-https://{workspace}--{accountName}.myvtex.com/admin/apps/vtexarg.qr-barcode-reader/setup
-
-Completar en los productos con multiples Ean para un mismo sku de la siguiente manera:
-
---SKU:EAN-SKU:EAN-SKU:EAN-SKU:EAN--
-
-Es importante que comienze y termine con --
 
 ### Step 2 - Adding the Qr & Barcode Reader's blocks to your theme's templates
 
@@ -88,15 +70,42 @@ For example:
 
 If the qr code have this code embeded: `division0Xdivision1Xdivision2X33675134Xdivision4`, we will split by the `separator` in 5 division (0 to 4), and with the `eanIndex` we will get the division number 3 that in this case contains the Ean.
 
-Every block in this app only has two props in common:
+Every block in this app only has three props in common:
 
 | Prop name          | Type      |  Description | Default value |
 | --------------------| ----------|--------------|---------------|
 |  `action`  |  `string`  |  The `action` that will do after the scan. Possible values are: `go-to-pdp` and `add-to-cart` | `go-to-pdp` |
+|  `mode`  |  `string`  |  The `mode` indicates if we will have 1 Ean for 1 Sku or Many Eans for 1 Sku. Possible values are: `singleEan` and `multipleEan` | `singleEan` |
 |  `blockClass`  |  `string`  |  Block  ID  of your choosing to  be  used  in [CSS  customization](https://vtex.io/docs/recipes/style/using-css-handles-for-store-customization#using-the-blockclass-property). | 
 
 ---
 
+## Multiple Ean
+
+> ℹ️ _You need to do this configuration **only** if you want to use the `mode` `multipleEan`_
+
+1. Go _Catalog -> Categories_ and in the Category father of alls, create a new `Product Field`
+![Media Placeholder](https://user-images.githubusercontent.com/55905671/134919291-f4131fc6-2721-49c3-b4ef-9973a7394861.gif)
+
+2. Set it up like this
+![Media Placeholder](https://user-images.githubusercontent.com/55905671/134919558-8a56b9d7-6588-4200-b8cd-dd8ee75797de.png)
+
+3. Copy the `id` of the created field
+![Media Placeholder](https://user-images.githubusercontent.com/55905671/134921342-73a630cb-61dc-4fab-83b8-9e334b3f4a0c.png)
+
+4. Go to the setup of the `Qr & Barcode Reader` component in 
+<https://{workspace}--{account}.myvtex.com/admin/apps/vtexarg.qr-barcode-reader@{version}/setup>
+![Media Placeholder](https://user-images.githubusercontent.com/55905671/134928031-687c9beb-0b21-4dde-bed0-60193ee95309.png)
+
+5. Complete the `Id of Product Field MultipleEan` with the `id` copied before
+![Media Placeholder](https://user-images.githubusercontent.com/55905671/134928287-3ca3df2f-066b-4f09-86bc-5ef3bc259900.png)
+
+6. Edit `MultipleEan` field of the products that you want to have it multiples Ean. 
+![Media Placeholder](https://user-images.githubusercontent.com/55905671/134929068-9b42913a-aaee-4b5a-9821-c05cb1ba43b4.png)
+For the app to correctly identify which SKU of a product corresponds to which EAN, you need to ingress like this:  
+`--SKU:EAN-SKU:EAN-SKU:EAN-SKU:EAN--`  
+> ℹ️ _It is important that start and end with `--`_
+---
 ## Customization
 
 In order to apply CSS customizations in this and other blocks, follow the instructions given in the recipe on [Using CSS Handles for store customization](https://vtex.io/docs/recipes/style/using-css-handles-for-store-customization).
