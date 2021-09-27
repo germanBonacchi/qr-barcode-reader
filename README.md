@@ -88,7 +88,14 @@ Every block in this app only has three props in common:
 ![Media Placeholder](https://user-images.githubusercontent.com/55905671/134919291-f4131fc6-2721-49c3-b4ef-9973a7394861.gif)
 
 2. Set it up like this
+- Name = `MultipleEan`
+- Text = `MultipleEan`
+- Type = `Text`
+- Group = `Multiple Ean Group`
+- Filter = ✅
+- Active = ✅
 ![Media Placeholder](https://user-images.githubusercontent.com/55905671/134919558-8a56b9d7-6588-4200-b8cd-dd8ee75797de.png)
+
 
 3. Copy the `id` of the created field
 ![Media Placeholder](https://user-images.githubusercontent.com/55905671/134921342-73a630cb-61dc-4fab-83b8-9e334b3f4a0c.png)

@@ -161,23 +161,35 @@ export default function UseEanAddToCart({setSuccessAlert, setButton, setUse, ean
         setModalType('error')
     }
 
+    // eslint-disable-next-line vtex/prefer-early-return
     if(dataGetProduct){
       const {data} = dataGetProduct.getProductBySpecificationFilter
 
+      console.info('data',data)
+      console.info('ean',ean)
+
       if (data.length>0){
         const [{ MultipleEan, linkText, items }] = data
-        
-        const skuFinded = findSkuOfMultipleEan(MultipleEan, ean)
 
-        const { nameComplete } = items.find((item) => item.itemId === skuFinded)
-        
-        const skuTemp: SkuDataType = {
-          Id: skuFinded,
-          NameComplete: nameComplete,
-          DetailUrl: `${linkText}/p`
-        }
+        console.info('MultipleEan',MultipleEan)
+        console.info('ean',ean)
+        if (MultipleEan){
+          const skuFinded = findSkuOfMultipleEan(MultipleEan, ean)
 
-        setSkuData(skuTemp)
+          const { nameComplete } = items.find((item) => item.itemId === skuFinded)
+          
+          const skuTemp: SkuDataType = {
+            Id: skuFinded,
+            NameComplete: nameComplete,
+            DetailUrl: `${linkText}/p`
+          }
+  
+          setSkuData(skuTemp)
+        }else{
+          setMessageModal(`${translateMessage(messagesInternationalization.messageModalError)}`)
+          setModalType('error')
+       }
+        
      }else{
         setMessageModal(`${translateMessage(messagesInternationalization.messageModalError)}`)
         setModalType('error')

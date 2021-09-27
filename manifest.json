@@ -1,7 +1,7 @@
 {
   "vendor": "vtexarg",
   "name": "qr-barcode-reader",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "title": "qr-barcode-reader",
   "description": "qr-barcode-reader",
   "builders": {

@@ -123,20 +123,26 @@ export default function UseEanGoToPDP({setButton, setUse, ean, type, mode}: UseE
       if (data.length>0){
 
         const [{ MultipleEan, linkText, items }] = data
-        
-        const skuFinded = findSkuOfMultipleEan(MultipleEan, ean)
 
-        const { nameComplete } = items.find((item) => item.itemId === skuFinded)
-        
-        const skuTemp: SkuDataType = {
-          Id: skuFinded,
-          NameComplete: nameComplete,
-          DetailUrl: `${linkText}/p`
-        }
+        if(MultipleEan){
+          const skuFinded = findSkuOfMultipleEan(MultipleEan, ean)
 
-        setMessageModal(`${translateMessage(messagesInternationalization.messageModalSucces)} ${nameComplete}`)
-        setModalType('success')
-        setSkuData(skuTemp)
+          const { nameComplete } = items.find((item) => item.itemId === skuFinded)
+          
+          const skuTemp: SkuDataType = {
+            Id: skuFinded,
+            NameComplete: nameComplete,
+            DetailUrl: `${linkText}/p`
+          }
+  
+          setMessageModal(`${translateMessage(messagesInternationalization.messageModalSucces)} ${nameComplete}`)
+          setModalType('success')
+          setSkuData(skuTemp)
+        }else{
+        setMessageModal(`${translateMessage(messagesInternationalization.messageModalError)}`)
+        setModalType('error')
+     }
+        
      }else{
         setMessageModal(`${translateMessage(messagesInternationalization.messageModalError)}`)
         setModalType('error')
