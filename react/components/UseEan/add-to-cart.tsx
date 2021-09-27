@@ -19,6 +19,7 @@ import { OrderForm } from 'vtex.order-manager'
 import type { ModalType, UseEanProps, SkuDataType, OrderFormContext } from '../../typings/global'
 import getDataSku from '../../graphql/getSku.gql'
 import getProduct from '../../graphql/getProduct.gql'
+import findSkuOfMultipleEan from '../../utils/findSkuOfMultipleEan'
 
 import '../../style/Loading.global.css'
 
@@ -165,11 +166,8 @@ export default function UseEanAddToCart({setSuccessAlert, setButton, setUse, ean
 
       if (data.length>0){
         const [{ MultipleEan, linkText, items }] = data
-
-        const skuWithEanArray = MultipleEan[0].split('-')
-
-        const [skuWithEanFinded] = skuWithEanArray.filter((sku) => sku.includes(ean))
-        const skuFinded = skuWithEanFinded.replace(ean, '').replace(':','')
+        
+        const skuFinded = findSkuOfMultipleEan(MultipleEan, ean)
 
         const { nameComplete } = items.find((item) => item.itemId === skuFinded)
         

@@ -14,11 +14,7 @@ export default class MultipleEanClient extends ExternalClient {
   }
 
   public async getProductBySpecificationFilter(idMultipleEan: string,  ean: string) {
-    const aux = await this.http.getRaw(`?fq=specificationFilter_${idMultipleEan}:**${ean}**`)
-
-    console.info(aux.data)
-
-    return aux
+    return this.http.getRaw(`?fq=specificationFilter_${idMultipleEan}:**${ean}**`)
   }
 }
 

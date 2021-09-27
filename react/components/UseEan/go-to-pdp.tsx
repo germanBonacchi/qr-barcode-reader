@@ -14,6 +14,8 @@ import { useCssHandles } from 'vtex.css-handles'
 
 import type { ModalType, UseEanProps, SkuDataType } from '../../typings/global'
 import getDataSku from '../../graphql/getSku.gql'
+import getProduct from '../../graphql/getProduct.gql'
+import findSkuOfMultipleEan from '../../utils/findSkuOfMultipleEan'
 
 import '../../style/Loading.global.css'
 
@@ -29,6 +31,8 @@ export default function UseEanGoToPDP({setButton, setUse, ean, type, mode}: UseE
   const [modalType, setModalType] = useState<ModalType>()
 
   const [getSkuQuery,{ loading: loadingGetSku, error: errorGetSku, data: dataGetSku }] = useLazyQuery(getDataSku)
+  const [getProductQuery,{ loading: loadingGetProduct, error: errorGetProduct, data: dataGetProduct }] = useLazyQuery(getProduct)
+
   const handles = useCssHandles(CSS_HANDLES)
 
   const intl = useIntl()
@@ -76,12 +80,13 @@ export default function UseEanGoToPDP({setButton, setUse, ean, type, mode}: UseE
     }
 
     if(errorGetSku){
-      if (mode === 'single'){
+      if (mode === 'singleEan'){
         setMessageModal(`${translateMessage(messagesInternationalization.messageModalError)}`)
         setModalType('error')
-      } else if (mode === 'multiple'){
-        console.info('mode',mode)
-        console.info('Buscar en el campo de producto')
+      } else if (mode === 'multipleEan'){
+        const queryParam = ean
+
+        getProductQuery({ variables: { ean: queryParam } })
       }
     }
 
@@ -99,17 +104,61 @@ export default function UseEanGoToPDP({setButton, setUse, ean, type, mode}: UseE
   },[loadingGetSku,errorGetSku,dataGetSku]
   )
 
+
+  useEffect(() => {
+    if(!loadingGetProduct && !errorGetProduct && !dataGetProduct ) return
+    if(loadingGetProduct){
+      setMessageModal(``)
+      openModalResult()
+    }
+
+    if(errorGetProduct){
+        setMessageModal(`${translateMessage(messagesInternationalization.messageModalError)}`)
+        setModalType('error')
+    }
+
+    if(dataGetProduct){
+      const {data} = dataGetProduct.getProductBySpecificationFilter
+
+      if (data.length>0){
+
+        const [{ MultipleEan, linkText, items }] = data
+        
+        const skuFinded = findSkuOfMultipleEan(MultipleEan, ean)
+
+        const { nameComplete } = items.find((item) => item.itemId === skuFinded)
+        
+        const skuTemp: SkuDataType = {
+          Id: skuFinded,
+          NameComplete: nameComplete,
+          DetailUrl: `${linkText}/p`
+        }
+
+        setMessageModal(`${translateMessage(messagesInternationalization.messageModalSucces)} ${nameComplete}`)
+        setModalType('success')
+        setSkuData(skuTemp)
+     }else{
+        setMessageModal(`${translateMessage(messagesInternationalization.messageModalError)}`)
+        setModalType('error')
+     }
+    }
+  }, [loadingGetProduct, errorGetProduct, dataGetProduct])
+
+
   useEffect(() => {
     if(!skuData) return
-      // eslint-disable-next-line vtex/prefer-early-return
-      if (!isRedirect){
-        const skuLink = `${skuData.DetailUrl}?skuId=${skuData.Id}`
 
-        setIsRedirect(true)
-        window.location.replace(skuLink)
-      }
-    
+    // eslint-disable-next-line vtex/prefer-early-return
+    if (!isRedirect){
+      const skuLink = `${skuData.DetailUrl}?skuId=${skuData.Id}`
+
+      setIsRedirect(true)
+      window.location.replace(skuLink)
+    }
+
   }, [skuData])
+
+
 
   return (
     <div>

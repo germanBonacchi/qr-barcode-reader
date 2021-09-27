@@ -10,8 +10,6 @@ export const queries = {
       `${process.env.VTEX_APP_ID}`
     )
 
-    console.info('ean', ean)
-
     return ctx.clients.multipleEan.getProductBySpecificationFilter(
       idMultipleEan,
       ean
