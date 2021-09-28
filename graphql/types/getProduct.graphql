@@ -5,6 +5,7 @@ type Item{
 
 type DataGetProductResponse{
   productId: String
+  productName: String
   MultipleEan: [String]
   linkText: String
   items: [Item]

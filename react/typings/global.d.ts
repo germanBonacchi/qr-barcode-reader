@@ -29,7 +29,12 @@ export interface UseEanProps {
   mode: string
 }
 
-export type ModalType = 'success' | 'error'
+export type ModalType = 'success' | 'error' | 'errorMultipleProduct'
+
+export interface ListMultipleProduct {
+  productName: string
+  productLink: string
+}
 
 export interface OrderFormContext {
   loading: boolean

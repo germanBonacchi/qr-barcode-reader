@@ -16,14 +16,14 @@ import { addToCart as ADD_TO_CART } from 'vtex.checkout-resources/Mutations'
 import type { OrderForm as OrderFormType } from 'vtex.checkout-graphql'
 import { OrderForm } from 'vtex.order-manager'
 
-import type { ModalType, UseEanProps, SkuDataType, OrderFormContext } from '../../typings/global'
+import type { ModalType, UseEanProps, SkuDataType, OrderFormContext, ListMultipleProduct } from '../../typings/global'
 import getDataSku from '../../graphql/getSku.gql'
 import getProduct from '../../graphql/getProduct.gql'
 import findSkuOfMultipleEan from '../../utils/findSkuOfMultipleEan'
 
 import '../../style/Loading.global.css'
 
-const CSS_HANDLES = ['modalReaderMessagesError','modalReaderMessagesErrorText','modalReaderMessagesSucces','modalReaderMessagesSuccesText']
+const CSS_HANDLES = ['modalReaderMessagesError','modalReaderMessagesErrorText','modalReaderMessagesSucces','modalReaderMessagesSuccesText','listErrorMutipleProductText']
 
 export default function UseEanAddToCart({setSuccessAlert, setButton, setUse, ean, type, mode}: UseEanProps) {
 
@@ -32,6 +32,8 @@ export default function UseEanAddToCart({setSuccessAlert, setButton, setUse, ean
   const [modalResult, setModalResult] = useState(false)
   const [messageModal, setMessageModal] = useState<string>('')
   const [modalType, setModalType] = useState<ModalType>()
+  const [listErrorMultipleProduct, setListErrorMultipleProduct] = useState<ListMultipleProduct[]>([])
+  const [messageErrorMultipleProductModal, setMessageErrorMultipleProductModal] = useState<string>('')
 
   const [getSkuQuery,{ loading: loadingGetSku, error: errorGetSku, data: dataGetSku }] = useLazyQuery(getDataSku)
   const [getProductQuery,{ loading: loadingGetProduct, error: errorGetProduct, data: dataGetProduct }] = useLazyQuery(getProduct)
@@ -49,6 +51,11 @@ export default function UseEanAddToCart({setSuccessAlert, setButton, setUse, ean
       addToCartSucces: { id: 'store/reader.addToCartSucces' },
       retry: { id: 'store/reader.retry' },
       cancel: { id: 'store/reader.cancel' },
+      theSku: { id: 'store/reader.theSku' },
+      doesNotExistInTheProduct: { id: 'store/reader.doesNotExistInTheProduct' },
+      scannedEanMatches: { id: 'store/reader.scannedEanMatches' },
+      differentProducts: { id: 'store/reader.differentProducts' },
+      reviewCatalog: { id: 'store/reader.reviewCatalog' },
     })
   }else if (type === 'barcode'){
     messagesInternationalization = defineMessages({
@@ -57,6 +64,11 @@ export default function UseEanAddToCart({setSuccessAlert, setButton, setUse, ean
       addToCartSucces: { id: 'store/reader.addToCartSucces' },
       retry: { id: 'store/reader.retry' },
       cancel: { id: 'store/reader.cancel' },
+      theSku: { id: 'store/reader.theSku' },
+      doesNotExistInTheProduct: { id: 'store/reader.doesNotExistInTheProduct' },
+      scannedEanMatches: { id: 'store/reader.scannedEanMatches' },
+      differentProducts: { id: 'store/reader.differentProducts' },
+      reviewCatalog: { id: 'store/reader.reviewCatalog' },
     })
   }
 
@@ -125,6 +137,8 @@ export default function UseEanAddToCart({setSuccessAlert, setButton, setUse, ean
     if(!loadingGetSku && !errorGetSku && !dataGetSku ) return
     if(loadingGetSku){
       setMessageModal(``)
+      setListErrorMultipleProduct([])
+      setMessageErrorMultipleProductModal(``)
       openModalResult()
     }
 
@@ -165,35 +179,46 @@ export default function UseEanAddToCart({setSuccessAlert, setButton, setUse, ean
     if(dataGetProduct){
       const {data} = dataGetProduct.getProductBySpecificationFilter
 
-      console.info('data',data)
-      console.info('ean',ean)
-
       if (data.length>0){
-        const [{ MultipleEan, linkText, items }] = data
+        if (data.length===1){
+          const [{ MultipleEan, linkText, items, productName }] = data
 
-        console.info('MultipleEan',MultipleEan)
-        console.info('ean',ean)
-        if (MultipleEan){
-          const skuFinded = findSkuOfMultipleEan(MultipleEan, ean)
+          if (MultipleEan){
+            const skuFinded = findSkuOfMultipleEan(MultipleEan, ean)
 
-          const { nameComplete } = items.find((item) => item.itemId === skuFinded)
-          
-          const skuTemp: SkuDataType = {
-            Id: skuFinded,
-            NameComplete: nameComplete,
-            DetailUrl: `${linkText}/p`
+            const itemFinded =  items.find((item) => item.itemId === skuFinded)
+
+            if (itemFinded){
+              const {nameComplete} = itemFinded
+
+              const skuTemp: SkuDataType = {
+                Id: skuFinded,
+                NameComplete: nameComplete,
+                DetailUrl: `${linkText}/p`
+              }
+
+              setSkuData(skuTemp)
+            }else{
+              setMessageModal(`${translateMessage(messagesInternationalization.theSku)} ${skuFinded} ${translateMessage(messagesInternationalization.doesNotExistInTheProduct)} ${productName}`)
+              setModalType('error')
+            } 
+          }else{
+            setMessageModal(`${translateMessage(messagesInternationalization.messageModalError)}`)
+            setModalType('error')
           }
-  
-          setSkuData(skuTemp)
         }else{
-          setMessageModal(`${translateMessage(messagesInternationalization.messageModalError)}`)
-          setModalType('error')
-       }
-        
-     }else{
+          const tempListErrorMultipleProduct: ListMultipleProduct[] = data.map(product => {
+            return {productName: product.productName, productLink: product.linkText}})
+          
+          setMessageModal(`${translateMessage(messagesInternationalization.scannedEanMatches)} ${data.length} ${translateMessage(messagesInternationalization.differentProducts)}`)
+          setListErrorMultipleProduct(tempListErrorMultipleProduct)
+          setMessageErrorMultipleProductModal(`${translateMessage(messagesInternationalization.reviewCatalog)}`)
+          setModalType('errorMultipleProduct')
+        }
+      }else{
         setMessageModal(`${translateMessage(messagesInternationalization.messageModalError)}`)
         setModalType('error')
-     }
+      }
     }
   }, [loadingGetProduct, errorGetProduct, dataGetProduct])
 
@@ -242,6 +267,41 @@ export default function UseEanAddToCart({setSuccessAlert, setButton, setUse, ean
         onClose={() => {closeModalResult()}}>
         <div className={`${handles.modalReaderMessagesError}`}>
           <span className={`${handles.modalReaderMessagesErrorText} f3 f3-ns fw3 gray c-action-primary fw5`}> {messageModal} </span>
+          {(messageModal === '') && <div className="loading-container"><Spinner /></div>}
+        </div>
+      </ModalDialog>}
+      {modalType === 'errorMultipleProduct' && 
+      <ModalDialog
+        centered
+        isOpen={modalResult}
+        confirmation={{
+          label: translateMessage(messagesInternationalization.retry),
+          onClick: () => {
+            closeModalResult()
+            setUse(false)
+            setTimeout(() => {
+              setUse(true)
+            }, 1000);
+          },
+        }}
+        cancelation={{
+          onClick: () => {
+            closeModalResult() 
+            setButton(false)
+          },
+          label: translateMessage(messagesInternationalization.cancel),
+        }}
+        onClose={() => {closeModalResult()}}>
+        <div className={`${handles.modalReaderMessagesError}`}>
+          <span className={`${handles.modalReaderMessagesErrorText} f3 f3-ns fw3 gray c-action-primary fw5`}> {messageModal} </span>
+          <div className={`${handles.listErrorMutipleProductText} f4 f3-ns fw3 gray c-action-primary fw5 mb5`}>
+            {listErrorMultipleProduct.map((product: ListMultipleProduct, index: number) => (
+              <li className="ma0 ml5" key={index}>
+                <a href={`${product.productLink}/p`}>{product.productName}</a>
+              </li>
+            ))}
+          </div>
+          <span className={`${handles.modalReaderMessagesErrorText} f3 f3-ns fw3 gray c-action-primary fw5`}> {messageErrorMultipleProductModal} </span>
           {(messageModal === '') && <div className="loading-container"><Spinner /></div>}
         </div>
       </ModalDialog>}

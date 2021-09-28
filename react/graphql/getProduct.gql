@@ -3,6 +3,7 @@ query getProduct($ean: String){
     status
     data {
       productId
+      productName
       MultipleEan
       linkText
       items {
