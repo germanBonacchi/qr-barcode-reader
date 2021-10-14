@@ -7,5 +7,10 @@
   "store/reader.theProduct": "O produto",
   "store/reader.addToCartSucces": "foi adicionado ao carrinho com sucesso.",
   "store/reader.retry": "Tentar novamente",
-  "store/reader.cancel": "Cancelar"
+  "store/reader.cancel": "Cancelar",
+  "store/reader.theSku": "O SKU",
+  "store/reader.doesNotExistInTheProduct": "não existe no produto",
+  "store/reader.scannedEanMatches": "O EAN digitalização coincide com",
+  "store/reader.differentProducts": "produtos diferentes:",
+  "store/reader.reviewCatalog": "Sugerimos que você reveja o catálogo para continuar."
 }
