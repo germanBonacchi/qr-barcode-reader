@@ -8,7 +8,7 @@
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 <!-- DOCS-IGNORE:end -->
 
-Scan Qr codes and Barcodes with the Ean of a product embedded and then redirect to the PDP of that product.
+Scan Qr codes and Barcodes with the Ean of a product embedded and do action with it.
 
 ![Media Placeholder](https://user-images.githubusercontent.com/55905671/131380395-e39ce499-2efa-4aaa-9506-f934fe9af8cf.gif)
 
