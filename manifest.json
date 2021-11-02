@@ -28,6 +28,7 @@
     "properties": {
       "idMultipleEan": {
         "title": "Id of Product Field MultipleEan",
+        "description": "You need to do this configuration only if you want to use the Multiple Ean mode. Copy the ID of the new product field you set up on Catalog > Categories and paste it here.",
         "type": "number"
       }
     }
