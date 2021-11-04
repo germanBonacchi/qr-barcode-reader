@@ -4,7 +4,7 @@
   },
   "dependencies": {
     "@vtex/css-handles": "^1.0.0",
-    "@zxing/library": "^0.17.0",
+    "@zxing/library": "0.17.1",
     "barcode-react-scanner": "^1.2.0",
     "classnames": "^2.2.6",
     "ramda": "^0.26.1",
@@ -16,7 +16,7 @@
   },
   "devDependencies": {
     "@types/classnames": "^2.2.7",
-    "@types/jest": "^24.0.18",
+    "@types/jest": "^27.0.2",
     "@types/node": "^12.7.5",
     "@types/prop-types": "^15.7.0",
     "@types/ramda": "^0.26.5",
@@ -31,5 +31,5 @@
     "vtex.render-runtime": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.render-runtime@8.120.0/public/@types/vtex.render-runtime",
     "vtex.styleguide": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.styleguide@9.129.0/public/@types/vtex.styleguide"
   },
-  "version": "0.2.0"
+  "version": "0.4.0"
 }

@@ -8,7 +8,7 @@
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 <!-- DOCS-IGNORE:end -->
 
-Scan Qr codes and Barcodes with the Ean of a product embedded and then redirect to the PDP of that product.
+Scan Qr codes and Barcodes with the Ean of a product embedded and do action with it.
 
 ![Media Placeholder](https://user-images.githubusercontent.com/55905671/131380395-e39ce499-2efa-4aaa-9506-f934fe9af8cf.gif)
 
@@ -112,6 +112,14 @@ Every block in this app only has three props in common:
 For the app to correctly identify which SKU of a product corresponds to which EAN, you need to ingress like this:  
 `--SKU:EAN-SKU:EAN-SKU:EAN-SKU:EAN--`  
 > ℹ️ _It is important that start and end with `--`_
+
+### Clarifications
+
+* If an EAN corresponds to two products, a modal will be displayed listing them and suggesting that the catalog be reviewed. None will be added to the cart.
+
+* If an EAN corresponds to a SKU but that SKU does not exist in the product in which that product field is loaded, a modal will be displayed commenting on it. None will be added to the cart.
+
+* If an EAN corresponds to 2 SKUs of the same product, the first one loaded in the product field will be added.
 ---
 ## Customization
 

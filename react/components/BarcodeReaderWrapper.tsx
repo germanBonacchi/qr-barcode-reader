@@ -32,6 +32,7 @@ const BarcodeReaderWrapper: StorefrontFunctionComponent<any> = ({action, mode}) 
     setUseBarcode(!useBarcode)
   }
 
+
   const handles = useCssHandles(CSS_HANDLES)
 
   return (

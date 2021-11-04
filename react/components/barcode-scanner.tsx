@@ -3,10 +3,10 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 import React, { useState, useEffect } from 'react'
-import BarCodeScanner from 'barcode-react-scanner'
 import { useCssHandles } from 'vtex.css-handles'
 import { Spinner, Alert } from 'vtex.styleguide'
 
+import BarCodeScanner from './library/BarcodeScannerComponent'
 import UseEanGoToPDP from './UseEan/go-to-pdp'
 import UseEanAddToCart from './UseEan/add-to-cart'
 import { BarcodeReaderProps } from '../typings/global'
@@ -54,6 +54,7 @@ export default function BarcodeContainer({
               if (resp) {
                 const text = resp.getText()
 
+                console.info('text', text)
                 setEan(text)
               }
             }}
