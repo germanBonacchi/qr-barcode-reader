@@ -41,6 +41,7 @@ export default function UseEanAddToCart({
   ean,
   type,
   mode,
+  setState,
 }: UseEanProps) {
   const [skuData, setSkuData] = useState<SkuDataType>()
 
@@ -56,6 +57,7 @@ export default function UseEanAddToCart({
     setMessageErrorMultipleProductModal,
   ] = useState<string>('')
 
+  const times = 1000
   const [
     getSkuQuery,
     { loading: loadingGetSku, error: errorGetSku, data: dataGetSku },
@@ -163,7 +165,8 @@ export default function UseEanAddToCart({
 
   useEffect(() => {
     const queryParam = ean
-
+    console.info('ean', ean)
+    setState('Buscando')
     getSkuQuery({ variables: { ean: queryParam } })
   }, [])
 
@@ -182,6 +185,7 @@ export default function UseEanAddToCart({
           `${translateMessage(messagesInternationalization.messageModalError)}`
         )
         setModalType('error')
+        setState('')
       } else if (mode === 'multipleEan') {
         const queryParam = ean
 
@@ -191,7 +195,8 @@ export default function UseEanAddToCart({
 
     if (dataGetSku) {
       const sku: SkuDataType = dataGetSku.getSku.data
-
+      console.info('sku', sku)
+      setState('Se ha encontrado ' + sku.NameComplete)
       setSkuData(sku)
     }
   }, [loadingGetSku, errorGetSku, dataGetSku])
@@ -208,6 +213,7 @@ export default function UseEanAddToCart({
         `${translateMessage(messagesInternationalization.messageModalError)}`
       )
       setModalType('error')
+      setState('')
     }
 
     // eslint-disable-next-line vtex/prefer-early-return
@@ -242,6 +248,7 @@ export default function UseEanAddToCart({
                 )} ${productName}`
               )
               setModalType('error')
+              setState('')
             }
           } else {
             setMessageModal(
@@ -250,6 +257,7 @@ export default function UseEanAddToCart({
               )}`
             )
             setModalType('error')
+            setState('')
           }
         } else {
           const tempListErrorMultipleProduct: ListMultipleProduct[] = data.map(
@@ -273,29 +281,33 @@ export default function UseEanAddToCart({
             `${translateMessage(messagesInternationalization.reviewCatalog)}`
           )
           setModalType('errorMultipleProduct')
+          setState('')
         }
       } else {
         setMessageModal(
           `${translateMessage(messagesInternationalization.messageModalError)}`
         )
         setModalType('error')
+        setState('')
       }
     }
   }, [loadingGetProduct, errorGetProduct, dataGetProduct])
 
   useEffect(() => {
     if (!skuData) return
+    //setUse(false)
+
     setSuccessAlert?.(
       `${translateMessage(messagesInternationalization.theProduct)} ${
         skuData.NameComplete
       } ${translateMessage(messagesInternationalization.addToCartSucces)}`
     )
-    setUse(false)
+    console.info(`${skuData.NameComplete} added to cart`)
 
     const quantityInOrderForm: number = itemsOrderform.find(
       (item: any) => item.id === skuData.Id
     )?.quantity
-
+    setState('Añadiendo al carrito')
     callAddToCart([
       {
         id: parseInt(skuData.Id, 10),
@@ -303,9 +315,14 @@ export default function UseEanAddToCart({
         seller: '1',
       },
     ])
+    setState('El producto se ha añadido al correctamente')
     setTimeout(() => {
+      console.info('seteo state en null')
+      setState('')
+    }, times)
+    /*setTimeout(() => {
       setUse(true)
-    }, 1000)
+    }, times)*/
   }, [skuData])
 
   return (
@@ -321,7 +338,7 @@ export default function UseEanAddToCart({
               setUse(false)
               setTimeout(() => {
                 setUse(true)
-              }, 1000)
+              }, times)
             },
           }}
           cancelation={{
@@ -360,7 +377,7 @@ export default function UseEanAddToCart({
               setUse(false)
               setTimeout(() => {
                 setUse(true)
-              }, 1000)
+              }, times)
             },
           }}
           cancelation={{

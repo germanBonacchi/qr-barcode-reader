@@ -5,6 +5,7 @@
 import React, { useState, useEffect } from 'react'
 import { useCssHandles } from 'vtex.css-handles'
 import { Spinner, Alert } from 'vtex.styleguide'
+import type { Result } from '@zxing/library';
 
 import BarCodeScanner from './library/BarcodeScannerComponent'
 import UseEanGoToPDP from './UseEan/go-to-pdp'
@@ -25,15 +26,31 @@ export default function BarcodeContainer({
   const [ean, setEan] = useState('')
   const handles = useCssHandles(CSS_HANDLES)
   const [useBarcode, setUseBarcode]: any = useState<boolean>(true)
-
   const [successAlert, setSuccessAlert]: any = useState<string>('')
-
+  const [state, setState]: any = useState<string>('')
+  const [response, setResponse]: any = useState<Result | null>()
   useEffect(() => {
     if (!useBarcode) return
 
     setEan('')
   }, [useBarcode])
 
+  useEffect(() => {
+    if (response) {
+      console.info('response', response)
+      const text = response.getText()
+      setEan(response.getText())
+      setState('Procesando: ' + text)
+    }
+  }, [response])
+
+  useEffect(() => {
+    if (!state) {
+      console.info('here we go again')
+      setResponse(null)
+      setEan('')
+    }
+  }, [state])
   return (
     <div>
       {successAlert && (
@@ -47,18 +64,14 @@ export default function BarcodeContainer({
           </Alert>
         </div>
       )}
-      {useBarcode && (
+      {state && <p>{state}</p>}
         <div className={`${handles.QrContainer} camStyle`}>
           <BarCodeScanner
-            onUpdate={(_, resp): void => {
-              if (resp) {
-                const text = resp.getText()
-
-                console.info('text', text)
-                setEan(text)
-              }
-            }}
+            state={state}
+            response={response}
+            setResponse={setResponse}
           />
+        
           {action === 'go-to-pdp' && ean && (
             <UseEanGoToPDP
               setSuccessAlert={null}
@@ -67,6 +80,7 @@ export default function BarcodeContainer({
               ean={ean}
               type={'barcode'}
               mode={mode}
+              setState={setState}
             />
           )}
           {action === 'add-to-cart' && ean && (
@@ -77,10 +91,11 @@ export default function BarcodeContainer({
               ean={ean}
               type={'barcode'}
               mode={mode}
+              setState={setState}
             />
           )}
         </div>
-      )}
+
       {!useBarcode && (
         <div className="loading-container">
           <Spinner />
