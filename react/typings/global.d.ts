@@ -27,6 +27,7 @@ export interface UseEanProps {
   ean: string
   type: UseEanType
   mode: string
+  setState: (state: string) => void
 }
 
 export type ModalType = 'success' | 'error' | 'errorMultipleProduct'

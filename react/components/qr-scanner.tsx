@@ -21,6 +21,7 @@ export default function QrContainer({setButtonUseQr, separator,eanIndex,action,m
   const delay = 3000
   const [result, setResult] = useState(null)  
   const [ean, setEan] = useState<string>('')
+  const [state, setState]: any = useState<string>('Ready to Scan')
 
   const [prevData, setPrevData] = useState<any>(null)
   const handles = useCssHandles(CSS_HANDLES)
@@ -66,6 +67,9 @@ export default function QrContainer({setButtonUseQr, separator,eanIndex,action,m
           </Alert>
         </div>
       )}
+      <div className={`camStyle`}>
+        <p>{state}</p>
+      </div>
       {useQr && (
         <div>
       <div className={`${handles.QrContainer} camStyle`}>
@@ -76,8 +80,10 @@ export default function QrContainer({setButtonUseQr, separator,eanIndex,action,m
           onScan={handleScan}
         />   
       </div>
-      {action==='go-to-pdp' && ean && <UseEanGoToPDP setSuccessAlert={null} setButton={setButtonUseQr} setUse = {setUseQr} ean={ean} type={'qr'} mode={mode} />}
-      {action==='add-to-cart' && ean && <UseEanAddToCart setSuccessAlert={setSuccessAlert} setButton={setButtonUseQr} setUse = {setUseQr} ean={ean} type={'qr'} mode={mode} />}
+      {action==='go-to-pdp' && ean && <UseEanGoToPDP setSuccessAlert={null} setButton={setButtonUseQr} setUse = {setUseQr} ean={ean} type={'qr'} mode={mode} 
+              setState={setState} />}
+      {action==='add-to-cart' && ean && <UseEanAddToCart setSuccessAlert={setSuccessAlert} setButton={setButtonUseQr} setUse = {setUseQr} ean={ean} type={'qr'} mode={mode} 
+              setState={setState} />}
       </div>
       )}
       {!useQr && (

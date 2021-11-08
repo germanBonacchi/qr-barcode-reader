@@ -41,7 +41,9 @@ export default function UseEanAddToCart({
   ean,
   type,
   mode,
+  setState,
 }: UseEanProps) {
+  const times = 1000
   const [skuData, setSkuData] = useState<SkuDataType>()
 
   const [modalResult, setModalResult] = useState(false)
@@ -163,13 +165,13 @@ export default function UseEanAddToCart({
 
   useEffect(() => {
     const queryParam = ean
-
     getSkuQuery({ variables: { ean: queryParam } })
   }, [])
 
   useEffect(() => {
     if (!loadingGetSku && !errorGetSku && !dataGetSku) return
     if (loadingGetSku) {
+      setState('Buscando')
       setMessageModal(``)
       setListErrorMultipleProduct([])
       setMessageErrorMultipleProductModal(``)
@@ -181,10 +183,12 @@ export default function UseEanAddToCart({
         setMessageModal(
           `${translateMessage(messagesInternationalization.messageModalError)}`
         )
+        setState('')
         setModalType('error')
       } else if (mode === 'multipleEan') {
+        
         const queryParam = ean
-
+        setState('No encontrado, buscando multipleEan')
         getProductQuery({ variables: { ean: queryParam } })
       }
     }
@@ -192,6 +196,7 @@ export default function UseEanAddToCart({
     if (dataGetSku) {
       const sku: SkuDataType = dataGetSku.getSku.data
 
+      setState('Sku encontrado: ' + sku.NameComplete)
       setSkuData(sku)
     }
   }, [loadingGetSku, errorGetSku, dataGetSku])
@@ -199,21 +204,24 @@ export default function UseEanAddToCart({
   useEffect(() => {
     if (!loadingGetProduct && !errorGetProduct && !dataGetProduct) return
     if (loadingGetProduct) {
+      setState('Buscando multipleEan')
       setMessageModal(``)
       openModalResult()
     }
 
     if (errorGetProduct) {
+      setState('No encontrado multipleEan')
       setMessageModal(
         `${translateMessage(messagesInternationalization.messageModalError)}`
       )
+      setState('')
       setModalType('error')
     }
 
     // eslint-disable-next-line vtex/prefer-early-return
     if (dataGetProduct) {
       const { data } = dataGetProduct.getProductBySpecificationFilter
-
+      setState('Encontrado multipleEan')
       if (data.length > 0) {
         if (data.length === 1) {
           const [{ MultipleEan, linkText, items, productName }] = data
@@ -241,6 +249,7 @@ export default function UseEanAddToCart({
                   messagesInternationalization.doesNotExistInTheProduct
                 )} ${productName}`
               )
+              setState('')
               setModalType('error')
             }
           } else {
@@ -249,6 +258,7 @@ export default function UseEanAddToCart({
                 messagesInternationalization.messageModalError
               )}`
             )
+            setState('')
             setModalType('error')
           }
         } else {
@@ -272,12 +282,14 @@ export default function UseEanAddToCart({
           setMessageErrorMultipleProductModal(
             `${translateMessage(messagesInternationalization.reviewCatalog)}`
           )
+          setState('')
           setModalType('errorMultipleProduct')
         }
       } else {
         setMessageModal(
           `${translateMessage(messagesInternationalization.messageModalError)}`
         )
+        setState('')
         setModalType('error')
       }
     }
@@ -296,6 +308,7 @@ export default function UseEanAddToCart({
       (item: any) => item.id === skuData.Id
     )?.quantity
 
+    setState('Añadiendo a carrito: ' + skuData.NameComplete)
     callAddToCart([
       {
         id: parseInt(skuData.Id, 10),
@@ -303,9 +316,10 @@ export default function UseEanAddToCart({
         seller: '1',
       },
     ])
+
     setTimeout(() => {
       setUse(true)
-    }, 1000)
+    }, times)
   }, [skuData])
 
   return (
@@ -321,7 +335,7 @@ export default function UseEanAddToCart({
               setUse(false)
               setTimeout(() => {
                 setUse(true)
-              }, 1000)
+              }, times)
             },
           }}
           cancelation={{
@@ -360,7 +374,7 @@ export default function UseEanAddToCart({
               setUse(false)
               setTimeout(() => {
                 setUse(true)
-              }, 1000)
+              }, times)
             },
           }}
           cancelation={{

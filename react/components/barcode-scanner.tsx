@@ -4,7 +4,6 @@
 
 import React, { useState, useEffect } from 'react'
 import { useCssHandles } from 'vtex.css-handles'
-import { Spinner, Alert } from 'vtex.styleguide'
 
 import BarCodeScanner from './library/BarcodeScannerComponent'
 import UseEanGoToPDP from './UseEan/go-to-pdp'
@@ -25,67 +24,73 @@ export default function BarcodeContainer({
   const [ean, setEan] = useState('')
   const handles = useCssHandles(CSS_HANDLES)
   const [useBarcode, setUseBarcode]: any = useState<boolean>(true)
-
+  const [dataURL, setDataURL] = useState<string | undefined>(undefined)
   const [successAlert, setSuccessAlert]: any = useState<string>('')
+  const [state, setState]: any = useState<string>('Ready to Scan')
 
   useEffect(() => {
     if (!useBarcode) return
+    if (useBarcode){
+      setEan('')
+      setDataURL('')
+      setState('Ready to Scan')
+    }
 
-    setEan('')
   }, [useBarcode])
 
+  console.info({successAlert})
   return (
     <div>
-      {successAlert && (
-        <div className="success-container">
-          <Alert
-            type="success"
-            autoClose={1000}
-            onClose={() => setSuccessAlert('')}
-          >
-            {successAlert}
-          </Alert>
-        </div>
-      )}
-      {useBarcode && (
-        <div className={`${handles.QrContainer} camStyle`}>
-          <BarCodeScanner
-            onUpdate={(_, resp): void => {
-              if (resp) {
-                const text = resp.getText()
+    <div className={`camStyle`}>
+      <p>{state}</p>
+    </div>
 
-                console.info('text', text)
-                setEan(text)
-              }
-            }}
+    {!useBarcode && 
+      <img id="imgFromVideo" src={dataURL} style={{minHeight: '375px'}}/>
+    }
+
+    {useBarcode && (
+      <div className={`${handles.QrContainer} camStyle`}>
+        <BarCodeScanner
+          defaultImage={dataURL}
+
+          onUpdate={(_, textResponse, dataURLResponse): void => {
+            if (dataURLResponse) {
+              setDataURL(dataURLResponse)
+            }
+            if (textResponse) {
+              const text = textResponse.getText()
+              setState('Procesando ', text)
+              setEan(text)
+            }
+            
+          }}
+        />
+        {action === 'go-to-pdp' && ean && (
+          <UseEanGoToPDP
+            setSuccessAlert={null}
+            setButton={setButtonUseBarcode}
+            setUse={setUseBarcode}
+            ean={ean}
+            type={'barcode'}
+            mode={mode}
+            setState={setState}
           />
-          {action === 'go-to-pdp' && ean && (
-            <UseEanGoToPDP
-              setSuccessAlert={null}
-              setButton={setButtonUseBarcode}
-              setUse={setUseBarcode}
-              ean={ean}
-              type={'barcode'}
-              mode={mode}
-            />
-          )}
-          {action === 'add-to-cart' && ean && (
-            <UseEanAddToCart
-              setSuccessAlert={setSuccessAlert}
-              setButton={setButtonUseBarcode}
-              setUse={setUseBarcode}
-              ean={ean}
-              type={'barcode'}
-              mode={mode}
-            />
-          )}
-        </div>
-      )}
-      {!useBarcode && (
-        <div className="loading-container">
-          <Spinner />
-        </div>
-      )}
+        )}
+        {action === 'add-to-cart' && ean && (
+          <UseEanAddToCart
+            setSuccessAlert={setSuccessAlert}
+            setButton={setButtonUseBarcode}
+            setUse={setUseBarcode}
+            ean={ean}
+            type={'barcode'}
+            mode={mode}
+            setState={setState}
+          />
+        )}
+      </div>
+    )}
+      
     </div>
   )
 }
