@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react'
 import { useCssHandles } from 'vtex.css-handles'
 import { Tag } from 'vtex.styleguide'
+import type { MessageDescriptor } from 'react-intl'
+import { useIntl, defineMessages } from 'react-intl'
 
 import BarCodeScanner from './library/BarcodeScannerComponent'
 import UseEanGoToPDP from './UseEan/go-to-pdp'
@@ -22,7 +24,21 @@ export default function BarcodeContainer({
   const handles = useCssHandles(CSS_HANDLES)
   const [useBarcode, setUseBarcode] = useState<boolean>(true)
   const [dataURL, setDataURL] = useState<string | undefined>(undefined)
-  const [state, setState] = useState<string>('Ready to Scan')
+
+  const intl = useIntl()
+
+  const messagesInternationalization = defineMessages({
+    readyToScan: { id: 'store/reader.readyToScan' },
+    processing: { id: 'store/reader.processing' },
+  })
+
+  const translateMessage = (message: MessageDescriptor) =>
+    intl.formatMessage(message)
+
+  const [state, setState] = useState<string>(
+    `${translateMessage(messagesInternationalization.readyToScan)}`
+  )
+
   const [modalShows, setModalShows] = useState<boolean>(false)
 
   useEffect(() => {
@@ -31,7 +47,7 @@ export default function BarcodeContainer({
     setEan('')
     setDataURL('')
     setModalShows(false)
-    setState('Ready to Scan')
+    setState(`${translateMessage(messagesInternationalization.readyToScan)}`)
   }, [useBarcode])
 
   return (
@@ -56,7 +72,11 @@ export default function BarcodeContainer({
               if (textResponse) {
                 const text = textResponse.getText()
 
-                setState(`Procesando ${text}`)
+                setState(
+                  `${translateMessage(
+                    messagesInternationalization.processing
+                  )} ${text}`
+                )
                 setEan(text)
               }
             }}

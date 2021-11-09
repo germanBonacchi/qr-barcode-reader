@@ -11,5 +11,10 @@
   "store/reader.doesNotExistInTheProduct": "não existe no produto",
   "store/reader.scannedEanMatches": "O EAN digitalização coincide com",
   "store/reader.differentProducts": "produtos diferentes:",
-  "store/reader.reviewCatalog": "Sugerimos que você reveja o catálogo para continuar."
+  "store/reader.reviewCatalog": "Sugerimos que você reveja o catálogo para continuar.",
+  "store/reader.readyToScan": "Pronto para digitalizar",
+  "store/reader.processing": "Em processamento:",
+  "store/reader.searching": "Procurando",
+  "store/reader.skuFound": "Sku encontrado:",
+  "store/reader.addingToCart": "Adicionando ao carrinho:"
 }

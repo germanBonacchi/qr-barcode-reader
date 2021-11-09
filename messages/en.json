@@ -11,5 +11,10 @@
   "store/reader.doesNotExistInTheProduct": "does not exist in the product",
   "store/reader.scannedEanMatches": "Scanned EAN matches",
   "store/reader.differentProducts": "different products:",
-  "store/reader.reviewCatalog": "We suggest you review the catalog to continue."
+  "store/reader.reviewCatalog": "We suggest you review the catalog to continue.",
+  "store/reader.readyToScan": "Ready to Scan",
+  "store/reader.processing": "Processing:",
+  "store/reader.searching": "Searching",
+  "store/reader.skuFound": "Sku found:",
+  "store/reader.addingToCart": "Adding to Cart:"
 }

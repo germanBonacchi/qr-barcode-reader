@@ -86,6 +86,9 @@ export default function UseEanAddToCart({
       scannedEanMatches: { id: 'store/reader.scannedEanMatches' },
       differentProducts: { id: 'store/reader.differentProducts' },
       reviewCatalog: { id: 'store/reader.reviewCatalog' },
+      searching: { id: 'store/reader.searching' },
+      skuFound: { id: 'store/reader.skuFound' },
+      addingToCart: { id: 'store/reader.addingToCart' },
     })
   } else if (type === 'barcode') {
     messagesInternationalization = defineMessages({
@@ -98,6 +101,9 @@ export default function UseEanAddToCart({
       scannedEanMatches: { id: 'store/reader.scannedEanMatches' },
       differentProducts: { id: 'store/reader.differentProducts' },
       reviewCatalog: { id: 'store/reader.reviewCatalog' },
+      searching: { id: 'store/reader.searching' },
+      skuFound: { id: 'store/reader.skuFound' },
+      addingToCart: { id: 'store/reader.addingToCart' },
     })
   }
 
@@ -164,7 +170,7 @@ export default function UseEanAddToCart({
   useEffect(() => {
     if (!loadingGetSku && !errorGetSku && !dataGetSku) return
     if (loadingGetSku) {
-      setState('Buscando')
+      setState(`${translateMessage(messagesInternationalization.searching)}`)
       setMessageModal(``)
       setListErrorMultipleProduct([])
       setMessageErrorMultipleProductModal(``)
@@ -176,8 +182,9 @@ export default function UseEanAddToCart({
         setMessageModal(
           `${translateMessage(messagesInternationalization.messageModalError)}`
         )
-        setState('Error')
-        console.info('error aca')
+        setState(
+          `${translateMessage(messagesInternationalization.messageModalError)}`
+        )
         setModalShows(true)
         setUse(false)
 
@@ -185,7 +192,6 @@ export default function UseEanAddToCart({
       } else if (mode === 'multipleEan') {
         const queryParam = ean
 
-        setState('No encontrado, buscando multipleEan')
         getProductQuery({ variables: { ean: queryParam } })
       }
     }
@@ -194,7 +200,11 @@ export default function UseEanAddToCart({
     if (dataGetSku) {
       const sku: SkuDataType = dataGetSku.getSku.data
 
-      setState(`Sku encontrado: ${sku.NameComplete}`)
+      setState(
+        `${translateMessage(messagesInternationalization.skuFound)} ${
+          sku.NameComplete
+        }`
+      )
       setSkuData(sku)
     }
   }, [loadingGetSku, errorGetSku, dataGetSku])
@@ -202,17 +212,17 @@ export default function UseEanAddToCart({
   useEffect(() => {
     if (!loadingGetProduct && !errorGetProduct && !dataGetProduct) return
     if (loadingGetProduct) {
-      setState('Buscando multipleEan')
       setMessageModal(``)
       openModalResult()
     }
 
     if (errorGetProduct) {
-      setState('No encontrado multipleEan')
+      setState(
+        `${translateMessage(messagesInternationalization.messageModalError)}`
+      )
       setMessageModal(
         `${translateMessage(messagesInternationalization.messageModalError)}`
       )
-      setState('Error')
       setModalShows(true)
       setModalType('error')
     }
@@ -221,7 +231,6 @@ export default function UseEanAddToCart({
     if (dataGetProduct) {
       const { data } = dataGetProduct.getProductBySpecificationFilter
 
-      setState('Encontrado multipleEan')
       if (data.length > 0) {
         if (data.length === 1) {
           const [{ MultipleEan, linkText, items, productName }] = data
@@ -249,7 +258,13 @@ export default function UseEanAddToCart({
                   messagesInternationalization.doesNotExistInTheProduct
                 )} ${productName}`
               )
-              setState('Error')
+              setState(
+                `${translateMessage(
+                  messagesInternationalization.theSku
+                )} ${skuFinded} ${translateMessage(
+                  messagesInternationalization.doesNotExistInTheProduct
+                )} ${productName}`
+              )
               setModalShows(true)
               setModalType('error')
             }
@@ -259,7 +274,11 @@ export default function UseEanAddToCart({
                 messagesInternationalization.messageModalError
               )}`
             )
-            setState('Error')
+            setState(
+              `${translateMessage(
+                messagesInternationalization.messageModalError
+              )}`
+            )
             setModalShows(true)
             setModalType('error')
           }
@@ -284,7 +303,13 @@ export default function UseEanAddToCart({
           setMessageErrorMultipleProductModal(
             `${translateMessage(messagesInternationalization.reviewCatalog)}`
           )
-          setState('Error')
+          setState(
+            `${translateMessage(
+              messagesInternationalization.scannedEanMatches
+            )} ${data.length} ${translateMessage(
+              messagesInternationalization.differentProducts
+            )}`
+          )
           setModalShows(true)
           setModalType('errorMultipleProduct')
         }
@@ -292,7 +317,9 @@ export default function UseEanAddToCart({
         setMessageModal(
           `${translateMessage(messagesInternationalization.messageModalError)}`
         )
-        setState('Error')
+        setState(
+          `${translateMessage(messagesInternationalization.messageModalError)}`
+        )
         setModalShows(true)
         setModalType('error')
       }
@@ -308,7 +335,11 @@ export default function UseEanAddToCart({
       (item) => item.id === skuData.Id
     )?.quantity
 
-    setState(`Añadiendo a carrito: ${skuData.NameComplete}`)
+    setState(
+      `${translateMessage(messagesInternationalization.addingToCart)} ${
+        skuData.NameComplete
+      }`
+    )
     callAddToCart([
       {
         id: parseInt(skuData.Id, 10),
