@@ -5,7 +5,6 @@
   "store/barcode-reader.buttonOpenReaderBarcode": "Barcode Reader",
   "store/barcode-reader.messageModalError": "El Barcode mostrado no coincide con ningun producto, por favor intente con otro.",
   "store/reader.theProduct": "El producto",
-  "store/reader.addToCartSucces": "se agregó al carrito con éxito.",
   "store/reader.retry": "Reintentar",
   "store/reader.cancel": "Cancelar",
   "store/reader.theSku": "El SKU",

@@ -1,15 +1,17 @@
 import React, { useState, useEffect } from 'react'
 import { useCssHandles } from 'vtex.css-handles'
+import { Tag } from 'vtex.styleguide'
 
 import BarCodeScanner from './library/BarcodeScannerComponent'
 import UseEanGoToPDP from './UseEan/go-to-pdp'
 import UseEanAddToCart from './UseEan/add-to-cart'
 import type { BarcodeReaderProps } from '../typings/global'
+
 import '../style/camStyle.global.css'
 import '../style/Loading.global.css'
 import '../style/dbrScanner-video.global.css'
 
-const CSS_HANDLES = ['barcodeContainer']
+const CSS_HANDLES = ['barcodeContainer', 'state']
 
 export default function BarcodeContainer({
   setButtonUseBarcode,
@@ -34,18 +36,15 @@ export default function BarcodeContainer({
 
   return (
     <div>
-      <div className={`camStyle`}>
-        <div className="pa3 br2 c-action-primary hover-c-action-primary active-c-action-primary dib mr5 mv0 ba b--action-primary hover-b-action-primary active-b-action-primary">
-          {state}
-        </div>
+      <div className={`${handles.state} mb2`}>
+        <Tag bgColor="#F71963">{state}</Tag>
       </div>
-
       {!useBarcode && (
         <img id="imgFromVideo" src={dataURL} style={{ minHeight: '375px' }} />
       )}
 
       {useBarcode && (
-        <div className={`${handles.QrContainer} camStyle`}>
+        <div className={`${handles.barcodeContainer} camStyle`}>
           <BarCodeScanner
             defaultImage={dataURL}
             onUpdate={(_, textResponse, dataURLResponse): void => {

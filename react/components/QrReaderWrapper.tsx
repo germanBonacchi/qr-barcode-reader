@@ -37,7 +37,7 @@ const QrReaderWrapper: StorefrontFunctionComponent<QrReaderProps> = ({
 
   return (
     <div className={`${handles.qrReaderWrapper} c-muted-1 db tc`}>
-      <div className="mb4">
+      <div className="mb2">
         <Button onClick={onclickQrReader}>
           {`${translateMessage(messagesInternationalization.buttonOpenReader)}`}
         </Button>

@@ -34,7 +34,7 @@ const BarcodeReaderWrapper: StorefrontFunctionComponent<any> = ({
 
   return (
     <div className={`${handles.BarcodeReader} c-muted-1 db tc`}>
-      <div className="mb4">
+      <div className="mb2">
         <Button variation="primary" onClick={onclickBarcodeReader}>
           {`${translateMessage(messagesInternationalization.buttonOpenReader)}`}
         </Button>

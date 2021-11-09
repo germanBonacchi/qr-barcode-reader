@@ -72,7 +72,7 @@ export default function QrContainer({
       </div>
       {useQr && (
         <div>
-          <div className={`${handles.QrContainer} camStyle`}>
+          <div className={`${handles.qrContainer} camStyle`}>
             <QrReader
               delay={delay}
               style={previewStyle}
