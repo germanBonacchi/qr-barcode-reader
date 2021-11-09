@@ -16,9 +16,15 @@ import '../style/Loading.global.css'
 
 const CSS_HANDLES = ['qrContainer']
 
-export default function QrContainer({setButtonUseQr, separator,eanIndex,action,mode}: QrReaderProps) {
+export default function QrContainer({
+  setButtonUseQr,
+  separator,
+  eanIndex,
+  action,
+  mode,
+}: QrReaderProps) {
   const delay = 3000
-  const [result, setResult] = useState(null)  
+  const [result, setResult] = useState(null)
   const [ean, setEan] = useState<string>('')
   const [state, setState]: any = useState<string>('Ready to Scan')
   const [modalShows, setModalShows] = useState<boolean>(false)
@@ -34,31 +40,31 @@ export default function QrContainer({setButtonUseQr, separator,eanIndex,action,m
   }, [useQr])
 
   const handleScan = (data: any) => {
-    if (data && data.text!==prevData?.text){
+    if (data && data.text !== prevData?.text) {
       setPrevData(data)
       setResult(data.text)
     }
   }
-  
+
   const handleError = (err: any) => {
     console.error(err)
   }
 
   useEffect(() => {
-    if(!result) return
+    if (!result) return
 
-    setEan(formatQr(result,separator,eanIndex))
+    setEan(formatQr(result, separator, eanIndex))
   }, [result])
 
   const previewStyle = {
     heigth: 500,
     width: 500,
     display: 'flex',
-    justifyContent: "center"
+    justifyContent: 'center',
   }
 
+  console.info({ modalShows })
 
-  console.info({modalShows})
   return (
     <div>
       <div className={`camStyle`}>
@@ -66,25 +72,43 @@ export default function QrContainer({setButtonUseQr, separator,eanIndex,action,m
       </div>
       {useQr && (
         <div>
-      <div className={`${handles.QrContainer} camStyle`}>
-        <QrReader
-          delay={delay}
-          style={previewStyle}
-          onError={handleError}
-          onScan={handleScan}
-        />   
-      </div>
-      {action==='go-to-pdp' && ean && <UseEanGoToPDP setButton={setButtonUseQr} setUse = {setUseQr} ean={ean} type={'qr'} mode={mode} setModalShows={setModalShows} 
-              setState={setState} />}
-      {action==='add-to-cart' && ean && <UseEanAddToCart  setButton={setButtonUseQr} setUse = {setUseQr} ean={ean} type={'qr'} mode={mode} setModalShows={setModalShows}
-              setState={setState} />}
-      </div>
+          <div className={`${handles.QrContainer} camStyle`}>
+            <QrReader
+              delay={delay}
+              style={previewStyle}
+              onError={handleError}
+              onScan={handleScan}
+            />
+          </div>
+          {action === 'go-to-pdp' && ean && (
+            <UseEanGoToPDP
+              setButton={setButtonUseQr}
+              setUse={setUseQr}
+              ean={ean}
+              type={'qr'}
+              mode={mode}
+              setModalShows={setModalShows}
+              setState={setState}
+            />
+          )}
+          {action === 'add-to-cart' && ean && (
+            <UseEanAddToCart
+              setButton={setButtonUseQr}
+              setUse={setUseQr}
+              ean={ean}
+              type={'qr'}
+              mode={mode}
+              setModalShows={setModalShows}
+              setState={setState}
+            />
+          )}
+        </div>
       )}
       {!useQr && (
         <div className="loading-container">
           <Spinner />
         </div>
       )}
-      </div> 
+    </div>
   )
 }

@@ -3,7 +3,7 @@
 
 declare module 'vtex.styleguide' {
   import type { ComponentType } from 'react'
-  
+
   export const Input: ComponentType<InputProps>
 
   interface InputProps {

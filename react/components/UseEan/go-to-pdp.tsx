@@ -4,8 +4,7 @@ import React, { useState, useEffect } from 'react'
 import { Spinner, ModalDialog, Modal } from 'vtex.styleguide'
 import { useLazyQuery } from 'react-apollo'
 // eslint-disable-next-line prettier/prettier
-import type {
-  MessageDescriptor} from 'react-intl';
+import type { MessageDescriptor } from 'react-intl'
 import { useIntl, defineMessages } from 'react-intl'
 import { useCssHandles } from 'vtex.css-handles'
 

@@ -1,11 +1,7 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import React, { useState, useEffect } from 'react'
 import { Spinner, ModalDialog } from 'vtex.styleguide'
 import { useLazyQuery, useMutation } from 'react-apollo'
-// eslint-disable-next-line prettier/prettier
-import type {
-  MessageDescriptor} from 'react-intl';
+import type { MessageDescriptor } from 'react-intl'
 import { useIntl, defineMessages } from 'react-intl'
 import { useCssHandles } from 'vtex.css-handles'
 import { usePixel } from 'vtex.pixel-manager'
@@ -29,8 +25,6 @@ import '../../style/Loading.global.css'
 const CSS_HANDLES = [
   'modalReaderMessagesError',
   'modalReaderMessagesErrorText',
-  'modalReaderMessagesSucces',
-  'modalReaderMessagesSuccesText',
   'listErrorMutipleProductText',
 ]
 
@@ -79,13 +73,12 @@ export default function UseEanAddToCart({
 
   const intl = useIntl()
 
-  let messagesInternationalization: any
+  let messagesInternationalization
 
   if (type === 'qr') {
     messagesInternationalization = defineMessages({
       messageModalError: { id: 'store/qr-reader.messageModalError' },
       theProduct: { id: 'store/reader.theProduct' },
-      addToCartSucces: { id: 'store/reader.addToCartSucces' },
       retry: { id: 'store/reader.retry' },
       cancel: { id: 'store/reader.cancel' },
       theSku: { id: 'store/reader.theSku' },
@@ -98,7 +91,6 @@ export default function UseEanAddToCart({
     messagesInternationalization = defineMessages({
       messageModalError: { id: 'store/barcode-reader.messageModalError' },
       theProduct: { id: 'store/reader.theProduct' },
-      addToCartSucces: { id: 'store/reader.addToCartSucces' },
       retry: { id: 'store/reader.retry' },
       cancel: { id: 'store/reader.cancel' },
       theSku: { id: 'store/reader.theSku' },
@@ -128,10 +120,10 @@ export default function UseEanAddToCart({
     { items: [] }
   >(ADD_TO_CART)
 
-  const callAddToCart = async (items: any) => {
+  const callAddToCart = async (items) => {
     const mutationResult = await addToCart({
       variables: {
-        items: items.map((item: any) => {
+        items: items.map((item) => {
           return {
             ...item,
           }
@@ -147,7 +139,7 @@ export default function UseEanAddToCart({
 
     // Update OrderForm from the context
     mutationResult.data && setOrderForm(mutationResult.data.addToCart)
-    const adjustSkuItemForPixelEvent = (item: any) => {
+    const adjustSkuItemForPixelEvent = (item) => {
       return {
         skuId: item.id,
         quantity: item.quantity,
@@ -165,6 +157,7 @@ export default function UseEanAddToCart({
 
   useEffect(() => {
     const queryParam = ean
+
     getSkuQuery({ variables: { ean: queryParam } })
   }, [])
 
@@ -191,15 +184,17 @@ export default function UseEanAddToCart({
         setModalType('error')
       } else if (mode === 'multipleEan') {
         const queryParam = ean
+
         setState('No encontrado, buscando multipleEan')
         getProductQuery({ variables: { ean: queryParam } })
       }
     }
 
+    // eslint-disable-next-line vtex/prefer-early-return
     if (dataGetSku) {
       const sku: SkuDataType = dataGetSku.getSku.data
 
-      setState('Sku encontrado: ' + sku.NameComplete)
+      setState(`Sku encontrado: ${sku.NameComplete}`)
       setSkuData(sku)
     }
   }, [loadingGetSku, errorGetSku, dataGetSku])
@@ -225,6 +220,7 @@ export default function UseEanAddToCart({
     // eslint-disable-next-line vtex/prefer-early-return
     if (dataGetProduct) {
       const { data } = dataGetProduct.getProductBySpecificationFilter
+
       setState('Encontrado multipleEan')
       if (data.length > 0) {
         if (data.length === 1) {
@@ -305,14 +301,14 @@ export default function UseEanAddToCart({
 
   useEffect(() => {
     if (!skuData) return
-    
+
     setUse(false)
 
     const quantityInOrderForm: number = itemsOrderform.find(
-      (item: any) => item.id === skuData.Id
+      (item) => item.id === skuData.Id
     )?.quantity
 
-    setState('Añadiendo a carrito: ' + skuData.NameComplete)
+    setState(`Añadiendo a carrito: ${skuData.NameComplete}`)
     callAddToCart([
       {
         id: parseInt(skuData.Id, 10),
