@@ -23,11 +23,11 @@ export type UseEanType = 'qr' | 'barcode'
 export interface UseEanProps {
   setButton: (button: boolean) => void
   setUse: (code: boolean) => void
-  setSuccessAlert: ((alert: string) => void) | null
   ean: string
   type: UseEanType
   mode: string
   setState: (state: string) => void
+  setModalShows: (modal: boolean) => void
 }
 
 export type ModalType = 'success' | 'error' | 'errorMultipleProduct'

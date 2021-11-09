@@ -35,13 +35,13 @@ const CSS_HANDLES = [
 ]
 
 export default function UseEanAddToCart({
-  setSuccessAlert,
   setButton,
   setUse,
   ean,
   type,
   mode,
   setState,
+  setModalShows,
 }: UseEanProps) {
   const times = 1000
   const [skuData, setSkuData] = useState<SkuDataType>()
@@ -183,10 +183,13 @@ export default function UseEanAddToCart({
         setMessageModal(
           `${translateMessage(messagesInternationalization.messageModalError)}`
         )
-        setState('')
+        setState('Error')
+        console.info('error aca')
+        setModalShows(true)
+        setUse(false)
+
         setModalType('error')
       } else if (mode === 'multipleEan') {
-        
         const queryParam = ean
         setState('No encontrado, buscando multipleEan')
         getProductQuery({ variables: { ean: queryParam } })
@@ -214,7 +217,8 @@ export default function UseEanAddToCart({
       setMessageModal(
         `${translateMessage(messagesInternationalization.messageModalError)}`
       )
-      setState('')
+      setState('Error')
+      setModalShows(true)
       setModalType('error')
     }
 
@@ -249,7 +253,8 @@ export default function UseEanAddToCart({
                   messagesInternationalization.doesNotExistInTheProduct
                 )} ${productName}`
               )
-              setState('')
+              setState('Error')
+              setModalShows(true)
               setModalType('error')
             }
           } else {
@@ -258,7 +263,8 @@ export default function UseEanAddToCart({
                 messagesInternationalization.messageModalError
               )}`
             )
-            setState('')
+            setState('Error')
+            setModalShows(true)
             setModalType('error')
           }
         } else {
@@ -282,14 +288,16 @@ export default function UseEanAddToCart({
           setMessageErrorMultipleProductModal(
             `${translateMessage(messagesInternationalization.reviewCatalog)}`
           )
-          setState('')
+          setState('Error')
+          setModalShows(true)
           setModalType('errorMultipleProduct')
         }
       } else {
         setMessageModal(
           `${translateMessage(messagesInternationalization.messageModalError)}`
         )
-        setState('')
+        setState('Error')
+        setModalShows(true)
         setModalType('error')
       }
     }
@@ -297,11 +305,7 @@ export default function UseEanAddToCart({
 
   useEffect(() => {
     if (!skuData) return
-    setSuccessAlert?.(
-      `${translateMessage(messagesInternationalization.theProduct)} ${
-        skuData.NameComplete
-      } ${translateMessage(messagesInternationalization.addToCartSucces)}`
-    )
+    
     setUse(false)
 
     const quantityInOrderForm: number = itemsOrderform.find(
@@ -331,6 +335,7 @@ export default function UseEanAddToCart({
           confirmation={{
             label: translateMessage(messagesInternationalization.retry),
             onClick: () => {
+              console.info('1')
               closeModalResult()
               setUse(false)
               setTimeout(() => {
@@ -340,12 +345,14 @@ export default function UseEanAddToCart({
           }}
           cancelation={{
             onClick: () => {
+              console.info('2')
               closeModalResult()
               setButton(false)
             },
             label: translateMessage(messagesInternationalization.cancel),
           }}
           onClose={() => {
+            console.info('3')
             closeModalResult()
           }}
         >

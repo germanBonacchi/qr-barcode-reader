@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from 'react'
 import QrReader from 'react-qr-scanner'
 import { useCssHandles } from 'vtex.css-handles'
-import { Spinner,Alert } from 'vtex.styleguide'
+import { Spinner } from 'vtex.styleguide'
 
 import UseEanGoToPDP from './UseEan/go-to-pdp'
 import UseEanAddToCart from './UseEan/add-to-cart'
@@ -13,7 +13,6 @@ import formatQr from '../utils/formatQr'
 
 import '../style/camStyle.global.css'
 import '../style/Loading.global.css'
-import '../style/Success.global.css'
 
 const CSS_HANDLES = ['qrContainer']
 
@@ -22,11 +21,11 @@ export default function QrContainer({setButtonUseQr, separator,eanIndex,action,m
   const [result, setResult] = useState(null)  
   const [ean, setEan] = useState<string>('')
   const [state, setState]: any = useState<string>('Ready to Scan')
+  const [modalShows, setModalShows] = useState<boolean>(false)
 
   const [prevData, setPrevData] = useState<any>(null)
   const handles = useCssHandles(CSS_HANDLES)
   const [useQr, setUseQr]: any = useState<boolean>(true)
-  const [successAlert, setSuccessAlert]: any = useState<boolean>(false)
 
   useEffect(() => {
     if (!useQr) {
@@ -58,15 +57,10 @@ export default function QrContainer({setButtonUseQr, separator,eanIndex,action,m
     justifyContent: "center"
   }
 
+
+  console.info({modalShows})
   return (
     <div>
-      {successAlert && (
-        <div className="success-container">
-          <Alert type="success" autoClose={1000}>
-            {`Test`}
-          </Alert>
-        </div>
-      )}
       <div className={`camStyle`}>
         <p>{state}</p>
       </div>
@@ -80,9 +74,9 @@ export default function QrContainer({setButtonUseQr, separator,eanIndex,action,m
           onScan={handleScan}
         />   
       </div>
-      {action==='go-to-pdp' && ean && <UseEanGoToPDP setSuccessAlert={null} setButton={setButtonUseQr} setUse = {setUseQr} ean={ean} type={'qr'} mode={mode} 
+      {action==='go-to-pdp' && ean && <UseEanGoToPDP setButton={setButtonUseQr} setUse = {setUseQr} ean={ean} type={'qr'} mode={mode} setModalShows={setModalShows} 
               setState={setState} />}
-      {action==='add-to-cart' && ean && <UseEanAddToCart setSuccessAlert={setSuccessAlert} setButton={setButtonUseQr} setUse = {setUseQr} ean={ean} type={'qr'} mode={mode} 
+      {action==='add-to-cart' && ean && <UseEanAddToCart  setButton={setButtonUseQr} setUse = {setUseQr} ean={ean} type={'qr'} mode={mode} setModalShows={setModalShows}
               setState={setState} />}
       </div>
       )}
