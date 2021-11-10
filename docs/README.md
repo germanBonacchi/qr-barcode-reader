@@ -8,9 +8,9 @@
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 <!-- DOCS-IGNORE:end -->
 
-Scan Qr codes and Barcodes with the Ean of a product embedded and do action with it.
+Scan Qr codes and Barcodes with the Ean of a product embedded and do actions with it.
 
-![Media Placeholder](https://user-images.githubusercontent.com/55905671/131380395-e39ce499-2efa-4aaa-9506-f934fe9af8cf.gif)
+![Media Placeholder](https://user-images.githubusercontent.com/55905671/141179209-ebbeeb19-7556-4a59-9913-d04b1f6c8f5d.gif)
 
 :warning: **Supported Barcodes:**
 - Ean 13
