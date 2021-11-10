@@ -5,12 +5,13 @@ import React, { useState } from 'react'
 import { useCssHandles } from 'vtex.css-handles'
 import type { MessageDescriptor } from 'react-intl'
 import { useIntl, defineMessages } from 'react-intl'
-import { Button } from 'vtex.styleguide'
+import { ButtonWithIcon } from 'vtex.styleguide'
+import Search from '@vtex/styleguide/lib/icon/Search'
 
 import QrContainer from './qr-scanner'
 import type { QrReaderProps } from '../typings/global'
 
-const CSS_HANDLES = ['qrReaderWrapper']
+const CSS_HANDLES = ['qrReaderWrapper', 'qrReaderButton']
 
 const QrReaderWrapper: StorefrontFunctionComponent<QrReaderProps> = ({
   separator,
@@ -21,6 +22,7 @@ const QrReaderWrapper: StorefrontFunctionComponent<QrReaderProps> = ({
   const [useQr, setUseQr]: any = useState<boolean>(false)
 
   const intl = useIntl()
+  const searchIcon = <Search />
 
   const messagesInternationalization = defineMessages({
     buttonOpenReader: { id: 'store/qr-reader.buttonOpenReaderQr' },
@@ -37,10 +39,10 @@ const QrReaderWrapper: StorefrontFunctionComponent<QrReaderProps> = ({
 
   return (
     <div className={`${handles.qrReaderWrapper} c-muted-1 db tc`}>
-      <div className="mb2">
-        <Button onClick={onclickQrReader}>
+      <div className={`${handles.qrReaderButton} mb2`}>
+        <ButtonWithIcon icon={searchIcon} onClick={onclickQrReader}>
           {`${translateMessage(messagesInternationalization.buttonOpenReader)}`}
-        </Button>
+        </ButtonWithIcon>
       </div>
       {useQr && (
         <QrContainer

@@ -5,11 +5,12 @@ import React, { useState } from 'react'
 import { useCssHandles } from 'vtex.css-handles'
 import type { MessageDescriptor } from 'react-intl'
 import { useIntl, defineMessages } from 'react-intl'
-import { Button } from 'vtex.styleguide'
+import { ButtonWithIcon } from 'vtex.styleguide'
+import Search from '@vtex/styleguide/lib/icon/Search'
 
 import BarcodeContainer from './barcode-scanner'
 
-const CSS_HANDLES = ['barcodeReaderWrapper']
+const CSS_HANDLES = ['barcodeReaderWrapper', 'barcodeReaderButton']
 
 const BarcodeReaderWrapper: StorefrontFunctionComponent<any> = ({
   action,
@@ -18,7 +19,7 @@ const BarcodeReaderWrapper: StorefrontFunctionComponent<any> = ({
   const [useBarcode, setUseBarcode]: any = useState<boolean>(false)
 
   const intl = useIntl()
-
+  const searchIcon = <Search />
   const messagesInternationalization = defineMessages({
     buttonOpenReader: { id: 'store/barcode-reader.buttonOpenReaderBarcode' },
   })
@@ -33,11 +34,15 @@ const BarcodeReaderWrapper: StorefrontFunctionComponent<any> = ({
   const handles = useCssHandles(CSS_HANDLES)
 
   return (
-    <div className={`${handles.BarcodeReader} c-muted-1 db tc`}>
-      <div className="mb2">
-        <Button variation="primary" onClick={onclickBarcodeReader}>
+    <div className={`${handles.barcodeReaderWrapper} c-muted-1 db tc`}>
+      <div className={`${handles.barcodeReaderButton} mb2`}>
+        <ButtonWithIcon
+          icon={searchIcon}
+          variation="primary"
+          onClick={onclickBarcodeReader}
+        >
           {`${translateMessage(messagesInternationalization.buttonOpenReader)}`}
-        </Button>
+        </ButtonWithIcon>
       </div>
       {useBarcode && (
         <BarcodeContainer

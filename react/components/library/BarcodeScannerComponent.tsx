@@ -17,6 +17,10 @@ const BarCodeScanner = ({
   useEffect(() => {
     const videoInput: any = document.getElementById('video')
 
+    codeReader.tryPlayVideo(videoInput).then(() => {
+      setDataURL('')
+    })
+
     codeReader.listVideoInputDevices().then((devices) => {
       let deviceSuggested: MediaDeviceInfo
 
@@ -44,28 +48,26 @@ const BarCodeScanner = ({
 
       const { deviceId } = deviceSuggested
 
-      codeReader.decodeFromVideoDevice(deviceId, 'video', (result) => {
-        codeReader.tryPlayVideo(videoInput).then(() => {
-          setDataURL('')
-          // eslint-disable-next-line vtex/prefer-early-return
-          if (result) {
-            const video: any = document.getElementById('video')
+      codeReader.decodeOnceFromVideoDevice(deviceId, 'video').then((result) => {
+        // eslint-disable-next-line vtex/prefer-early-return
+        if (result) {
+          const video: any = document.getElementById('video')
 
-            if (video) {
-              const canvas = document.createElement('canvas')
+          if (video) {
+            const canvas = document.createElement('canvas')
 
-              canvas.width = video.clientWidth
-              canvas.height = video.clientHeight
-              canvas
-                .getContext('2d')
-                ?.drawImage(video, 0, 0, canvas.width, canvas.height)
-              dataAuxURL = canvas.toDataURL()
-              setDataURL(dataAuxURL)
-            }
-
-            onUpdate(null, result, dataAuxURL)
+            canvas.width = video.clientWidth
+            canvas.height = video.clientHeight
+            canvas
+              .getContext('2d')
+              ?.drawImage(video, 0, 0, canvas.width, canvas.height)
+            dataAuxURL = canvas.toDataURL()
+            setDataURL(dataAuxURL)
           }
-        })
+
+          onUpdate(null, result, dataAuxURL)
+          codeReader.reset()
+        }
       })
     })
 

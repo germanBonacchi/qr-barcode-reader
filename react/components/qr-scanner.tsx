@@ -87,8 +87,6 @@ export default function QrContainer({
     justifyContent: 'center',
   }
 
-  console.info({ modalShows })
-
   return (
     <div>
       <div className={`${handles.state} mb2`}>

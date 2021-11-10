@@ -362,7 +362,6 @@ export default function UseEanAddToCart({
           confirmation={{
             label: translateMessage(messagesInternationalization.retry),
             onClick: () => {
-              console.info('1')
               closeModalResult()
               setUse(false)
               setTimeout(() => {
@@ -372,14 +371,12 @@ export default function UseEanAddToCart({
           }}
           cancelation={{
             onClick: () => {
-              console.info('2')
               closeModalResult()
               setButton(false)
             },
             label: translateMessage(messagesInternationalization.cancel),
           }}
           onClose={() => {
-            console.info('3')
             closeModalResult()
           }}
         >
