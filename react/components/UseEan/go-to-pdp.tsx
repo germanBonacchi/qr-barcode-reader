@@ -29,7 +29,10 @@ export default function UseEanGoToPDP({
   ean,
   type,
   mode,
+  setState,
+  setModalShows,
 }: UseEanProps) {
+  const times = 1000
   const [skuData, setSkuData] = useState<SkuDataType>()
   const [isRedirect, setIsRedirect] = useState<boolean>(false)
 
@@ -63,6 +66,8 @@ export default function UseEanGoToPDP({
       messageModalSucces: { id: 'store/reader.messageModalSucces' },
       retry: { id: 'store/reader.retry' },
       cancel: { id: 'store/reader.cancel' },
+      searching: { id: 'store/reader.searching' },
+      skuFound: { id: 'store/reader.skuFound' },
     })
   } else if (type === 'barcode') {
     messagesInternationalization = defineMessages({
@@ -70,6 +75,8 @@ export default function UseEanGoToPDP({
       messageModalSucces: { id: 'store/reader.messageModalSucces' },
       retry: { id: 'store/reader.retry' },
       cancel: { id: 'store/reader.cancel' },
+      searching: { id: 'store/reader.searching' },
+      skuFound: { id: 'store/reader.skuFound' },
     })
   }
 
@@ -102,6 +109,11 @@ export default function UseEanGoToPDP({
         setMessageModal(
           `${translateMessage(messagesInternationalization.messageModalError)}`
         )
+        setState(
+          `${translateMessage(messagesInternationalization.messageModalError)}`
+        )
+        setModalShows(true)
+        setUse(false)
         setModalType('error')
       } else if (mode === 'multipleEan') {
         const queryParam = ean
@@ -119,6 +131,13 @@ export default function UseEanGoToPDP({
           messagesInternationalization.messageModalSucces
         )} ${productName}`
       )
+
+      setState(
+        `${translateMessage(
+          messagesInternationalization.messageModalSucces
+        )} ${productName}`
+      )
+      setModalShows(true)
       setModalType('success')
       setSkuData(sku)
     } else {
@@ -129,6 +148,7 @@ export default function UseEanGoToPDP({
   useEffect(() => {
     if (!loadingGetProduct && !errorGetProduct && !dataGetProduct) return
     if (loadingGetProduct) {
+      setState(`${translateMessage(messagesInternationalization.searching)}`)
       setMessageModal(``)
       openModalResult()
     }
@@ -137,6 +157,10 @@ export default function UseEanGoToPDP({
       setMessageModal(
         `${translateMessage(messagesInternationalization.messageModalError)}`
       )
+      setState(
+        `${translateMessage(messagesInternationalization.messageModalError)}`
+      )
+      setModalShows(true)
       setModalType('error')
     }
 
@@ -164,6 +188,12 @@ export default function UseEanGoToPDP({
               messagesInternationalization.messageModalSucces
             )} ${nameComplete}`
           )
+          setState(
+            `${translateMessage(
+              messagesInternationalization.messageModalSucces
+            )} ${nameComplete}`
+          )
+          setModalShows(true)
           setModalType('success')
           setSkuData(skuTemp)
         } else {
@@ -172,12 +202,22 @@ export default function UseEanGoToPDP({
               messagesInternationalization.messageModalError
             )}`
           )
+          setState(
+            `${translateMessage(
+              messagesInternationalization.messageModalError
+            )}`
+          )
+          setModalShows(true)
           setModalType('error')
         }
       } else {
         setMessageModal(
           `${translateMessage(messagesInternationalization.messageModalError)}`
         )
+        setState(
+          `${translateMessage(messagesInternationalization.messageModalError)}`
+        )
+        setModalShows(true)
         setModalType('error')
       }
     }
@@ -185,7 +225,7 @@ export default function UseEanGoToPDP({
 
   useEffect(() => {
     if (!skuData) return
-
+    setUse(false)
     // eslint-disable-next-line vtex/prefer-early-return
     if (!isRedirect) {
       const skuLink = `${skuData.DetailUrl}?skuId=${skuData.Id}`
@@ -208,7 +248,7 @@ export default function UseEanGoToPDP({
               setUse(false)
               setTimeout(() => {
                 setUse(true)
-              }, 1000)
+              }, times)
             },
           }}
           cancelation={{

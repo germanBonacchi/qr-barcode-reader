@@ -136,6 +136,7 @@ In order to apply CSS customizations in this and other blocks, follow the instru
 | `modalReaderMessagesError` | 
 | `modalReaderMessagesErrorText` | 
 | `listErrorMutipleProductText` | 
+| `state` | 
 
 ---
 <!-- DOCS-IGNORE:start -->

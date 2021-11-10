@@ -24,6 +24,7 @@ export default function BarcodeContainer({
   const handles = useCssHandles(CSS_HANDLES)
   const [useBarcode, setUseBarcode] = useState<boolean>(true)
   const [dataURL, setDataURL] = useState<string | undefined>(undefined)
+  const [modalShows, setModalShows] = useState<boolean>(false)
 
   const intl = useIntl()
 
@@ -38,8 +39,6 @@ export default function BarcodeContainer({
   const [state, setState] = useState<string>(
     `${translateMessage(messagesInternationalization.readyToScan)}`
   )
-
-  const [modalShows, setModalShows] = useState<boolean>(false)
 
   useEffect(() => {
     if (!useBarcode) return
