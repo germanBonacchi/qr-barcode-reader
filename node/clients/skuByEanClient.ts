@@ -1,5 +1,3 @@
-/* eslint-disable prettier/prettier */
-
 import type { InstanceOptions, IOContext } from '@vtex/api'
 import { ExternalClient } from '@vtex/api'
 

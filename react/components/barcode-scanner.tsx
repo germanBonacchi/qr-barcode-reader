@@ -63,17 +63,16 @@ export default function BarcodeContainer({
           <BarCodeScanner
             defaultImage={dataURL}
             onUpdate={(_, textResponse, dataURLResponse): void => {
+              if (!textResponse) return
+
               if (dataURLResponse) {
                 setDataURL(dataURLResponse)
               }
 
-              // eslint-disable-next-line vtex/prefer-early-return
-              if (textResponse) {
-                const text = textResponse.getText()
+              const text = textResponse.getText()
 
-                setState(`${translateMessage(messages.processing)} ${text}`)
-                setEan(text)
-              }
+              setState(`${translateMessage(messages.processing)} ${text}`)
+              setEan(text)
             }}
           />
         </div>

@@ -1,7 +1,5 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 export const queries = {
-  getSku: async (_: unknown, { ean }: any, ctx: Context): Promise<any> => {
+  getSku: async (_: unknown, { ean }: QueryParamEan, ctx: Context) => {
     return ctx.clients.skuByEan.getSku(ean)
   },
 }

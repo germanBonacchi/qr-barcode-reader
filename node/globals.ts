@@ -1,5 +1,3 @@
-/* eslint-disable prettier/prettier */
-
 import type {
   IOContext,
   ParamsContext,
@@ -48,5 +46,9 @@ declare global {
   interface Reference {
     Key: string
     Value: string
+  }
+
+  interface QueryParamEan {
+    ean: string
   }
 }
