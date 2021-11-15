@@ -1,6 +1,3 @@
-/* eslint-disable vtex/prefer-early-return */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import React, { useState, useEffect } from 'react'
 import QrReader from 'react-qr-scanner'
 import { useCssHandles } from 'vtex.css-handles'
@@ -10,7 +7,6 @@ import { useIntl, defineMessages } from 'react-intl'
 
 import UseEanGoToPDP from './UseEan/go-to-pdp'
 import UseEanAddToCart from './UseEan/add-to-cart'
-// eslint-disable-next-line prettier/prettier
 import type { QrReaderProps } from '../typings/global'
 import formatQr from '../utils/formatQr'
 
@@ -18,6 +14,11 @@ import '../style/camStyle.global.css'
 import '../style/Loading.global.css'
 
 const CSS_HANDLES = ['qrContainer', 'state']
+
+const messages = defineMessages({
+  readyToScan: { id: 'store/reader.readyToScan' },
+  processing: { id: 'store/reader.processing' },
+})
 
 export default function QrContainer({
   setButtonUseQr,
@@ -29,48 +30,40 @@ export default function QrContainer({
   const delay = 3000
   const [result, setResult] = useState(null)
   const [ean, setEan] = useState<string>('')
-  const [useQr, setUseQr]: any = useState<boolean>(true)
+  const [readQr, setReadQr] = useState<boolean>(true)
 
   const [modalShows, setModalShows] = useState<boolean>(false)
 
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [prevData, setPrevData] = useState<any>(null)
   const handles = useCssHandles(CSS_HANDLES)
 
   const intl = useIntl()
 
-  const messagesInternationalization = defineMessages({
-    readyToScan: { id: 'store/reader.readyToScan' },
-    processing: { id: 'store/reader.processing' },
-  })
-
   const translateMessage = (message: MessageDescriptor) =>
     intl.formatMessage(message)
 
   const [state, setState] = useState<string>(
-    `${translateMessage(messagesInternationalization.readyToScan)}`
+    `${translateMessage(messages.readyToScan)}`
   )
 
   useEffect(() => {
-    if (!useQr) return
+    if (!readQr) return
 
     setEan('')
     setModalShows(false)
-    setState(`${translateMessage(messagesInternationalization.readyToScan)}`)
-  }, [useQr])
+    setState(`${translateMessage(messages.readyToScan)}`)
+  }, [readQr])
 
-  const handleScan = (data: any) => {
-    if (data && data.text !== prevData?.text) {
-      setPrevData(data)
-      setResult(data.text)
-      setState(
-        `${translateMessage(messagesInternationalization.processing)} ${
-          data.text
-        }`
-      )
-    }
+  const handleScan = (data) => {
+    if (!data || data?.text === prevData?.text) return
+
+    setPrevData(data)
+    setResult(data.text)
+    setState(`${translateMessage(messages.processing)} ${data.text}`)
   }
 
-  const handleError = (err: any) => {
+  const handleError = (err) => {
     console.error(err)
   }
 
@@ -92,12 +85,12 @@ export default function QrContainer({
       <div className={`${handles.state} mb2`}>
         <Tag bgColor="#F71963">{state}</Tag>
       </div>
-      {!useQr && (
+      {!readQr && (
         <div className="loading-container">
           <Spinner />
         </div>
       )}
-      {useQr && (
+      {readQr && (
         <div className={`${handles.qrContainer} camStyle`}>
           <QrReader
             delay={delay}
@@ -107,12 +100,12 @@ export default function QrContainer({
           />
         </div>
       )}
-      {(useQr || modalShows) && (
+      {(readQr || modalShows) && (
         <div>
           {action === 'go-to-pdp' && ean && (
             <UseEanGoToPDP
               setButton={setButtonUseQr}
-              setUse={setUseQr}
+              setRead={setReadQr}
               ean={ean}
               type={'qr'}
               mode={mode}
@@ -123,7 +116,7 @@ export default function QrContainer({
           {action === 'add-to-cart' && ean && (
             <UseEanAddToCart
               setButton={setButtonUseQr}
-              setUse={setUseQr}
+              setRead={setReadQr}
               ean={ean}
               type={'qr'}
               mode={mode}

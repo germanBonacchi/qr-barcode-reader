@@ -22,7 +22,7 @@ export type UseEanType = 'qr' | 'barcode'
 
 export interface UseEanProps {
   setButton: (button: boolean) => void
-  setUse: (code: boolean) => void
+  setRead: (code: boolean) => void
   ean: string
   type: UseEanType
   mode: string
@@ -41,4 +41,9 @@ export interface OrderFormContext {
   loading: boolean
   orderForm: OrderFormType | undefined
   setOrderForm: (orderForm: Partial<OrderFormType>) => void
+}
+
+export interface BarcodeReaderWrapperProps {
+  action: string
+  mode: string
 }

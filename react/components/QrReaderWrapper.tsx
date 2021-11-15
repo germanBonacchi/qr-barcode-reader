@@ -1,6 +1,3 @@
-/* eslint-disable prettier/prettier */
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import React, { useState } from 'react'
 import { useCssHandles } from 'vtex.css-handles'
 import type { MessageDescriptor } from 'react-intl'
@@ -19,7 +16,7 @@ const QrReaderWrapper: StorefrontFunctionComponent<QrReaderProps> = ({
   action,
   mode,
 }) => {
-  const [useQr, setUseQr]: any = useState<boolean>(false)
+  const [readQr, setReadQr] = useState<boolean>(false)
 
   const intl = useIntl()
   const searchIcon = <Search />
@@ -32,7 +29,7 @@ const QrReaderWrapper: StorefrontFunctionComponent<QrReaderProps> = ({
     intl.formatMessage(message)
 
   const onclickQrReader = () => {
-    setUseQr(!useQr)
+    setReadQr(!readQr)
   }
 
   const handles = useCssHandles(CSS_HANDLES)
@@ -44,9 +41,9 @@ const QrReaderWrapper: StorefrontFunctionComponent<QrReaderProps> = ({
           {`${translateMessage(messagesInternationalization.buttonOpenReader)}`}
         </ButtonWithIcon>
       </div>
-      {useQr && (
+      {readQr && (
         <QrContainer
-          setButtonUseQr={setUseQr}
+          setButtonUseQr={setReadQr}
           separator={separator}
           eanIndex={eanIndex}
           action={action}

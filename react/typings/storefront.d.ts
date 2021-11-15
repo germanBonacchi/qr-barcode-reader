@@ -1,5 +1,3 @@
-/* eslint-disable prettier/prettier */
-
 import type { FunctionComponent } from 'react'
 
 declare global {

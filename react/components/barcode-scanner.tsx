@@ -15,6 +15,11 @@ import '../style/dbrScanner-video.global.css'
 
 const CSS_HANDLES = ['barcodeContainer', 'state']
 
+const messages = defineMessages({
+  readyToScan: { id: 'store/reader.readyToScan' },
+  processing: { id: 'store/reader.processing' },
+})
+
 export default function BarcodeContainer({
   setButtonUseBarcode,
   action,
@@ -22,43 +27,38 @@ export default function BarcodeContainer({
 }: BarcodeReaderProps) {
   const [ean, setEan] = useState('')
   const handles = useCssHandles(CSS_HANDLES)
-  const [useBarcode, setUseBarcode] = useState<boolean>(true)
+  const [readBarcode, setReadBarcode] = useState<boolean>(true)
   const [dataURL, setDataURL] = useState<string | undefined>(undefined)
   const [modalShows, setModalShows] = useState<boolean>(false)
 
   const intl = useIntl()
 
-  const messagesInternationalization = defineMessages({
-    readyToScan: { id: 'store/reader.readyToScan' },
-    processing: { id: 'store/reader.processing' },
-  })
-
   const translateMessage = (message: MessageDescriptor) =>
     intl.formatMessage(message)
 
   const [state, setState] = useState<string>(
-    `${translateMessage(messagesInternationalization.readyToScan)}`
+    `${translateMessage(messages.readyToScan)}`
   )
 
   useEffect(() => {
-    if (!useBarcode) return
+    if (!readBarcode) return
 
     setEan('')
     setDataURL('')
     setModalShows(false)
-    setState(`${translateMessage(messagesInternationalization.readyToScan)}`)
-  }, [useBarcode])
+    setState(`${translateMessage(messages.readyToScan)}`)
+  }, [readBarcode])
 
   return (
     <div>
       <div className={`${handles.state} mb2`}>
         <Tag bgColor="#F71963">{state}</Tag>
       </div>
-      {!useBarcode && (
+      {!readBarcode && (
         <img id="imgFromVideo" src={dataURL} style={{ minHeight: '375px' }} />
       )}
 
-      {useBarcode && (
+      {readBarcode && (
         <div className={`${handles.barcodeContainer} camStyle`}>
           <BarCodeScanner
             defaultImage={dataURL}
@@ -71,23 +71,19 @@ export default function BarcodeContainer({
               if (textResponse) {
                 const text = textResponse.getText()
 
-                setState(
-                  `${translateMessage(
-                    messagesInternationalization.processing
-                  )} ${text}`
-                )
+                setState(`${translateMessage(messages.processing)} ${text}`)
                 setEan(text)
               }
             }}
           />
         </div>
       )}
-      {(useBarcode || modalShows) && (
+      {(readBarcode || modalShows) && (
         <div>
           {action === 'go-to-pdp' && ean && (
             <UseEanGoToPDP
               setButton={setButtonUseBarcode}
-              setUse={setUseBarcode}
+              setRead={setReadBarcode}
               ean={ean}
               type={'barcode'}
               mode={mode}
@@ -98,7 +94,7 @@ export default function BarcodeContainer({
           {action === 'add-to-cart' && ean && (
             <UseEanAddToCart
               setButton={setButtonUseBarcode}
-              setUse={setUseBarcode}
+              setRead={setReadBarcode}
               ean={ean}
               type={'barcode'}
               mode={mode}

@@ -1,4 +1,3 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { useEffect, useState } from 'react'
 import type { Result } from '@zxing/library'
 import { BrowserBarcodeReader } from '@zxing/library'
@@ -15,6 +14,7 @@ const BarCodeScanner = ({
   const [dataURL, setDataURL] = useState(defaultImage)
 
   useEffect(() => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const videoInput: any = document.getElementById('video')
 
     codeReader.tryPlayVideo(videoInput).then(() => {
@@ -49,25 +49,21 @@ const BarCodeScanner = ({
       const { deviceId } = deviceSuggested
 
       codeReader.decodeOnceFromVideoDevice(deviceId, 'video').then((result) => {
-        // eslint-disable-next-line vtex/prefer-early-return
-        if (result) {
-          const video: any = document.getElementById('video')
+        if (!result) return
+        if (videoInput) {
+          const canvas = document.createElement('canvas')
 
-          if (video) {
-            const canvas = document.createElement('canvas')
-
-            canvas.width = video.clientWidth
-            canvas.height = video.clientHeight
-            canvas
-              .getContext('2d')
-              ?.drawImage(video, 0, 0, canvas.width, canvas.height)
-            dataAuxURL = canvas.toDataURL()
-            setDataURL(dataAuxURL)
-          }
-
-          onUpdate(null, result, dataAuxURL)
-          codeReader.reset()
+          canvas.width = videoInput.clientWidth
+          canvas.height = videoInput.clientHeight
+          canvas
+            .getContext('2d')
+            ?.drawImage(videoInput, 0, 0, canvas.width, canvas.height)
+          dataAuxURL = canvas.toDataURL()
+          setDataURL(dataAuxURL)
         }
+
+        onUpdate(null, result, dataAuxURL)
+        codeReader.reset()
       })
     })
 
