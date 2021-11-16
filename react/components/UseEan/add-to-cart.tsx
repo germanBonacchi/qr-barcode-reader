@@ -133,7 +133,7 @@ export default function UseEanAddToCart({
     })
 
     if (mutationError) {
-      console.error(mutationError)
+      console.error('mutationError', mutationError)
 
       return
     }
@@ -284,7 +284,6 @@ export default function UseEanAddToCart({
         seller: '1',
       },
     ])
-
     setTimeout(() => {
       setRead(true)
     }, times)

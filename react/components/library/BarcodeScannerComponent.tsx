@@ -29,13 +29,19 @@ const BarCodeScanner = ({
       } else if (devices.length > 1) {
         deviceSuggested = devices.filter(
           (device) =>
-            device.label.includes('back') && device.label.includes('0')
+            (device.label.includes('back') && device.label.includes('0')) ||
+            (device.label.includes('trasera') && device.label.includes('0'))
         )[0]
           ? devices.filter(
               (device) =>
-                device.label.includes('back') && device.label.includes('0')
+                (device.label.includes('back') && device.label.includes('0')) ||
+                (device.label.includes('trasera') && device.label.includes('0'))
             )[0]
-          : devices.filter((device) => device.label.includes('back'))[0]
+          : devices.filter(
+              (device) =>
+                device.label.includes('back') ||
+                device.label.includes('trasera')
+            )[0]
       } else {
         deviceSuggested = {
           deviceId: '',
