@@ -8,9 +8,10 @@
     "lint:locales": "intl-equalizer",
     "test": "cd ./react && yarn test"
   },
-  "intl-equalizer": {
-    "referenceLocale": "en",
-    "localeDirectory": "messages"
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged"
+    }
   },
   "lint-staged": {
     "*.{ts,js,tsx,jsx}": [
