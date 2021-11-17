@@ -52,7 +52,9 @@ const BarCodeScanner = ({
         }
       }
 
-      const { deviceId } = deviceSuggested
+      const deviceId = deviceSuggested?.deviceId
+        ? deviceSuggested.deviceId
+        : undefined
 
       codeReader.decodeOnceFromVideoDevice(deviceId, 'video').then((result) => {
         if (!result) return
