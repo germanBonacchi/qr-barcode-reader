@@ -17,6 +17,13 @@ Scan Qr codes and Barcodes with the Ean of a product embedded and do actions wit
 - Ean 14
 - Ean 8
 - UPC-A
+
+:warning: **Limitations**
+
+On iOS-Devices with iOS < 14.3 camera access works only in native Safari and not in other Browsers (Chrome,...) or Apps that use an UIWebView or WKWebView. This is not a restriction of this library of this app but of the limited WebRTC support by Apple. 
+
+> iOS 14.3 (released in december 2020) now supports WebRTC in 3rd party browsers as well 🎉
+
 ---
 ## Configuration 
 
