@@ -8,6 +8,8 @@ import { usePixel } from 'vtex.pixel-manager'
 import { addToCart as ADD_TO_CART } from 'vtex.checkout-resources/Mutations'
 import { OrderForm } from 'vtex.order-manager'
 
+import logger from '../../graphql/logger.gql'
+import saveLog from '../../utils/saveLog'
 import type {
   ModalType,
   UseEanProps,
@@ -84,6 +86,8 @@ export default function UseEanAddToCart({
     },
   ] = useLazyQuery(getProduct)
 
+  const [loggerMutation] = useMutation(logger)
+
   const handles = useCssHandles(CSS_HANDLES)
   const {
     orderForm: { items: itemsOrderform },
@@ -133,13 +137,14 @@ export default function UseEanAddToCart({
     })
 
     if (mutationError) {
-      console.error('mutationError', mutationError)
+      saveLog('callAddToCart mutationError', mutationError, loggerMutation)
 
       return
     }
 
     // Update OrderForm from the context
     mutationResult.data && setOrderForm(mutationResult.data.addToCart)
+    saveLog('callAddToCart mutationResult', mutationResult, loggerMutation)
     const adjustSkuItemForPixelEvent = (item) => {
       return {
         skuId: item.id,
@@ -174,9 +179,11 @@ export default function UseEanAddToCart({
 
     if (errorGetSku) {
       if (mode === 'singleEan') {
+        saveLog('errorGetSku singleEan', errorGetSku, loggerMutation)
         setSomeStates(`${translateMessage(modalErrorId)}`, true, 'error')
         setRead(false)
       } else if (mode === 'multipleEan') {
+        saveLog('errorGetSku multipleEan', errorGetSku, loggerMutation)
         const queryParam = ean
 
         getProductQuery({ variables: { ean: queryParam } })
@@ -198,6 +205,7 @@ export default function UseEanAddToCart({
     }
 
     if (errorGetProduct) {
+      saveLog('errorGetProduct', errorGetProduct, loggerMutation)
       setSomeStates(`${translateMessage(modalErrorId)}`, true, 'error')
     }
 
@@ -314,6 +322,10 @@ export default function UseEanAddToCart({
           }}
           onClose={() => {
             closeModalResult()
+            setRead(false)
+            setTimeout(() => {
+              setRead(true)
+            }, times)
           }}
         >
           <div className={`${handles.modalReaderMessagesError}`}>
@@ -353,6 +365,10 @@ export default function UseEanAddToCart({
           }}
           onClose={() => {
             closeModalResult()
+            setRead(false)
+            setTimeout(() => {
+              setRead(true)
+            }, times)
           }}
         >
           <div className={`${handles.modalReaderMessagesError}`}>

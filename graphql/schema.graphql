@@ -2,3 +2,7 @@ type Query {
   getSku(ean: String): GetSkuResponse
   getProductBySpecificationFilter(ean: String): GetProductResponse
 }
+
+type Mutation {
+  logger(message: String, detail: String): LoggerResponse
+}

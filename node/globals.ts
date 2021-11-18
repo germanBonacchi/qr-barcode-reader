@@ -51,4 +51,9 @@ declare global {
   interface QueryParamEan {
     ean: string
   }
+
+  interface MutationParamLogger {
+    message: string
+    detail: string
+  }
 }

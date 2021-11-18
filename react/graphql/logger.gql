@@ -1,0 +1,5 @@
+mutation logger($message: String, $detail: String) {
+  logger(message: $message, detail: $detail) {
+    status
+  }
+}

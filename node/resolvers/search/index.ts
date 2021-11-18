@@ -8,9 +8,15 @@ export const queries = {
       `${process.env.VTEX_APP_ID}`
     )
 
-    return ctx.clients.multipleEan.getProductBySpecificationFilter(
+    const aux = await ctx.clients.multipleEan.getProductBySpecificationFilter(
       idMultipleEan,
       ean
     )
+
+    if (aux.data.length > 0) {
+      return aux
+    }
+
+    throw new Error('No product was found.')
   },
 }

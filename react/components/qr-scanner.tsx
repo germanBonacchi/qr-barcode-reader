@@ -4,12 +4,14 @@ import { useCssHandles } from 'vtex.css-handles'
 import { Tag, Spinner } from 'vtex.styleguide'
 import type { MessageDescriptor } from 'react-intl'
 import { useIntl, defineMessages } from 'react-intl'
+import { useMutation } from 'react-apollo'
 
 import UseEanGoToPDP from './UseEan/go-to-pdp'
 import UseEanAddToCart from './UseEan/add-to-cart'
 import type { QrReaderProps } from '../typings/global'
 import formatQr from '../utils/formatQr'
-
+import logger from '../graphql/logger.gql'
+import saveLog from '../utils/saveLog'
 import '../style/camStyle.global.css'
 import '../style/Loading.global.css'
 
@@ -33,6 +35,7 @@ export default function QrContainer({
   const [readQr, setReadQr] = useState<boolean>(true)
 
   const [modalShows, setModalShows] = useState<boolean>(false)
+  const [loggerMutation] = useMutation(logger)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [prevData, setPrevData] = useState<any>(null)
@@ -64,7 +67,7 @@ export default function QrContainer({
   }
 
   const handleError = (err) => {
-    console.error(err)
+    saveLog('qr handleError', err, loggerMutation)
   }
 
   useEffect(() => {
