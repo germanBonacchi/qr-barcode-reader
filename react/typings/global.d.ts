@@ -20,6 +20,11 @@ export interface SkuDataType {
 
 export type UseEanType = 'qr' | 'barcode'
 
+export interface ShowToastType {
+  message: string
+  duration: number
+}
+
 export interface UseEanProps {
   setButton: (button: boolean) => void
   setRead: (code: boolean) => void
@@ -28,6 +33,7 @@ export interface UseEanProps {
   mode: string
   setState: (state: string) => void
   setModalShows: (modal: boolean) => void
+  showToast: ({ message, duration }: ShowToastType) => void
 }
 
 export type ModalType = 'success' | 'error' | 'errorMultipleProduct'

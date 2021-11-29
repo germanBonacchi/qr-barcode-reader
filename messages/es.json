@@ -16,5 +16,6 @@
   "store/reader.processing": "Procesando:",
   "store/reader.searching": "Buscando",
   "store/reader.skuFound": "Sku encontrado:",
-  "store/reader.addingToCart": "Añadiendo al carrito:"
+  "store/reader.addingToCart": "Añadiendo al carrito:",
+  "store/reader.addingToCartSucces": "Se ha añadido con exito el producto:"
 }

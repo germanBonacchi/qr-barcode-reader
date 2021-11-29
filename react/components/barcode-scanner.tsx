@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { useCssHandles } from 'vtex.css-handles'
-import { Tag } from 'vtex.styleguide'
+import { Tag, ToastProvider, ToastConsumer } from 'vtex.styleguide'
 import type { MessageDescriptor } from 'react-intl'
 import { useIntl, defineMessages } from 'react-intl'
 
@@ -50,59 +50,71 @@ export default function BarcodeContainer({
   }, [readBarcode])
 
   return (
-    <div>
-      <div className={`${handles.state} mb2`}>
-        <Tag bgColor="#F71963">{state}</Tag>
+    <ToastProvider positioning="window">
+      <div>
+        <div className={`${handles.state} mb2`}>
+          <Tag bgColor="#F71963">{state}</Tag>
+        </div>
+        {!readBarcode && (
+          <img id="imgFromVideo" src={dataURL} style={{ minHeight: '375px' }} />
+        )}
+
+        {readBarcode && (
+          <div className={`${handles.barcodeContainer} camStyle`}>
+            <BarCodeScanner
+              defaultImage={dataURL}
+              onUpdate={(_, textResponse, dataURLResponse): void => {
+                if (!textResponse) return
+
+                if (dataURLResponse) {
+                  setDataURL(dataURLResponse)
+                }
+
+                const text = textResponse.getText()
+
+                setState(`${translateMessage(messages.processing)} ${text}`)
+                setEan(text)
+              }}
+            />
+          </div>
+        )}
+        {(readBarcode || modalShows) && (
+          <div>
+            {action === 'go-to-pdp' && ean && (
+              <ToastConsumer>
+                {({ showToast }) => (
+                  <UseEanGoToPDP
+                    setButton={setButtonUseBarcode}
+                    setRead={setReadBarcode}
+                    ean={ean}
+                    type={'barcode'}
+                    mode={mode}
+                    setState={setState}
+                    setModalShows={setModalShows}
+                    showToast={showToast}
+                  />
+                )}
+              </ToastConsumer>
+            )}
+            {action === 'add-to-cart' && ean && (
+              <ToastConsumer>
+                {({ showToast }) => (
+                  <UseEanAddToCart
+                    setButton={setButtonUseBarcode}
+                    setRead={setReadBarcode}
+                    ean={ean}
+                    type={'barcode'}
+                    mode={mode}
+                    setState={setState}
+                    setModalShows={setModalShows}
+                    showToast={showToast}
+                  />
+                )}
+              </ToastConsumer>
+            )}
+          </div>
+        )}
       </div>
-      {!readBarcode && (
-        <img id="imgFromVideo" src={dataURL} style={{ minHeight: '375px' }} />
-      )}
-
-      {readBarcode && (
-        <div className={`${handles.barcodeContainer} camStyle`}>
-          <BarCodeScanner
-            defaultImage={dataURL}
-            onUpdate={(_, textResponse, dataURLResponse): void => {
-              if (!textResponse) return
-
-              if (dataURLResponse) {
-                setDataURL(dataURLResponse)
-              }
-
-              const text = textResponse.getText()
-
-              setState(`${translateMessage(messages.processing)} ${text}`)
-              setEan(text)
-            }}
-          />
-        </div>
-      )}
-      {(readBarcode || modalShows) && (
-        <div>
-          {action === 'go-to-pdp' && ean && (
-            <UseEanGoToPDP
-              setButton={setButtonUseBarcode}
-              setRead={setReadBarcode}
-              ean={ean}
-              type={'barcode'}
-              mode={mode}
-              setState={setState}
-              setModalShows={setModalShows}
-            />
-          )}
-          {action === 'add-to-cart' && ean && (
-            <UseEanAddToCart
-              setButton={setButtonUseBarcode}
-              setRead={setReadBarcode}
-              ean={ean}
-              type={'barcode'}
-              mode={mode}
-              setState={setState}
-              setModalShows={setModalShows}
-            />
-          )}
-        </div>
-      )}
-    </div>
+    </ToastProvider>
   )
 }

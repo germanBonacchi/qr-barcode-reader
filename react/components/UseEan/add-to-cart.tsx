@@ -43,6 +43,7 @@ const messages = defineMessages({
   searching: { id: 'store/reader.searching' },
   skuFound: { id: 'store/reader.skuFound' },
   addingToCart: { id: 'store/reader.addingToCart' },
+  addingToCartSucces: { id: 'store/reader.addingToCartSucces' },
 })
 
 export default function UseEanAddToCart({
@@ -53,6 +54,7 @@ export default function UseEanAddToCart({
   mode,
   setState,
   setModalShows,
+  showToast,
 }: UseEanProps) {
   const times = 1000
   const [skuData, setSkuData] = useState<SkuDataType>()
@@ -125,7 +127,7 @@ export default function UseEanAddToCart({
     { items: [] }
   >(ADD_TO_CART)
 
-  const callAddToCart = async (items) => {
+  const callAddToCart = async (items, skuName) => {
     const mutationResult = await addToCart({
       variables: {
         items: items.map((item) => {
@@ -143,7 +145,14 @@ export default function UseEanAddToCart({
     }
 
     // Update OrderForm from the context
-    mutationResult.data && setOrderForm(mutationResult.data.addToCart)
+    if (mutationResult.data) {
+      showToast({
+        message: `${translateMessage(messages.addingToCartSucces)} ${skuName}`,
+        duration: 5000,
+      })
+      setOrderForm(mutationResult.data.addToCart)
+    }
+
     saveLog('callAddToCart mutationResult', mutationResult, loggerMutation)
     const adjustSkuItemForPixelEvent = (item) => {
       return {
@@ -285,13 +294,16 @@ export default function UseEanAddToCart({
     setState(
       `${translateMessage(messages.addingToCart)} ${skuData.NameComplete}`
     )
-    callAddToCart([
-      {
-        id: parseInt(skuData.Id, 10),
-        quantity: quantityInOrderForm ? quantityInOrderForm + 1 : 1,
-        seller: '1',
-      },
-    ])
+    callAddToCart(
+      [
+        {
+          id: parseInt(skuData.Id, 10),
+          quantity: quantityInOrderForm ? quantityInOrderForm + 1 : 1,
+          seller: '1',
+        },
+      ],
+      skuData.NameComplete
+    )
     setTimeout(() => {
       setRead(true)
     }, times)

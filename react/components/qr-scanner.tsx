@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react'
 import QrReader from 'react-qr-scanner'
 import { useCssHandles } from 'vtex.css-handles'
-import { Tag, Spinner } from 'vtex.styleguide'
+import { Tag, Spinner, ToastProvider, ToastConsumer } from 'vtex.styleguide'
 import type { MessageDescriptor } from 'react-intl'
 import { useIntl, defineMessages } from 'react-intl'
 import { useMutation } from 'react-apollo'
@@ -84,51 +84,63 @@ export default function QrContainer({
   }
 
   return (
-    <div>
-      <div className={`${handles.state} mb2`}>
-        <Tag bgColor="#F71963">{state}</Tag>
+    <ToastProvider positioning="window">
+      <div>
+        <div className={`${handles.state} mb2`}>
+          <Tag bgColor="#F71963">{state}</Tag>
+        </div>
+        {!readQr && (
+          <div className="loading-container">
+            <Spinner />
+          </div>
+        )}
+        {readQr && (
+          <div className={`${handles.qrContainer} camStyle`}>
+            <QrReader
+              delay={delay}
+              style={previewStyle}
+              onError={handleError}
+              onScan={handleScan}
+            />
+          </div>
+        )}
+        {(readQr || modalShows) && (
+          <div>
+            {action === 'go-to-pdp' && ean && (
+              <ToastConsumer>
+                {({ showToast }) => (
+                  <UseEanGoToPDP
+                    setButton={setButtonUseQr}
+                    setRead={setReadQr}
+                    ean={ean}
+                    type={'qr'}
+                    mode={mode}
+                    setModalShows={setModalShows}
+                    setState={setState}
+                    showToast={showToast}
+                  />
+                )}
+              </ToastConsumer>
+            )}
+            {action === 'add-to-cart' && ean && (
+              <ToastConsumer>
+                {({ showToast }) => (
+                  <UseEanAddToCart
+                    setButton={setButtonUseQr}
+                    setRead={setReadQr}
+                    ean={ean}
+                    type={'qr'}
+                    mode={mode}
+                    setModalShows={setModalShows}
+                    setState={setState}
+                    showToast={showToast}
+                  />
+                )}
+              </ToastConsumer>
+            )}
+          </div>
+        )}
       </div>
-      {!readQr && (
-        <div className="loading-container">
-          <Spinner />
-        </div>
-      )}
-      {readQr && (
-        <div className={`${handles.qrContainer} camStyle`}>
-          <QrReader
-            delay={delay}
-            style={previewStyle}
-            onError={handleError}
-            onScan={handleScan}
-          />
-        </div>
-      )}
-      {(readQr || modalShows) && (
-        <div>
-          {action === 'go-to-pdp' && ean && (
-            <UseEanGoToPDP
-              setButton={setButtonUseQr}
-              setRead={setReadQr}
-              ean={ean}
-              type={'qr'}
-              mode={mode}
-              setModalShows={setModalShows}
-              setState={setState}
-            />
-          )}
-          {action === 'add-to-cart' && ean && (
-            <UseEanAddToCart
-              setButton={setButtonUseQr}
-              setRead={setReadQr}
-              ean={ean}
-              type={'qr'}
-              mode={mode}
-              setModalShows={setModalShows}
-              setState={setState}
-            />
-          )}
-        </div>
-      )}
-    </div>
+    </ToastProvider>
   )
 }
