@@ -27,7 +27,7 @@ Scan Qr codes and Barcodes with the Ean of a product embedded and do action with
 3. Add the app as a theme peerDependency in the `manifest.json` file;
 ```json
 "peerDependencies": {
-  "vtexarg.qr-barcode-reader": "0.x"
+  "vtexarg.qr-barcode-reader": "1.x"
 }
 ```
 Now, you are able to use all blocks exported by the `qr-barcode-reader` app. Check out the full list below:
