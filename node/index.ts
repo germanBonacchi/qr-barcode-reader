@@ -4,7 +4,7 @@ import { LRUCache, Service } from '@vtex/api'
 import { Clients } from './clients'
 import { resolvers } from './resolvers'
 
-const TIMEOUT_MS = 800
+const TIMEOUT_MS = 500
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 const memoryCache = new LRUCache<string, any>({ max: 20 })

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react'
 import { Spinner, ModalDialog, Modal } from 'vtex.styleguide'
-import { useLazyQuery } from 'react-apollo'
+import { useLazyQuery, useMutation } from 'react-apollo'
 import type { MessageDescriptor } from 'react-intl'
 import { useIntl, defineMessages } from 'react-intl'
 import { useCssHandles } from 'vtex.css-handles'
@@ -8,6 +8,8 @@ import { useCssHandles } from 'vtex.css-handles'
 import type { ModalType, UseEanProps, SkuDataType } from '../../typings/global'
 import getDataSku from '../../graphql/getSku.gql'
 import getProduct from '../../graphql/getProduct.gql'
+import logger from '../../graphql/logger.gql'
+import saveLog from '../../utils/saveLog'
 import findSkuOfMultipleEan from '../../utils/findSkuOfMultipleEan'
 
 import '../../style/Loading.global.css'
@@ -50,6 +52,8 @@ export default function UseEanGoToPDP({
   const modalErrorId =
     type === 'qr' ? messages.qrReaderModalError : messages.barcodeModalError
 
+  const [loggerMutation] = useMutation(logger)
+
   const [
     getSkuQuery,
     { loading: loadingGetSku, error: errorGetSku, data: dataGetSku },
@@ -82,6 +86,7 @@ export default function UseEanGoToPDP({
   useEffect(() => {
     const queryParam = ean
 
+    saveLog('go to pdp', ean, loggerMutation)
     getSkuQuery({ variables: { ean: queryParam } })
   }, [])
 
@@ -94,12 +99,14 @@ export default function UseEanGoToPDP({
 
     if (errorGetSku) {
       if (mode === 'singleEan') {
+        saveLog('errorGetSku singleEan', errorGetSku, loggerMutation)
         setMessageModal(`${translateMessage(modalErrorId)}`)
         setState(`${translateMessage(modalErrorId)}`)
         setModalShows(true)
         setRead(false)
         setModalType('error')
       } else if (mode === 'multipleEan') {
+        saveLog('errorGetSku multipleEan', errorGetSku, loggerMutation)
         const queryParam = ean
 
         getProductQuery({ variables: { ean: queryParam } })
@@ -132,6 +139,7 @@ export default function UseEanGoToPDP({
     }
 
     if (errorGetProduct) {
+      saveLog('errorGetProduct', errorGetProduct, loggerMutation)
       setMessageModal(`${translateMessage(modalErrorId)}`)
       setState(`${translateMessage(modalErrorId)}`)
       setModalShows(true)
@@ -188,6 +196,7 @@ export default function UseEanGoToPDP({
     const skuLink = `${skuData.DetailUrl}?skuId=${skuData.Id}`
 
     setIsRedirect(true)
+    saveLog('window.location.replace skuLink', skuLink, loggerMutation)
     window.location.replace(skuLink)
   }, [skuData])
 

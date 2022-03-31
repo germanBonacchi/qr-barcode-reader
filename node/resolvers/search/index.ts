@@ -4,19 +4,23 @@ export const queries = {
     { ean }: QueryParamEan,
     ctx: Context
   ) => {
-    const { idMultipleEan } = await ctx.clients.apps.getAppSettings(
-      `${process.env.VTEX_APP_ID}`
-    )
+    try {
+      const { idMultipleEan } = await ctx.clients.apps.getAppSettings(
+        `${process.env.VTEX_APP_ID}`
+      )
 
-    const aux = await ctx.clients.multipleEan.getProductBySpecificationFilter(
-      idMultipleEan,
-      ean
-    )
+      const aux = await ctx.clients.multipleEan.getProductBySpecificationFilter(
+        idMultipleEan,
+        ean
+      )
 
-    if (aux.data.length > 0) {
-      return aux
+      if (aux.data.length > 0) {
+        return aux
+      }
+
+      throw new Error('No product was found.')
+    } catch (error) {
+      throw new Error('No product was found.')
     }
-
-    throw new Error('No product was found.')
   },
 }

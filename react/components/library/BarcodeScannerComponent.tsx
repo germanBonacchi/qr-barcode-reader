@@ -1,6 +1,10 @@
 import React, { useEffect, useState } from 'react'
 import type { Result } from '@zxing/library'
 import { BrowserBarcodeReader } from '@zxing/library'
+import { useMutation } from 'react-apollo'
+
+import logger from '../../graphql/logger.gql'
+import saveLog from '../../utils/saveLog'
 
 const BarCodeScanner = ({
   defaultImage,
@@ -12,6 +16,7 @@ const BarCodeScanner = ({
   const codeReader = new BrowserBarcodeReader()
   let dataAuxURL = ''
   const [dataURL, setDataURL] = useState(defaultImage)
+  const [loggerMutation] = useMutation(logger)
 
   useEffect(() => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -23,6 +28,8 @@ const BarCodeScanner = ({
 
     codeReader.listVideoInputDevices().then((devices) => {
       let deviceSuggested: MediaDeviceInfo
+
+      saveLog('devices', devices, loggerMutation)
 
       if (devices.length === 1) {
         deviceSuggested = devices[0]
@@ -55,6 +62,8 @@ const BarCodeScanner = ({
       const deviceId = deviceSuggested?.deviceId
         ? deviceSuggested.deviceId
         : undefined
+
+      saveLog('deviceSuggested', deviceSuggested, loggerMutation)
 
       codeReader.decodeOnceFromVideoDevice(deviceId, 'video').then((result) => {
         if (!result) return

@@ -151,9 +151,15 @@ export default function UseEanAddToCart({
         duration: 5000,
       })
       setOrderForm(mutationResult.data.addToCart)
+      saveLog(
+        'add to cart succesfully',
+        mutationResult.data.addToCart,
+        loggerMutation
+      )
     }
 
     saveLog('callAddToCart mutationResult', mutationResult, loggerMutation)
+
     const adjustSkuItemForPixelEvent = (item) => {
       return {
         skuId: item.id,
@@ -173,6 +179,7 @@ export default function UseEanAddToCart({
   useEffect(() => {
     const queryParam = ean
 
+    saveLog('add to cart', ean, loggerMutation)
     getSkuQuery({ variables: { ean: queryParam } })
   }, [])
 
