@@ -87,6 +87,9 @@ export default function UseEanGoToPDP({
     const queryParam = ean
 
     saveLog('go to pdp', ean, loggerMutation)
+    setTimeout(() => {
+      alert('pasaron 10 sec')
+    }, 500)
     getSkuQuery({ variables: { ean: queryParam } })
   }, [])
 

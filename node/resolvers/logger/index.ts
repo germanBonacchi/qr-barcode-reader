@@ -6,14 +6,34 @@ export const mutations = {
     { message, detail }: MutationParamLogger,
     ctx: Context
   ) => {
-    ctx.vtex.logger.log(
-      {
-        message,
-        detail: JSON.parse(detail),
-      },
-      LogLevel.Info
-    )
+    try {
+      ctx.vtex.logger.log(
+        {
+          message,
+          detail: JSON.parse(detail),
+        },
+        LogLevel.Info
+      )
 
-    return { status: 200 }
+      return { status: 200 }
+    } catch (error) {
+      try {
+        setTimeout(() => {
+          ctx.vtex.logger.log(
+            {
+              message,
+              detail: JSON.parse(detail),
+            },
+            LogLevel.Info
+          )
+
+          return { status: 200 }
+        }, 5000)
+
+        return { status: 200 }
+      } catch (_errorAfterTimeout) {
+        throw new Error('Error on mutation logger')
+      }
+    }
   },
 }
