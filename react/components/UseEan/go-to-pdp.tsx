@@ -86,21 +86,35 @@ export default function UseEanGoToPDP({
   useEffect(() => {
     const queryParam = ean
 
+    console.info('loadingGetSku', loadingGetSku)
+    console.info('errorGetSku', errorGetSku)
+    console.info('dataGetSku', dataGetSku)
+
     saveLog('go to pdp', ean, loggerMutation)
-    setTimeout(() => {
-      alert('pasaron 10 sec')
-    }, 500)
-    getSkuQuery({ variables: { ean: queryParam } })
+    console.info('go to pdp', ean)
+    try {
+      getSkuQuery({ variables: { ean: queryParam } })
+    } catch (error) {
+      console.info('error getSkuQuery', error)
+      saveLog('error getSkuQuery', error, loggerMutation)
+      setMessageModal(`${translateMessage(modalErrorId)}`)
+      setState(`${translateMessage(modalErrorId)}`)
+      setModalShows(true)
+      setRead(false)
+      setModalType('error')
+    }
   }, [])
 
   useEffect(() => {
     if (!loadingGetSku && !errorGetSku && !dataGetSku) return
     if (loadingGetSku) {
+      console.info('loadingGetSku', loadingGetSku)
       setMessageModal(``)
       openModalResult()
     }
 
     if (errorGetSku) {
+      console.info('errorGetSku', errorGetSku)
       if (mode === 'singleEan') {
         saveLog('errorGetSku singleEan', errorGetSku, loggerMutation)
         setMessageModal(`${translateMessage(modalErrorId)}`)
@@ -112,11 +126,21 @@ export default function UseEanGoToPDP({
         saveLog('errorGetSku multipleEan', errorGetSku, loggerMutation)
         const queryParam = ean
 
-        getProductQuery({ variables: { ean: queryParam } })
+        try {
+          getProductQuery({ variables: { ean: queryParam } })
+        } catch (error) {
+          console.info('error getProductQuery', error)
+          saveLog('error getProductQuery', error, loggerMutation)
+          setMessageModal(`${translateMessage(modalErrorId)}`)
+          setState(`${translateMessage(modalErrorId)}`)
+          setModalShows(true)
+          setModalType('error')
+        }
       }
     }
 
     if (dataGetSku) {
+      console.info('dataGetSku', dataGetSku)
       const sku: SkuDataType = dataGetSku.getSku.data
       const productName: string = sku.NameComplete
 

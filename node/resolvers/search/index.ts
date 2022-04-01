@@ -20,6 +20,9 @@ export const queries = {
 
       throw new Error('No product was found.')
     } catch (error) {
+      console.info('No product was found.')
+      console.info(error.response)
+      console.info(error.response.data)
       throw new Error('No product was found.')
     }
   },

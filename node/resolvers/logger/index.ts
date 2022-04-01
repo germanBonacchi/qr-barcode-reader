@@ -7,6 +7,8 @@ export const mutations = {
     ctx: Context
   ) => {
     try {
+      console.info('message', message)
+      console.info('detail', detail)
       ctx.vtex.logger.log(
         {
           message,
@@ -17,18 +19,16 @@ export const mutations = {
 
       return { status: 200 }
     } catch (error) {
+      console.info('Logger error')
+      console.info(error)
       try {
-        setTimeout(() => {
-          ctx.vtex.logger.log(
-            {
-              message,
-              detail: JSON.parse(detail),
-            },
-            LogLevel.Info
-          )
-
-          return { status: 200 }
-        }, 5000)
+        ctx.vtex.logger.log(
+          {
+            message,
+            detail: JSON.parse(detail),
+          },
+          LogLevel.Info
+        )
 
         return { status: 200 }
       } catch (_errorAfterTimeout) {
