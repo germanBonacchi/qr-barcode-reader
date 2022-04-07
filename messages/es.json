@@ -13,6 +13,7 @@
   "store/reader.differentProducts": "productos distintos:",
   "store/reader.reviewCatalog": "Te sugerimos revisar el catálogo para poder continuar.",
   "store/reader.readyToScan": "Listo para Escanear",
+  "store/reader.askPermissions": "Habilita la cámara para continuar",
   "store/reader.processing": "Procesando:",
   "store/reader.searching": "Buscando",
   "store/reader.skuFound": "Sku encontrado:",
