@@ -31,7 +31,9 @@ const CSS_HANDLES = [
 
 const messages = defineMessages({
   qrReaderModalError: { id: 'store/qr-reader.messageModalError' },
+  qrReaderModalErrorRetry: { id: 'store/qr-reader.messageModalErrorRetry' },
   barcodeModalError: { id: 'store/barcode-reader.messageModalError' },
+  barcodeModalErrorRetry: { id: 'store/barcode-reader.messageModalErrorRetry' },
   theProduct: { id: 'store/reader.theProduct' },
   retry: { id: 'store/reader.retry' },
   cancel: { id: 'store/reader.cancel' },
@@ -69,6 +71,11 @@ export default function UseEanAddToCart({
   const modalErrorId =
     type === 'qr' ? messages.qrReaderModalError : messages.barcodeModalError
 
+  const modalErrorRetry =
+    type === 'qr'
+      ? messages.qrReaderModalErrorRetry
+      : messages.barcodeModalErrorRetry
+
   const [
     messageErrorMultipleProductModal,
     setMessageErrorMultipleProductModal,
@@ -99,6 +106,14 @@ export default function UseEanAddToCart({
 
   const translateMessage = (message: MessageDescriptor) =>
     intl.formatMessage(message)
+
+  const FormatErrorMessage = (
+    error1: MessageDescriptor,
+    eancode: string,
+    error2: MessageDescriptor
+  ) => {
+    return `${translateMessage(error1)} ${eancode} ${translateMessage(error2)}`
+  }
 
   const openModalResult = () => {
     setModalResult(true)
@@ -196,7 +211,11 @@ export default function UseEanAddToCart({
     if (errorGetSku) {
       if (mode === 'singleEan') {
         saveLog('errorGetSku singleEan', errorGetSku, loggerMutation)
-        setSomeStates(`${translateMessage(modalErrorId)}`, true, 'error')
+        setSomeStates(
+          FormatErrorMessage(modalErrorId, ean, modalErrorRetry),
+          true,
+          'error'
+        )
         setRead(false)
       } else if (mode === 'multipleEan') {
         saveLog('errorGetSku multipleEan', errorGetSku, loggerMutation)
@@ -222,7 +241,11 @@ export default function UseEanAddToCart({
 
     if (errorGetProduct) {
       saveLog('errorGetProduct', errorGetProduct, loggerMutation)
-      setSomeStates(`${translateMessage(modalErrorId)}`, true, 'error')
+      setSomeStates(
+        FormatErrorMessage(modalErrorId, ean, modalErrorRetry),
+        true,
+        'error'
+      )
     }
 
     if (!dataGetProduct) return
@@ -259,7 +282,11 @@ export default function UseEanAddToCart({
             )
           }
         } else {
-          setSomeStates(`${translateMessage(modalErrorId)}`, true, 'error')
+          setSomeStates(
+            FormatErrorMessage(modalErrorId, ean, modalErrorRetry),
+            true,
+            'error'
+          )
         }
       } else {
         const tempListErrorMultipleProduct: ListMultipleProduct[] = data.map(
@@ -285,7 +312,11 @@ export default function UseEanAddToCart({
         )
       }
     } else {
-      setSomeStates(`${translateMessage(modalErrorId)}`, true, 'error')
+      setSomeStates(
+        FormatErrorMessage(modalErrorId, ean, modalErrorRetry),
+        true,
+        'error'
+      )
     }
   }, [loadingGetProduct, errorGetProduct, dataGetProduct])
 
