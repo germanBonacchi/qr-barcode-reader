@@ -15,7 +15,8 @@
     "vtex.pixel-manager": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.pixel-manager@1.8.0/public/@types/vtex.pixel-manager",
     "vtex.session-client": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.session-client@1.0.2/public/@types/vtex.session-client",
     "vtex.styleguide": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.styleguide@9.146.1/public/@types/vtex.styleguide",
-    "vtexarg.qr-barcode-reader": "https://chef2--arvitalqa.myvtex.com/_v/private/typings/linked/v1/vtexarg.qr-barcode-reader@1.4.2+build1648750972/public/@types/vtexarg.qr-barcode-reader"
+    "vtex.vtex-logger-react": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.vtex-logger-react@1.0.1/public/@types/vtex.vtex-logger-react",
+    "vtexarg.qr-barcode-reader": "https://chef2--arvitalqa.myvtex.com/_v/private/typings/linked/v1/vtexarg.qr-barcode-reader@1.4.3+build1649343594/public/@types/vtexarg.qr-barcode-reader"
   },
   "resolutions": {
     "**/**/minimist": "^0.2.1",
