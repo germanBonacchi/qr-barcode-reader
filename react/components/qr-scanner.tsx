@@ -19,6 +19,7 @@ const CSS_HANDLES = ['qrContainer', 'state']
 
 const messages = defineMessages({
   readyToScan: { id: 'store/reader.readyToScan' },
+  checkPermissions: { id: 'store/reader.checkPermissions' },
   askPermissions: { id: 'store/reader.askPermissions' },
   processing: { id: 'store/reader.processing' },
 })
