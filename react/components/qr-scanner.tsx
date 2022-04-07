@@ -17,6 +17,8 @@ import '../style/Loading.global.css'
 
 const CSS_HANDLES = ['qrContainer', 'state']
 
+let forceReload = false
+
 const messages = defineMessages({
   readyToScan: { id: 'store/reader.readyToScan' },
   checkPermissions: { id: 'store/reader.checkPermissions' },
@@ -25,11 +27,13 @@ const messages = defineMessages({
 })
 
 const GetPermissions = () => {
-  return navigator.mediaDevices.getUserMedia({
+  const constraints = {
     video: {
       facingMode: 'environment',
     },
-  })
+  }
+
+  return navigator.mediaDevices.getUserMedia(constraints)
 }
 
 export default function QrContainer({
@@ -65,13 +69,19 @@ export default function QrContainer({
 
     GetPermissions()
       .then((stream) => {
+        // workaround to reload on IOS devices
+        // eslint-disable-next-line no-restricted-globals
+        if (forceReload) window.location.reload()
         if (stream) {
           setEan('')
           setModalShows(false)
           setState(`${translateMessage(messages.readyToScan)}`)
         }
       })
-      .catch(() => setState(`${translateMessage(messages.askPermissions)}`))
+      .catch(() => {
+        setState(`${translateMessage(messages.askPermissions)}`)
+        forceReload = true
+      })
   }, [readQr])
 
   const handleScan = (data) => {
