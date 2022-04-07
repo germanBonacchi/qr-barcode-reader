@@ -14,6 +14,7 @@
   "store/reader.reviewCatalog": "Sugerimos que você reveja o catálogo para continuar.",
   "store/reader.readyToScan": "Pronto para digitalizar",
   "store/reader.askPermissions": "Habilitar a câmara a continuar",
+  "store/reader.checkPermissions": "Verificação de permissões",
   "store/reader.processing": "Em processamento:",
   "store/reader.searching": "Procurando",
   "store/reader.skuFound": "Sku encontrado:",

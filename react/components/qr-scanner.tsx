@@ -56,7 +56,7 @@ export default function QrContainer({
     intl.formatMessage(message)
 
   const [state, setState] = useState<string>(
-    `${translateMessage(messages.askPermissions)}`
+    `${translateMessage(messages.checkPermissions)}`
   )
 
   useEffect(() => {
@@ -70,7 +70,7 @@ export default function QrContainer({
           setState(`${translateMessage(messages.readyToScan)}`)
         }
       })
-      .catch((err) => console.error(err))
+      .catch(() => setState(`${translateMessage(messages.askPermissions)}`))
   }, [readQr])
 
   const handleScan = (data) => {
