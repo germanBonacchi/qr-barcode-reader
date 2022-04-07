@@ -24,7 +24,9 @@ const CSS_HANDLES = [
 
 const messages = defineMessages({
   qrReaderModalError: { id: 'store/qr-reader.messageModalError' },
+  qrReaderModalErrorRetry: { id: 'store/qr-reader.messageModalErrorRetry' },
   barcodeModalError: { id: 'store/barcode-reader.messageModalError' },
+  barcodeModalErrorRetry: { id: 'store/barcode-reader.messageModalErrorRetry' },
   readerModalSucces: { id: 'store/reader.readerModalSucces' },
   retry: { id: 'store/reader.retry' },
   cancel: { id: 'store/reader.cancel' },
@@ -52,6 +54,11 @@ export default function UseEanGoToPDP({
   const modalErrorId =
     type === 'qr' ? messages.qrReaderModalError : messages.barcodeModalError
 
+  const modalErrorRetry =
+    type === 'qr'
+      ? messages.qrReaderModalErrorRetry
+      : messages.barcodeModalErrorRetry
+
   const [loggerMutation] = useMutation(logger)
 
   const [
@@ -75,6 +82,16 @@ export default function UseEanGoToPDP({
   const translateMessage = (message: MessageDescriptor) =>
     intl.formatMessage(message)
 
+  const FormatErrorMessage = (
+    error1: MessageDescriptor,
+    eancode: string,
+    error2: MessageDescriptor
+  ) => {
+    return `${translateMessage(error1)} (${eancode}) ${translateMessage(
+      error2
+    )}`
+  }
+
   const openModalResult = () => {
     setModalResult(true)
   }
@@ -97,8 +114,8 @@ export default function UseEanGoToPDP({
     } catch (error) {
       console.info('error getSkuQuery', error)
       saveLog('error getSkuQuery', error, loggerMutation)
-      setMessageModal(`${translateMessage(modalErrorId)}`)
-      setState(`${translateMessage(modalErrorId)}`)
+      setMessageModal(FormatErrorMessage(modalErrorId, ean, modalErrorRetry))
+      setState(FormatErrorMessage(modalErrorId, ean, modalErrorRetry))
       setModalShows(true)
       setRead(false)
       setModalType('error')
@@ -117,8 +134,8 @@ export default function UseEanGoToPDP({
       console.info('errorGetSku', errorGetSku)
       if (mode === 'singleEan') {
         saveLog('errorGetSku singleEan', errorGetSku, loggerMutation)
-        setMessageModal(`${translateMessage(modalErrorId)}`)
-        setState(`${translateMessage(modalErrorId)}`)
+        setMessageModal(FormatErrorMessage(modalErrorId, ean, modalErrorRetry))
+        setState(FormatErrorMessage(modalErrorId, ean, modalErrorRetry))
         setModalShows(true)
         setRead(false)
         setModalType('error')
@@ -131,8 +148,10 @@ export default function UseEanGoToPDP({
         } catch (error) {
           console.info('error getProductQuery', error)
           saveLog('error getProductQuery', error, loggerMutation)
-          setMessageModal(`${translateMessage(modalErrorId)}`)
-          setState(`${translateMessage(modalErrorId)}`)
+          setMessageModal(
+            FormatErrorMessage(modalErrorId, ean, modalErrorRetry)
+          )
+          setState(FormatErrorMessage(modalErrorId, ean, modalErrorRetry))
           setModalShows(true)
           setModalType('error')
         }
@@ -167,8 +186,8 @@ export default function UseEanGoToPDP({
 
     if (errorGetProduct) {
       saveLog('errorGetProduct', errorGetProduct, loggerMutation)
-      setMessageModal(`${translateMessage(modalErrorId)}`)
-      setState(`${translateMessage(modalErrorId)}`)
+      setMessageModal(FormatErrorMessage(modalErrorId, ean, modalErrorRetry))
+      setState(FormatErrorMessage(modalErrorId, ean, modalErrorRetry))
       setModalShows(true)
       setModalType('error')
     }
@@ -202,14 +221,16 @@ export default function UseEanGoToPDP({
           setModalType('success')
           setSkuData(skuTemp)
         } else {
-          setMessageModal(`${translateMessage(modalErrorId)}`)
-          setState(`${translateMessage(modalErrorId)}`)
+          setMessageModal(
+            FormatErrorMessage(modalErrorId, ean, modalErrorRetry)
+          )
+          setState(FormatErrorMessage(modalErrorId, ean, modalErrorRetry))
           setModalShows(true)
           setModalType('error')
         }
       } else {
-        setMessageModal(`${translateMessage(modalErrorId)}`)
-        setState(`${translateMessage(modalErrorId)}`)
+        setMessageModal(FormatErrorMessage(modalErrorId, ean, modalErrorRetry))
+        setState(FormatErrorMessage(modalErrorId, ean, modalErrorRetry))
         setModalShows(true)
         setModalType('error')
       }

@@ -112,7 +112,9 @@ export default function UseEanAddToCart({
     eancode: string,
     error2: MessageDescriptor
   ) => {
-    return `${translateMessage(error1)} ${eancode} ${translateMessage(error2)}`
+    return `${translateMessage(error1)} (${eancode}) ${translateMessage(
+      error2
+    )}`
   }
 
   const openModalResult = () => {
