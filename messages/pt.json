@@ -1,9 +1,11 @@
 {
-  "store/qr-reader.messageModalError": "O Qr mostrado não corresponde a nenhum produto, tente outro.",
+  "store/qr-reader.messageModalError": "O Qr mostrado:",
+  "store/qr-reader.messageModalErrorRetry": "não corresponde a nenhum produto, tente outro.",
   "store/reader.readerModalSucces": "Iremos redirecioná-lo para o produto",
   "store/qr-reader.buttonOpenReaderQr": "Qr Reader",
   "store/barcode-reader.buttonOpenReaderBarcode": "Barcode Reader",
-  "store/barcode-reader.messageModalError": "O Barcode mostrado não corresponde a nenhum produto, tente outro.",
+  "store/barcode-reader.messageModalError": "O Barcode mostrado:",
+  "store/barcode-reader.messageModalErrorRetry": "não corresponde a nenhum produto, tente outro.",
   "store/reader.theProduct": "O produto",
   "store/reader.retry": "Tentar novamente",
   "store/reader.cancel": "Cancelar",
