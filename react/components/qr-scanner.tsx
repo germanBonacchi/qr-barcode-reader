@@ -19,8 +19,17 @@ const CSS_HANDLES = ['qrContainer', 'state']
 
 const messages = defineMessages({
   readyToScan: { id: 'store/reader.readyToScan' },
+  askPermissions: { id: 'store/reader.askPermissions' },
   processing: { id: 'store/reader.processing' },
 })
+
+const GetPermissions = () => {
+  return navigator.mediaDevices.getUserMedia({
+    video: {
+      facingMode: 'environment',
+    },
+  })
+}
 
 export default function QrContainer({
   setButtonUseQr,
@@ -47,15 +56,21 @@ export default function QrContainer({
     intl.formatMessage(message)
 
   const [state, setState] = useState<string>(
-    `${translateMessage(messages.readyToScan)}`
+    `${translateMessage(messages.askPermissions)}`
   )
 
   useEffect(() => {
     if (!readQr) return
 
-    setEan('')
-    setModalShows(false)
-    setState(`${translateMessage(messages.readyToScan)}`)
+    GetPermissions()
+      .then((stream) => {
+        if (stream) {
+          setEan('')
+          setModalShows(false)
+          setState(`${translateMessage(messages.readyToScan)}`)
+        }
+      })
+      .catch((err) => console.error(err))
   }, [readQr])
 
   const handleScan = (data) => {

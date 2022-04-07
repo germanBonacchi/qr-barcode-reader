@@ -17,8 +17,17 @@ const CSS_HANDLES = ['barcodeContainer', 'state']
 
 const messages = defineMessages({
   readyToScan: { id: 'store/reader.readyToScan' },
+  askPermissions: { id: 'store/reader.askPermissions' },
   processing: { id: 'store/reader.processing' },
 })
+
+const GetPermissions = () => {
+  return navigator.mediaDevices.getUserMedia({
+    video: {
+      facingMode: 'environment',
+    },
+  })
+}
 
 export default function BarcodeContainer({
   setButtonUseBarcode,
@@ -37,16 +46,22 @@ export default function BarcodeContainer({
     intl.formatMessage(message)
 
   const [state, setState] = useState<string>(
-    `${translateMessage(messages.readyToScan)}`
+    `${translateMessage(messages.askPermissions)}`
   )
 
   useEffect(() => {
     if (!readBarcode) return
 
-    setEan('')
-    setDataURL('')
-    setModalShows(false)
-    setState(`${translateMessage(messages.readyToScan)}`)
+    GetPermissions()
+      .then((stream) => {
+        if (stream) {
+          setEan('')
+          setDataURL('')
+          setModalShows(false)
+          setState(`${translateMessage(messages.readyToScan)}`)
+        }
+      })
+      .catch((err) => console.error(err))
   }, [readBarcode])
 
   return (
