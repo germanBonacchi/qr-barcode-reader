@@ -103,16 +103,16 @@ export default function UseEanGoToPDP({
   useEffect(() => {
     const queryParam = ean
 
-    console.info('loadingGetSku', loadingGetSku)
-    console.info('errorGetSku', errorGetSku)
-    console.info('dataGetSku', dataGetSku)
+    // console.info('loadingGetSku', loadingGetSku)
+    // console.info('errorGetSku', errorGetSku)
+    // console.info('dataGetSku', dataGetSku)
 
     saveLog('go to pdp', ean, loggerMutation)
-    console.info('go to pdp', ean)
+    // console.info('go to pdp', ean)
     try {
       getSkuQuery({ variables: { ean: queryParam } })
     } catch (error) {
-      console.info('error getSkuQuery', error)
+      // console.info('error getSkuQuery', error)
       saveLog('error getSkuQuery', error, loggerMutation)
       setMessageModal(FormatErrorMessage(modalErrorId, ean, modalErrorRetry))
       setState(FormatErrorMessage(modalErrorId, ean, modalErrorRetry))
@@ -125,13 +125,13 @@ export default function UseEanGoToPDP({
   useEffect(() => {
     if (!loadingGetSku && !errorGetSku && !dataGetSku) return
     if (loadingGetSku) {
-      console.info('loadingGetSku', loadingGetSku)
+      // console.info('loadingGetSku', loadingGetSku)
       setMessageModal(``)
       openModalResult()
     }
 
     if (errorGetSku) {
-      console.info('errorGetSku', errorGetSku)
+      // console.info('errorGetSku', errorGetSku)
       if (mode === 'singleEan') {
         saveLog('errorGetSku singleEan', errorGetSku, loggerMutation)
         setMessageModal(FormatErrorMessage(modalErrorId, ean, modalErrorRetry))
@@ -146,7 +146,7 @@ export default function UseEanGoToPDP({
         try {
           getProductQuery({ variables: { ean: queryParam } })
         } catch (error) {
-          console.info('error getProductQuery', error)
+          // console.info('error getProductQuery', error)
           saveLog('error getProductQuery', error, loggerMutation)
           setMessageModal(
             FormatErrorMessage(modalErrorId, ean, modalErrorRetry)
@@ -159,7 +159,7 @@ export default function UseEanGoToPDP({
     }
 
     if (dataGetSku) {
-      console.info('dataGetSku', dataGetSku)
+      // console.info('dataGetSku', dataGetSku)
       const sku: SkuDataType = dataGetSku.getSku.data
       const productName: string = sku.NameComplete
 
