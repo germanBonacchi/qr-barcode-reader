@@ -5,9 +5,7 @@ export const queries = {
 
       return await ctx.clients.skuByEan.getSku(ean)
     } catch (error) {
-      console.info('No sku was found.')
-      console.info(error.response)
-      console.info(error.response.data)
+      console.error('error getSku', error)
       throw new Error('No sku was found.')
     }
   },

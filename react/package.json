@@ -36,8 +36,7 @@
     "vtex.render-runtime": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.render-runtime@8.132.4/public/@types/vtex.render-runtime",
     "vtex.session-client": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.session-client@1.0.2/public/@types/vtex.session-client",
     "vtex.styleguide": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.styleguide@9.146.1/public/@types/vtex.styleguide",
-    "vtex.vtex-logger-react": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.vtex-logger-react@1.0.1/public/@types/vtex.vtex-logger-react",
-    "vtexarg.qr-barcode-reader": "https://chef2--arvitalqa.myvtex.com/_v/private/typings/linked/v1/vtexarg.qr-barcode-reader@1.4.3+build1649343594/public/@types/vtexarg.qr-barcode-reader"
+    "vtex.vtex-logger-react": "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.vtex-logger-react@1.0.1/public/@types/vtex.vtex-logger-react"
   },
   "version": "0.4.0"
 }

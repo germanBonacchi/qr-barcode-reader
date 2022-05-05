@@ -147,10 +147,10 @@
     "@types/mime" "^1"
     "@types/node" "*"
 
-"@vtex/api@6.45.10":
-  version "6.45.10"
-  resolved "https://registry.yarnpkg.com/@vtex/api/-/api-6.45.10.tgz#d338d05341e176593124fa171ea5710eee802e61"
-  integrity sha512-1OllEdBosqGbyGSvQtJzplmOISj2jalpgTDhRWlzhCdkGYbAg0Sm4doudKfZdvizu/6D1Dz4Uy2YncT6M3Vzng==
+"@vtex/api@6.45.12":
+  version "6.45.12"
+  resolved "https://registry.yarnpkg.com/@vtex/api/-/api-6.45.12.tgz#b13c04398b12f576263ea823369f09c970d57479"
+  integrity sha512-SVLKo+Q/TxQy+1UKzH8GswTI3F2OCRCLfgaNQOrVAVdbM6Ci4wzTeX8j/S4Q1aEEnqBFlH/wVpHf8I6NBa+g9A==
   dependencies:
     "@types/koa" "^2.11.0"
     "@types/koa-compose" "^3.2.3"
@@ -1571,10 +1571,6 @@ vary@^1.1.2:
 "vtex.vtex-logger-react@http://vtex.vtexassets.com/_v/public/typings/v1/vtex.vtex-logger-react@1.0.1/public/@types/vtex.vtex-logger-react":
   version "1.0.1"
   resolved "http://vtex.vtexassets.com/_v/public/typings/v1/vtex.vtex-logger-react@1.0.1/public/@types/vtex.vtex-logger-react#0afd08f2a5738b1f8750a6394a4c81c2b31c6166"
-
-"vtexarg.qr-barcode-reader@https://chef2--arvitalqa.myvtex.com/_v/private/typings/linked/v1/vtexarg.qr-barcode-reader@1.4.3+build1649343594/public/@types/vtexarg.qr-barcode-reader":
-  version "1.4.3"
-  resolved "https://chef2--arvitalqa.myvtex.com/_v/private/typings/linked/v1/vtexarg.qr-barcode-reader@1.4.3+build1649343594/public/@types/vtexarg.qr-barcode-reader#4113a7857a793f75cd5dd0f24610b5a6a6184596"
 
 wrappy@1:
   version "1.0.2"
