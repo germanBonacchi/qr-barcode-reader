@@ -9,8 +9,7 @@ export default class SkuByEanClient extends ExternalClient {
       {
         ...options,
         headers: {
-          VtexIdClientAutCookie:
-            context.storeUserAuthToken ?? context.authToken,
+          VtexIdClientAutCookie: context.authToken,
         },
       }
     )
