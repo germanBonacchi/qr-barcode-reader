@@ -1,7 +1,7 @@
 {
   "vendor": "vtexarg",
   "name": "qr-barcode-reader",
-  "version": "1.0.4",
+  "version": "1.6.5-beta.0",
   "title": "qr-barcode-reader",
   "description": "qr-barcode-reader",
   "builders": {
@@ -20,7 +20,8 @@
     "vtex.order-manager": "0.x",
     "vtex.pixel-manager": "1.x",
     "vtex.checkout-resources": "0.x",
-    "vtex.checkout-graphql": "0.x"
+    "vtex.checkout-graphql": "0.x",
+    "vtex.vtex-logger-react": "1.x"
   },
   "settingsSchema": {
     "title": "Qr & Barcode Reader",
@@ -38,9 +39,7 @@
       "url": "https://support.vtex.com/hc/requests"
     },
     "type": "free",
-    "availableCountries": [
-      "*"
-    ]
+    "availableCountries": ["*"]
   },
   "policies": [
     {

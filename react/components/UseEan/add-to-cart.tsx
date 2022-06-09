@@ -1,18 +1,15 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import React, { useState, useEffect } from 'react'
 import { Spinner, ModalDialog } from 'vtex.styleguide'
 import { useLazyQuery, useMutation } from 'react-apollo'
-// eslint-disable-next-line prettier/prettier
-import type {
-  MessageDescriptor} from 'react-intl';
+import type { MessageDescriptor } from 'react-intl'
 import { useIntl, defineMessages } from 'react-intl'
 import { useCssHandles } from 'vtex.css-handles'
 import { usePixel } from 'vtex.pixel-manager'
 import { addToCart as ADD_TO_CART } from 'vtex.checkout-resources/Mutations'
-import type { OrderForm as OrderFormType } from 'vtex.checkout-graphql'
 import { OrderForm } from 'vtex.order-manager'
 
+import logger from '../../graphql/logger.gql'
+import saveLog from '../../utils/saveLog'
 import type {
   ModalType,
   UseEanProps,
@@ -29,19 +26,39 @@ import '../../style/Loading.global.css'
 const CSS_HANDLES = [
   'modalReaderMessagesError',
   'modalReaderMessagesErrorText',
-  'modalReaderMessagesSucces',
-  'modalReaderMessagesSuccesText',
   'listErrorMutipleProductText',
 ]
 
+const messages = defineMessages({
+  qrReaderModalError: { id: 'store/qr-reader.messageModalError' },
+  qrReaderModalErrorRetry: { id: 'store/qr-reader.messageModalErrorRetry' },
+  barcodeModalError: { id: 'store/barcode-reader.messageModalError' },
+  barcodeModalErrorRetry: { id: 'store/barcode-reader.messageModalErrorRetry' },
+  theProduct: { id: 'store/reader.theProduct' },
+  retry: { id: 'store/reader.retry' },
+  cancel: { id: 'store/reader.cancel' },
+  theSku: { id: 'store/reader.theSku' },
+  doesNotExistInTheProduct: { id: 'store/reader.doesNotExistInTheProduct' },
+  scannedEanMatches: { id: 'store/reader.scannedEanMatches' },
+  differentProducts: { id: 'store/reader.differentProducts' },
+  reviewCatalog: { id: 'store/reader.reviewCatalog' },
+  searching: { id: 'store/reader.searching' },
+  skuFound: { id: 'store/reader.skuFound' },
+  addingToCart: { id: 'store/reader.addingToCart' },
+  addingToCartSucces: { id: 'store/reader.addingToCartSucces' },
+})
+
 export default function UseEanAddToCart({
-  setSuccessAlert,
   setButton,
-  setUse,
+  setRead,
   ean,
   type,
   mode,
+  setState,
+  setModalShows,
+  showToast,
 }: UseEanProps) {
+  const times = 1000
   const [skuData, setSkuData] = useState<SkuDataType>()
 
   const [modalResult, setModalResult] = useState(false)
@@ -50,6 +67,14 @@ export default function UseEanAddToCart({
   const [listErrorMultipleProduct, setListErrorMultipleProduct] = useState<
     ListMultipleProduct[]
   >([])
+
+  const modalErrorId =
+    type === 'qr' ? messages.qrReaderModalError : messages.barcodeModalError
+
+  const modalErrorRetry =
+    type === 'qr'
+      ? messages.qrReaderModalErrorRetry
+      : messages.barcodeModalErrorRetry
 
   const [
     messageErrorMultipleProductModal,
@@ -70,6 +95,8 @@ export default function UseEanAddToCart({
     },
   ] = useLazyQuery(getProduct)
 
+  const [loggerMutation] = useMutation(logger)
+
   const handles = useCssHandles(CSS_HANDLES)
   const {
     orderForm: { items: itemsOrderform },
@@ -77,38 +104,18 @@ export default function UseEanAddToCart({
 
   const intl = useIntl()
 
-  let messagesInternationalization: any
-
-  if (type === 'qr') {
-    messagesInternationalization = defineMessages({
-      messageModalError: { id: 'store/qr-reader.messageModalError' },
-      theProduct: { id: 'store/reader.theProduct' },
-      addToCartSucces: { id: 'store/reader.addToCartSucces' },
-      retry: { id: 'store/reader.retry' },
-      cancel: { id: 'store/reader.cancel' },
-      theSku: { id: 'store/reader.theSku' },
-      doesNotExistInTheProduct: { id: 'store/reader.doesNotExistInTheProduct' },
-      scannedEanMatches: { id: 'store/reader.scannedEanMatches' },
-      differentProducts: { id: 'store/reader.differentProducts' },
-      reviewCatalog: { id: 'store/reader.reviewCatalog' },
-    })
-  } else if (type === 'barcode') {
-    messagesInternationalization = defineMessages({
-      messageModalError: { id: 'store/barcode-reader.messageModalError' },
-      theProduct: { id: 'store/reader.theProduct' },
-      addToCartSucces: { id: 'store/reader.addToCartSucces' },
-      retry: { id: 'store/reader.retry' },
-      cancel: { id: 'store/reader.cancel' },
-      theSku: { id: 'store/reader.theSku' },
-      doesNotExistInTheProduct: { id: 'store/reader.doesNotExistInTheProduct' },
-      scannedEanMatches: { id: 'store/reader.scannedEanMatches' },
-      differentProducts: { id: 'store/reader.differentProducts' },
-      reviewCatalog: { id: 'store/reader.reviewCatalog' },
-    })
-  }
-
   const translateMessage = (message: MessageDescriptor) =>
     intl.formatMessage(message)
+
+  const FormatErrorMessage = (
+    error1: MessageDescriptor,
+    eancode: string,
+    error2: MessageDescriptor
+  ) => {
+    return `${translateMessage(error1)} (${eancode}) ${translateMessage(
+      error2
+    )}`
+  }
 
   const openModalResult = () => {
     setModalResult(true)
@@ -118,18 +125,29 @@ export default function UseEanAddToCart({
     setModalResult(false)
   }
 
+  const setSomeStates = (
+    message: string,
+    modalShows: boolean,
+    typeModal: ModalType
+  ) => {
+    setState(message)
+    setMessageModal(message)
+    setModalShows(modalShows)
+    setModalType(typeModal)
+  }
+
   const { push } = usePixel()
   const { setOrderForm }: OrderFormContext = OrderForm.useOrderForm()
 
   const [addToCart, { error: mutationError }] = useMutation<
-    { addToCart: OrderFormType },
+    { addToCart },
     { items: [] }
   >(ADD_TO_CART)
 
-  const callAddToCart = async (items: any) => {
+  const callAddToCart = async (items, skuName) => {
     const mutationResult = await addToCart({
       variables: {
-        items: items.map((item: any) => {
+        items: items.map((item) => {
           return {
             ...item,
           }
@@ -138,14 +156,28 @@ export default function UseEanAddToCart({
     })
 
     if (mutationError) {
-      console.error(mutationError)
+      saveLog('callAddToCart mutationError', mutationError, loggerMutation)
 
       return
     }
 
     // Update OrderForm from the context
-    mutationResult.data && setOrderForm(mutationResult.data.addToCart)
-    const adjustSkuItemForPixelEvent = (item: any) => {
+    if (mutationResult.data) {
+      showToast({
+        message: `${translateMessage(messages.addingToCartSucces)} ${skuName}`,
+        duration: 5000,
+      })
+      setOrderForm(mutationResult.data.addToCart)
+      saveLog(
+        'add to cart succesfully',
+        mutationResult.data.addToCart,
+        loggerMutation
+      )
+    }
+
+    saveLog('callAddToCart mutationResult', mutationResult, loggerMutation)
+
+    const adjustSkuItemForPixelEvent = (item) => {
       return {
         skuId: item.id,
         quantity: item.quantity,
@@ -164,12 +196,14 @@ export default function UseEanAddToCart({
   useEffect(() => {
     const queryParam = ean
 
+    saveLog('add to cart', ean, loggerMutation)
     getSkuQuery({ variables: { ean: queryParam } })
   }, [])
 
   useEffect(() => {
     if (!loadingGetSku && !errorGetSku && !dataGetSku) return
     if (loadingGetSku) {
+      setState(`${translateMessage(messages.searching)}`)
       setMessageModal(``)
       setListErrorMultipleProduct([])
       setMessageErrorMultipleProductModal(``)
@@ -178,22 +212,26 @@ export default function UseEanAddToCart({
 
     if (errorGetSku) {
       if (mode === 'singleEan') {
-        setMessageModal(
-          `${translateMessage(messagesInternationalization.messageModalError)}`
+        saveLog('errorGetSku singleEan', errorGetSku, loggerMutation)
+        setSomeStates(
+          FormatErrorMessage(modalErrorId, ean, modalErrorRetry),
+          true,
+          'error'
         )
-        setModalType('error')
+        setRead(false)
       } else if (mode === 'multipleEan') {
+        saveLog('errorGetSku multipleEan', errorGetSku, loggerMutation)
         const queryParam = ean
 
         getProductQuery({ variables: { ean: queryParam } })
       }
     }
 
-    if (dataGetSku) {
-      const sku: SkuDataType = dataGetSku.getSku.data
+    if (!dataGetSku) return
+    const sku: SkuDataType = dataGetSku.getSku.data
 
-      setSkuData(sku)
-    }
+    setState(`${translateMessage(messages.skuFound)} ${sku.NameComplete}`)
+    setSkuData(sku)
   }, [loadingGetSku, errorGetSku, dataGetSku])
 
   useEffect(() => {
@@ -204,108 +242,111 @@ export default function UseEanAddToCart({
     }
 
     if (errorGetProduct) {
-      setMessageModal(
-        `${translateMessage(messagesInternationalization.messageModalError)}`
+      saveLog('errorGetProduct', errorGetProduct, loggerMutation)
+      setSomeStates(
+        FormatErrorMessage(modalErrorId, ean, modalErrorRetry),
+        true,
+        'error'
       )
-      setModalType('error')
     }
 
-    // eslint-disable-next-line vtex/prefer-early-return
-    if (dataGetProduct) {
-      const { data } = dataGetProduct.getProductBySpecificationFilter
+    if (!dataGetProduct) return
+    const { data } = dataGetProduct.getProductBySpecificationFilter
 
-      if (data.length > 0) {
-        if (data.length === 1) {
-          const [{ MultipleEan, linkText, items, productName }] = data
+    if (data.length > 0) {
+      if (data.length === 1) {
+        const [{ MultipleEan, linkText, items, productName }] = data
 
-          if (MultipleEan) {
-            const skuFinded = findSkuOfMultipleEan(MultipleEan, ean)
+        if (MultipleEan) {
+          const skuFinded = findSkuOfMultipleEan(MultipleEan, ean)
 
-            const itemFinded = items.find((item) => item.itemId === skuFinded)
+          const itemFinded = items.find((item) => item.itemId === skuFinded)
 
-            if (itemFinded) {
-              const { nameComplete } = itemFinded
+          if (itemFinded) {
+            const { nameComplete } = itemFinded
 
-              const skuTemp: SkuDataType = {
-                Id: skuFinded,
-                NameComplete: nameComplete,
-                DetailUrl: `${linkText}/p`,
-              }
-
-              setSkuData(skuTemp)
-            } else {
-              setMessageModal(
-                `${translateMessage(
-                  messagesInternationalization.theSku
-                )} ${skuFinded} ${translateMessage(
-                  messagesInternationalization.doesNotExistInTheProduct
-                )} ${productName}`
-              )
-              setModalType('error')
+            const skuTemp: SkuDataType = {
+              Id: skuFinded,
+              NameComplete: nameComplete,
+              DetailUrl: `${linkText}/p`,
             }
+
+            setSkuData(skuTemp)
           } else {
-            setMessageModal(
+            setSomeStates(
               `${translateMessage(
-                messagesInternationalization.messageModalError
-              )}`
+                messages.theSku
+              )} ${skuFinded} ${translateMessage(
+                messages.doesNotExistInTheProduct
+              )} ${productName}`,
+              true,
+              'error'
             )
-            setModalType('error')
           }
         } else {
-          const tempListErrorMultipleProduct: ListMultipleProduct[] = data.map(
-            (product) => {
-              return {
-                productName: product.productName,
-                productLink: product.linkText,
-              }
-            }
+          setSomeStates(
+            FormatErrorMessage(modalErrorId, ean, modalErrorRetry),
+            true,
+            'error'
           )
-
-          setMessageModal(
-            `${translateMessage(
-              messagesInternationalization.scannedEanMatches
-            )} ${data.length} ${translateMessage(
-              messagesInternationalization.differentProducts
-            )}`
-          )
-          setListErrorMultipleProduct(tempListErrorMultipleProduct)
-          setMessageErrorMultipleProductModal(
-            `${translateMessage(messagesInternationalization.reviewCatalog)}`
-          )
-          setModalType('errorMultipleProduct')
         }
       } else {
-        setMessageModal(
-          `${translateMessage(messagesInternationalization.messageModalError)}`
+        const tempListErrorMultipleProduct: ListMultipleProduct[] = data.map(
+          (product) => {
+            return {
+              productName: product.productName,
+              productLink: product.linkText,
+            }
+          }
         )
-        setModalType('error')
+
+        setSomeStates(
+          `${translateMessage(messages.scannedEanMatches)} ${
+            data.length
+          } ${translateMessage(messages.differentProducts)}`,
+          true,
+          'errorMultipleProduct'
+        )
+
+        setListErrorMultipleProduct(tempListErrorMultipleProduct)
+        setMessageErrorMultipleProductModal(
+          `${translateMessage(messages.reviewCatalog)}`
+        )
       }
+    } else {
+      setSomeStates(
+        FormatErrorMessage(modalErrorId, ean, modalErrorRetry),
+        true,
+        'error'
+      )
     }
   }, [loadingGetProduct, errorGetProduct, dataGetProduct])
 
   useEffect(() => {
     if (!skuData) return
-    setSuccessAlert?.(
-      `${translateMessage(messagesInternationalization.theProduct)} ${
-        skuData.NameComplete
-      } ${translateMessage(messagesInternationalization.addToCartSucces)}`
-    )
-    setUse(false)
+
+    setRead(false)
 
     const quantityInOrderForm: number = itemsOrderform.find(
-      (item: any) => item.id === skuData.Id
+      (item) => item.id === skuData.Id
     )?.quantity
 
-    callAddToCart([
-      {
-        id: parseInt(skuData.Id, 10),
-        quantity: quantityInOrderForm ? quantityInOrderForm + 1 : 1,
-        seller: '1',
-      },
-    ])
+    setState(
+      `${translateMessage(messages.addingToCart)} ${skuData.NameComplete}`
+    )
+    callAddToCart(
+      [
+        {
+          id: parseInt(skuData.Id, 10),
+          quantity: quantityInOrderForm ? quantityInOrderForm + 1 : 1,
+          seller: '1',
+        },
+      ],
+      skuData.NameComplete
+    )
     setTimeout(() => {
-      setUse(true)
-    }, 1000)
+      setRead(true)
+    }, times)
   }, [skuData])
 
   return (
@@ -315,13 +356,13 @@ export default function UseEanAddToCart({
           centered
           isOpen={modalResult}
           confirmation={{
-            label: translateMessage(messagesInternationalization.retry),
+            label: translateMessage(messages.retry),
             onClick: () => {
               closeModalResult()
-              setUse(false)
+              setRead(false)
               setTimeout(() => {
-                setUse(true)
-              }, 1000)
+                setRead(true)
+              }, times)
             },
           }}
           cancelation={{
@@ -329,10 +370,14 @@ export default function UseEanAddToCart({
               closeModalResult()
               setButton(false)
             },
-            label: translateMessage(messagesInternationalization.cancel),
+            label: translateMessage(messages.cancel),
           }}
           onClose={() => {
             closeModalResult()
+            setRead(false)
+            setTimeout(() => {
+              setRead(true)
+            }, times)
           }}
         >
           <div className={`${handles.modalReaderMessagesError}`}>
@@ -354,13 +399,13 @@ export default function UseEanAddToCart({
           centered
           isOpen={modalResult}
           confirmation={{
-            label: translateMessage(messagesInternationalization.retry),
+            label: translateMessage(messages.retry),
             onClick: () => {
               closeModalResult()
-              setUse(false)
+              setRead(false)
               setTimeout(() => {
-                setUse(true)
-              }, 1000)
+                setRead(true)
+              }, times)
             },
           }}
           cancelation={{
@@ -368,10 +413,14 @@ export default function UseEanAddToCart({
               closeModalResult()
               setButton(false)
             },
-            label: translateMessage(messagesInternationalization.cancel),
+            label: translateMessage(messages.cancel),
           }}
           onClose={() => {
             closeModalResult()
+            setRead(false)
+            setTimeout(() => {
+              setRead(true)
+            }, times)
           }}
         >
           <div className={`${handles.modalReaderMessagesError}`}>

@@ -1,5 +1,3 @@
-/* eslint-disable prettier/prettier */
-
 import type {
   IOContext,
   ParamsContext,
@@ -50,4 +48,12 @@ declare global {
     Value: string
   }
 
+  interface QueryParamEan {
+    ean: string
+  }
+
+  interface MutationParamLogger {
+    message: string
+    detail: string
+  }
 }

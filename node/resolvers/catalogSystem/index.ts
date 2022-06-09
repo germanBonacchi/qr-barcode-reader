@@ -1,7 +1,9 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 export const queries = {
-  getSku: async (_: unknown, { ean }: any, ctx: Context): Promise<any> => {
-    return ctx.clients.skuByEan.getSku(ean)
+  getSku: async (_: unknown, { ean }: QueryParamEan, ctx: Context) => {
+    try {
+      return await ctx.clients.skuByEan.getSku(ean)
+    } catch (error) {
+      throw new Error('No sku was found.')
+    }
   },
 }

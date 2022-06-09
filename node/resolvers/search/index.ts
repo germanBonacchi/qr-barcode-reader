@@ -1,18 +1,26 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 export const queries = {
   getProductBySpecificationFilter: async (
     _: unknown,
-    { ean }: any,
+    { ean }: QueryParamEan,
     ctx: Context
-  ): Promise<any> => {
-    const { idMultipleEan } = await ctx.clients.apps.getAppSettings(
-      `${process.env.VTEX_APP_ID}`
-    )
+  ) => {
+    try {
+      const { idMultipleEan } = await ctx.clients.apps.getAppSettings(
+        `${process.env.VTEX_APP_ID}`
+      )
 
-    return ctx.clients.multipleEan.getProductBySpecificationFilter(
-      idMultipleEan,
-      ean
-    )
+      const aux = await ctx.clients.multipleEan.getProductBySpecificationFilter(
+        idMultipleEan,
+        ean
+      )
+
+      if (aux.data.length > 0) {
+        return aux
+      }
+
+      throw new Error('No product was found.')
+    } catch (error) {
+      throw new Error('No product was found.')
+    }
   },
 }

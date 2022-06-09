@@ -8,15 +8,22 @@
 <!-- ALL-CONTRIBUTORS-BADGE:END -->
 <!-- DOCS-IGNORE:end -->
 
-Scan Qr codes and Barcodes with the Ean of a product embedded and do action with it.
+Scan Qr codes and Barcodes with the Ean of a product embedded and do actions with it.
 
-![Media Placeholder](https://user-images.githubusercontent.com/55905671/131380395-e39ce499-2efa-4aaa-9506-f934fe9af8cf.gif)
+![Media Placeholder](https://user-images.githubusercontent.com/55905671/141179209-ebbeeb19-7556-4a59-9913-d04b1f6c8f5d.gif)
 
 :warning: **Supported Barcodes:**
 - Ean 13
 - Ean 14
 - Ean 8
 - UPC-A
+
+:warning: **Limitations**
+
+On iOS-Devices with iOS < 14.3 camera access works only in native Safari and not in other Browsers (Chrome,...) or Apps that use an UIWebView or WKWebView. This is not a restriction of this library of this app but of the limited WebRTC support by Apple. 
+
+> iOS 14.3 (released in december 2020) now supports WebRTC in 3rd party browsers as well 🎉
+
 ---
 ## Configuration 
 
@@ -129,13 +136,16 @@ In order to apply CSS customizations in this and other blocks, follow the instru
 | ----------- | 
 | `qrReaderWrapper` | 
 | `qrContainer` | 
+| `qrReaderButton` | 
 | `barcodeReaderWrapper` | 
 | `barcodeContainer` | 
+| `barcodeReaderButton` | 
 | `modalReaderMessagesSucces` | 
 | `modalReaderMessagesSuccesText` | 
 | `modalReaderMessagesError` | 
 | `modalReaderMessagesErrorText` | 
 | `listErrorMutipleProductText` | 
+| `state` | 
 
 ---
 <!-- DOCS-IGNORE:start -->

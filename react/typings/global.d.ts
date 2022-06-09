@@ -20,13 +20,20 @@ export interface SkuDataType {
 
 export type UseEanType = 'qr' | 'barcode'
 
+export interface ShowToastType {
+  message: string
+  duration: number
+}
+
 export interface UseEanProps {
   setButton: (button: boolean) => void
-  setUse: (code: boolean) => void
-  setSuccessAlert: ((alert: string) => void) | null
+  setRead: (code: boolean) => void
   ean: string
   type: UseEanType
   mode: string
+  setState: (state: string) => void
+  setModalShows: (modal: boolean) => void
+  showToast: ({ message, duration }: ShowToastType) => void
 }
 
 export type ModalType = 'success' | 'error' | 'errorMultipleProduct'
@@ -40,4 +47,9 @@ export interface OrderFormContext {
   loading: boolean
   orderForm: OrderFormType | undefined
   setOrderForm: (orderForm: Partial<OrderFormType>) => void
+}
+
+export interface BarcodeReaderWrapperProps {
+  action: string
+  mode: string
 }

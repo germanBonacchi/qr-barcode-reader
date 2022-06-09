@@ -1,17 +1,15 @@
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 import React, { useState, useEffect } from 'react'
 import { Spinner, ModalDialog, Modal } from 'vtex.styleguide'
-import { useLazyQuery } from 'react-apollo'
-// eslint-disable-next-line prettier/prettier
-import type {
-  MessageDescriptor} from 'react-intl';
+import { useLazyQuery, useMutation } from 'react-apollo'
+import type { MessageDescriptor } from 'react-intl'
 import { useIntl, defineMessages } from 'react-intl'
 import { useCssHandles } from 'vtex.css-handles'
 
 import type { ModalType, UseEanProps, SkuDataType } from '../../typings/global'
 import getDataSku from '../../graphql/getSku.gql'
 import getProduct from '../../graphql/getProduct.gql'
+import logger from '../../graphql/logger.gql'
+import saveLog from '../../utils/saveLog'
 import findSkuOfMultipleEan from '../../utils/findSkuOfMultipleEan'
 
 import '../../style/Loading.global.css'
@@ -24,19 +22,44 @@ const CSS_HANDLES = [
   'listErrorMutipleProductText',
 ]
 
+const messages = defineMessages({
+  qrReaderModalError: { id: 'store/qr-reader.messageModalError' },
+  qrReaderModalErrorRetry: { id: 'store/qr-reader.messageModalErrorRetry' },
+  barcodeModalError: { id: 'store/barcode-reader.messageModalError' },
+  barcodeModalErrorRetry: { id: 'store/barcode-reader.messageModalErrorRetry' },
+  readerModalSucces: { id: 'store/reader.readerModalSucces' },
+  retry: { id: 'store/reader.retry' },
+  cancel: { id: 'store/reader.cancel' },
+  searching: { id: 'store/reader.searching' },
+  skuFound: { id: 'store/reader.skuFound' },
+})
+
 export default function UseEanGoToPDP({
   setButton,
-  setUse,
+  setRead,
   ean,
   type,
   mode,
+  setState,
+  setModalShows,
 }: UseEanProps) {
+  const times = 1000
   const [skuData, setSkuData] = useState<SkuDataType>()
   const [isRedirect, setIsRedirect] = useState<boolean>(false)
 
   const [modalResult, setModalResult] = useState(false)
   const [messageModal, setMessageModal] = useState<string>('')
   const [modalType, setModalType] = useState<ModalType>()
+
+  const modalErrorId =
+    type === 'qr' ? messages.qrReaderModalError : messages.barcodeModalError
+
+  const modalErrorRetry =
+    type === 'qr'
+      ? messages.qrReaderModalErrorRetry
+      : messages.barcodeModalErrorRetry
+
+  const [loggerMutation] = useMutation(logger)
 
   const [
     getSkuQuery,
@@ -56,26 +79,18 @@ export default function UseEanGoToPDP({
 
   const intl = useIntl()
 
-  let messagesInternationalization: any
-
-  if (type === 'qr') {
-    messagesInternationalization = defineMessages({
-      messageModalError: { id: 'store/qr-reader.messageModalError' },
-      messageModalSucces: { id: 'store/reader.messageModalSucces' },
-      retry: { id: 'store/reader.retry' },
-      cancel: { id: 'store/reader.cancel' },
-    })
-  } else if (type === 'barcode') {
-    messagesInternationalization = defineMessages({
-      messageModalError: { id: 'store/barcode-reader.messageModalError' },
-      messageModalSucces: { id: 'store/reader.messageModalSucces' },
-      retry: { id: 'store/reader.retry' },
-      cancel: { id: 'store/reader.cancel' },
-    })
-  }
-
   const translateMessage = (message: MessageDescriptor) =>
     intl.formatMessage(message)
+
+  const FormatErrorMessage = (
+    error1: MessageDescriptor,
+    eancode: string,
+    error2: MessageDescriptor
+  ) => {
+    return `${translateMessage(error1)} (${eancode}) ${translateMessage(
+      error2
+    )}`
+  }
 
   const openModalResult = () => {
     setModalResult(true)
@@ -88,38 +103,72 @@ export default function UseEanGoToPDP({
   useEffect(() => {
     const queryParam = ean
 
-    getSkuQuery({ variables: { ean: queryParam } })
+    /* console.info('loadingGetSku', loadingGetSku)
+    console.info('errorGetSku', errorGetSku)
+    console.info('dataGetSku', dataGetSku) */
+
+    saveLog('go to pdp', ean, loggerMutation)
+    // console.info('go to pdp', ean)
+    try {
+      getSkuQuery({ variables: { ean: queryParam } })
+    } catch (error) {
+      // console.info('error getSkuQuery', error)
+      saveLog('error getSkuQuery', error, loggerMutation)
+      setMessageModal(FormatErrorMessage(modalErrorId, ean, modalErrorRetry))
+      setState(FormatErrorMessage(modalErrorId, ean, modalErrorRetry))
+      setModalShows(true)
+      setRead(false)
+      setModalType('error')
+    }
   }, [])
 
   useEffect(() => {
     if (!loadingGetSku && !errorGetSku && !dataGetSku) return
     if (loadingGetSku) {
+      // console.info('loadingGetSku', loadingGetSku)
       setMessageModal(``)
       openModalResult()
     }
 
     if (errorGetSku) {
+      // console.info('errorGetSku', errorGetSku)
       if (mode === 'singleEan') {
-        setMessageModal(
-          `${translateMessage(messagesInternationalization.messageModalError)}`
-        )
+        saveLog('errorGetSku singleEan', errorGetSku, loggerMutation)
+        setMessageModal(FormatErrorMessage(modalErrorId, ean, modalErrorRetry))
+        setState(FormatErrorMessage(modalErrorId, ean, modalErrorRetry))
+        setModalShows(true)
+        setRead(false)
         setModalType('error')
       } else if (mode === 'multipleEan') {
+        saveLog('errorGetSku multipleEan', errorGetSku, loggerMutation)
         const queryParam = ean
 
-        getProductQuery({ variables: { ean: queryParam } })
+        try {
+          getProductQuery({ variables: { ean: queryParam } })
+        } catch (error) {
+          // console.info('error getProductQuery', error)
+          saveLog('error getProductQuery', error, loggerMutation)
+          setMessageModal(
+            FormatErrorMessage(modalErrorId, ean, modalErrorRetry)
+          )
+          setState(FormatErrorMessage(modalErrorId, ean, modalErrorRetry))
+          setModalShows(true)
+          setModalType('error')
+        }
       }
     }
 
     if (dataGetSku) {
+      // console.info('dataGetSku', dataGetSku)
       const sku: SkuDataType = dataGetSku.getSku.data
       const productName: string = sku.NameComplete
 
       setMessageModal(
-        `${translateMessage(
-          messagesInternationalization.messageModalSucces
-        )} ${productName}`
+        `${translateMessage(messages.readerModalSucces)} ${productName}`
       )
+
+      setState(`${translateMessage(messages.readerModalSucces)} ${productName}`)
+      setModalShows(true)
       setModalType('success')
       setSkuData(sku)
     } else {
@@ -130,14 +179,16 @@ export default function UseEanGoToPDP({
   useEffect(() => {
     if (!loadingGetProduct && !errorGetProduct && !dataGetProduct) return
     if (loadingGetProduct) {
+      setState(`${translateMessage(messages.searching)}`)
       setMessageModal(``)
       openModalResult()
     }
 
     if (errorGetProduct) {
-      setMessageModal(
-        `${translateMessage(messagesInternationalization.messageModalError)}`
-      )
+      saveLog('errorGetProduct', errorGetProduct, loggerMutation)
+      setMessageModal(FormatErrorMessage(modalErrorId, ean, modalErrorRetry))
+      setState(FormatErrorMessage(modalErrorId, ean, modalErrorRetry))
+      setModalShows(true)
       setModalType('error')
     }
 
@@ -161,24 +212,26 @@ export default function UseEanGoToPDP({
           }
 
           setMessageModal(
-            `${translateMessage(
-              messagesInternationalization.messageModalSucces
-            )} ${nameComplete}`
+            `${translateMessage(messages.readerModalSucces)} ${nameComplete}`
           )
+          setState(
+            `${translateMessage(messages.readerModalSucces)} ${nameComplete}`
+          )
+          setModalShows(true)
           setModalType('success')
           setSkuData(skuTemp)
         } else {
           setMessageModal(
-            `${translateMessage(
-              messagesInternationalization.messageModalError
-            )}`
+            FormatErrorMessage(modalErrorId, ean, modalErrorRetry)
           )
+          setState(FormatErrorMessage(modalErrorId, ean, modalErrorRetry))
+          setModalShows(true)
           setModalType('error')
         }
       } else {
-        setMessageModal(
-          `${translateMessage(messagesInternationalization.messageModalError)}`
-        )
+        setMessageModal(FormatErrorMessage(modalErrorId, ean, modalErrorRetry))
+        setState(FormatErrorMessage(modalErrorId, ean, modalErrorRetry))
+        setModalShows(true)
         setModalType('error')
       }
     }
@@ -186,14 +239,13 @@ export default function UseEanGoToPDP({
 
   useEffect(() => {
     if (!skuData) return
+    setRead(false)
+    if (isRedirect) return
+    const skuLink = `${skuData.DetailUrl}?skuId=${skuData.Id}`
 
-    // eslint-disable-next-line vtex/prefer-early-return
-    if (!isRedirect) {
-      const skuLink = `${skuData.DetailUrl}?skuId=${skuData.Id}`
-
-      setIsRedirect(true)
-      window.location.replace(skuLink)
-    }
+    setIsRedirect(true)
+    saveLog('window.location.replace skuLink', skuLink, loggerMutation)
+    window.location.replace(skuLink)
   }, [skuData])
 
   return (
@@ -203,13 +255,13 @@ export default function UseEanGoToPDP({
           centered
           isOpen={modalResult}
           confirmation={{
-            label: translateMessage(messagesInternationalization.retry),
+            label: translateMessage(messages.retry),
             onClick: () => {
               closeModalResult()
-              setUse(false)
+              setRead(false)
               setTimeout(() => {
-                setUse(true)
-              }, 1000)
+                setRead(true)
+              }, times)
             },
           }}
           cancelation={{
@@ -217,7 +269,7 @@ export default function UseEanGoToPDP({
               closeModalResult()
               setButton(false)
             },
-            label: translateMessage(messagesInternationalization.cancel),
+            label: translateMessage(messages.cancel),
           }}
           onClose={() => {
             closeModalResult()
