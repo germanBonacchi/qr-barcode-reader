@@ -218,7 +218,7 @@ export default function UseEanAddToCart({
           true,
           'error'
         )
-        setRead(false)
+        setRead(true)
       } else if (mode === 'multipleEan') {
         saveLog('errorGetSku multipleEan', errorGetSku, loggerMutation)
         const queryParam = ean
@@ -248,6 +248,7 @@ export default function UseEanAddToCart({
         true,
         'error'
       )
+      setRead(true)
     }
 
     if (!dataGetProduct) return
@@ -326,7 +327,6 @@ export default function UseEanAddToCart({
     if (!skuData) return
 
     setRead(false)
-
     const quantityInOrderForm: number = itemsOrderform.find(
       (item) => item.id === skuData.Id
     )?.quantity

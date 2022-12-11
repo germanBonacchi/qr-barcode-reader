@@ -1,17 +1,14 @@
 import React, { useState, useEffect } from 'react'
-import QrReader from 'react-qr-scanner'
+import { QrReader } from 'react-qr-reader';
 import { useCssHandles } from 'vtex.css-handles'
 import { Tag, Spinner, ToastProvider, ToastConsumer } from 'vtex.styleguide'
 import type { MessageDescriptor } from 'react-intl'
 import { useIntl, defineMessages } from 'react-intl'
-import { useMutation } from 'react-apollo'
 
 import UseEanGoToPDP from './UseEan/go-to-pdp'
 import UseEanAddToCart from './UseEan/add-to-cart'
 import type { QrReaderProps } from '../typings/global'
 import formatQr from '../utils/formatQr'
-import logger from '../graphql/logger.gql'
-import saveLog from '../utils/saveLog'
 import '../style/camStyle.global.css'
 import '../style/Loading.global.css'
 
@@ -43,13 +40,13 @@ export default function QrContainer({
   action,
   mode,
 }: QrReaderProps) {
-  const delay = 3000
+  const constraints = { facingMode: 'environment'}
+  const delay = 2000
   const [result, setResult] = useState(null)
   const [ean, setEan] = useState<string>('')
   const [readQr, setReadQr] = useState<boolean>(true)
 
   const [modalShows, setModalShows] = useState<boolean>(false)
-  const [loggerMutation] = useMutation(logger)
 
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const [prevData, setPrevData] = useState<any>(null)
@@ -65,7 +62,15 @@ export default function QrContainer({
   )
 
   useEffect(() => {
-    if (!readQr) return
+    if (readQr) {
+      setEan('')
+      setResult(null)
+      prevData && setPrevData(null)
+      setModalShows(false)
+      setState(`${translateMessage(messages.readyToScan)}`)
+
+      return
+    }
 
     GetPermissions()
       .then((stream) => {
@@ -74,6 +79,8 @@ export default function QrContainer({
         if (forceReload) window.location.reload()
         if (stream) {
           setEan('')
+          setResult(null)
+          prevData && setPrevData(null)
           setModalShows(false)
           setState(`${translateMessage(messages.readyToScan)}`)
         }
@@ -90,10 +97,6 @@ export default function QrContainer({
     setPrevData(data)
     setResult(data.text)
     setState(`${translateMessage(messages.processing)} ${data.text}`)
-  }
-
-  const handleError = (err) => {
-    saveLog('qr handleError', err, loggerMutation)
   }
 
   useEffect(() => {
@@ -115,18 +118,18 @@ export default function QrContainer({
         <div className={`${handles.state} mb2`}>
           <Tag bgColor="#F71963">{state}</Tag>
         </div>
-        {!readQr && (
+        {(!readQr || modalShows) && (
           <div className="loading-container">
             <Spinner />
           </div>
         )}
-        {readQr && (
+        {readQr && !modalShows && (
           <div className={`${handles.qrContainer} camStyle`}>
             <QrReader
-              delay={delay}
-              style={previewStyle}
-              onError={handleError}
-              onScan={handleScan}
+            constraints={constraints}
+              scanDelay={delay}
+              containerStyle={previewStyle}
+              onResult={handleScan}
             />
           </div>
         )}
